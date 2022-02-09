@@ -1,0 +1,43 @@
+.picHolder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.lakeTahoePic {
+  object-fit: cover;
+  min-width: 100%;
+  height: 350px;
+}
+
+.info {
+  padding: 0px 10px 10px;
+}
+
+.pageStack {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.pageStack > li {
+  display: grid;
+  padding: 36px 5px;
+}
+
+.stack {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.currPage {
+  color: 4c4c4c;
+}
+
+.pageStack > li > a {
+  text-decoration: none;
+  color: #355b85;
+  font-weight: bolder;
+}
