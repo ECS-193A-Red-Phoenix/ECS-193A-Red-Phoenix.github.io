@@ -13,7 +13,10 @@ export default function App() {
         <Header />
         <Navbar />
         <PageTitle />
-        <img src="Map.png" className="Map1" />
+        <div className="Map1">
+          <img src="LTPic.png" className="Pic" />
+          <img src="LTPic2.png" />
+        </div>
         <HazardousBox />
       </div>
       <Footer />

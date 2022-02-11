@@ -10,7 +10,7 @@
 }
 
 .Map1 {
-  display: block;
-  margin: auto;
+  display: flex;
   align-items: center;
+  justify-content: center;
 }
