@@ -4,16 +4,19 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./components/styles/reset.css";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
-import "./components/styles/reset.css";
+import LakeConditions from "./components/LakeConditions";
 
 ReactDOM.render(
   <Router>
     <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="/AboutUs" element={<AboutUs />} />
-      <Route path="/ContactUs" element={<ContactUs />} />
+      <Route path="/" element={<App />}>
+        <Route index element={ <LakeConditions/> }/>
+        <Route path="about" element={ <AboutUs/> } />
+        <Route path="contact" element={ <ContactUs/> } />
+      </Route>
     </Routes>
   </Router>,
 

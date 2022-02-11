@@ -12,7 +12,7 @@
     margin-left: 15px;
   }
   
-  .nav--options > li {
+  .nav--options li {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,19 +23,27 @@
     transform: skewX(-20deg);
     text-decoration: none;
   }
+
+  .nav--options span {
+      transform: skewX(20deg); /* Unskew text */
+  }
   
-  .nav--options > li:hover {
+  .nav--options li:hover {
+    background-color: var(--GOLD);
+    color: var(--BLUE);
+  }
+
+  .nav--options .active {
     background-color: var(--GOLD);
     color: var(--BLUE);
   }
   
-  .nav--options > li > a {
+  .nav--options a {
     display: block;
     text-decoration: none;
     color: white;
-    transform: skewX(20deg);
   }
 
-  .nav--options > li > a:visited {
+  .nav--options a:visited {
     color: inherit;
   }

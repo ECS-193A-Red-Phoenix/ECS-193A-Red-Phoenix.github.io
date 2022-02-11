@@ -17,3 +17,8 @@
     margin: auto;
     align-items: center;
 }
+
+.page-title {
+    font-size: large;
+    padding: 20px;
+}
