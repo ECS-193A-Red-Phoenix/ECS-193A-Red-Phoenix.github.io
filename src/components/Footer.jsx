@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <div className="footer">
-      <img src="logo192.png" className="footer-logo-icon" />
       <p>1 Shields Ave, Davis, CA 95616</p>
       <nav className="footer-nav-bar">
         <ul className="footer-nav-options">
@@ -27,7 +26,7 @@ export default function Footer() {
         </ul>
       </nav>
       <p className="copyright">
-        &copy;{new Date().getFullYear()} Lake Tahoe Project
+        &copy; {new Date().getFullYear()} Lake Tahoe Project
       </p>
     </div>
   );

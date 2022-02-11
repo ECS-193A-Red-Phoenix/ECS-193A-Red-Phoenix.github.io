@@ -10,8 +10,8 @@ export default function App() {
   return (
     <div className="page-container">
       <div className="content-wrapper">
-        <Header />
-        <Navbar />
+        <Header/>
+        <Navbar/>
         <PageTitle />
         <div className="Map1">
           <img src="LTPic.png" className="Pic" />

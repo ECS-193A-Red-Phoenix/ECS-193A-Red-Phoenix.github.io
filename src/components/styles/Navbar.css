@@ -2,30 +2,40 @@
     display: flex;
     align-items: center;
     background-color: var(--BLUE);
-    height: 90px;
+    height: 60px;
   }
   
   .nav--options {
     list-style: none;
     display: flex;
-    border-top: 90px;
+    height: 100%;
+    margin-left: 15px;
   }
   
   .nav--options > li {
-    padding: 36px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0px;
+    min-width: 150px;
+    height: 100%;
     color: white;
+    transform: skewX(-20deg);
+    text-decoration: none;
   }
   
   .nav--options > li:hover {
     background-color: var(--GOLD);
-    color: black;
-    display: block;
-    align-items: center;
+    color: var(--BLUE);
   }
   
   .nav--options > li > a {
+    display: block;
     text-decoration: none;
     color: white;
-    font-weight: bolder;
+    transform: skewX(20deg);
   }
-  
+
+  .nav--options > li > a:visited {
+    color: inherit;
+  }

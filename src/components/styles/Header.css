@@ -9,20 +9,25 @@ body {
 }
 
 .title--name {
-  margin-right: auto;
-  color: black;
-  font-weight: 700;
-  font-size: 22px;
+  margin-left: 20px;
+  color: var(--BLUE);
+  font-size: 30px;
 }
 
 .title-and-logo {
   display: flex;
   align-items: center;
-  background-color: white;
   height: 90px;
   padding: 30px 25px;
 }
 
 .logo--icon {
   height: 50px;
+  margin: 20px 0px;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+    background-color: white;
 }
