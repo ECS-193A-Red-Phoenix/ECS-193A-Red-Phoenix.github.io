@@ -1,0 +1,45 @@
+.real-time-conditions-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-controls-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.map-control-button {
+    color: black;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.map-control-button:hover {
+    cursor: pointer;
+}
+
+.map-control-button-active {
+    background-color: aliceblue;
+}
+
+.time-plot-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.line-plot {
+}
+
+.line-plot-title {
+    font-size: 12px;
+}
+
+.line-plot-label {
+    font-size: 10px;
+}

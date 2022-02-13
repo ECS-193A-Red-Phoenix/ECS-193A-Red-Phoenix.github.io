@@ -8,14 +8,16 @@ import "./components/styles/reset.css";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
 import LakeConditions from "./components/LakeConditions";
+import RealTimeConditions from "./components/RealTime/RealTimeConditions";
 
 ReactDOM.render(
   <Router>
     <Routes>
       <Route path="/" element={<App />}>
         <Route index element={ <LakeConditions/> }/>
-        <Route path="about" element={ <AboutUs/> } />
-        <Route path="contact" element={ <ContactUs/> } />
+        <Route path="about" element={ <AboutUs/> }/>
+        <Route path="contact" element={ <ContactUs/> }/>
+        <Route path="real-time" element={ <RealTimeConditions/> }/> 
       </Route>
     </Routes>
   </Router>,

@@ -18,6 +18,12 @@ export default function Navbar() {
               <span> Home </span>
             </li>
           </Link>
+
+          <Link to="/real-time">
+            <li className={is_active("/real-time")}>
+              <span> Real Time </span>
+            </li>
+          </Link>
           
           <Link to="/contact">
             <li className={is_active("/contact")}>
