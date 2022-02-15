@@ -1,5 +1,5 @@
 import { select, selectAll } from "d3";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { ALL_STATIONS } from "./api";
 
 // Bounds of the map
@@ -53,7 +53,6 @@ function StationMap(props) {
         })
         .style("cursor", "pointer")
         .on("click", function (e, d) {
-            console.log("Set station index to", d.index);
             props.onClick(d.index);
         });
         

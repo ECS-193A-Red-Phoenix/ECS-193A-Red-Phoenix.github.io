@@ -1,9 +1,7 @@
-import { MapContainer, Marker, Popup, TileLayer, SVGOverlay, useMapEvents } from 'react-leaflet';
 import { ALL_STATIONS } from './api';
 import React, { useState, useEffect } from 'react'
 import MapControlButton from './MapControlButton';
 import "./RealTimeConditions.css"
-import StationMarker from './StationMarker';
 import StationMap from './StationMap';
 import LinePlot from './LinePlot';
 
@@ -50,24 +48,8 @@ function RealTimeConditions(props) {
     }
   }, []);
 
-  // Station Markers
-  let stationMarkers = [];
-  for (let i = 0; i < ALL_STATIONS.length; i++) {
-    if (stationData[i] && stationData[i].length > 0) {
-      let data_to_display = stationData[i][stationData[i].length - 1][current_data_displayed.name]
-      if (!data_to_display) continue;
-
-      let { id, station_name, coords } = ALL_STATIONS[i].info;
-      stationMarkers.push(
-        <StationMarker key={ station_name } position={coords} data={data_to_display}
-        onClick={() => {console.log("Station " + i + " was clicked");}}/>
-      )
-    }
-  }
 
   function setDataDisplayed(idx) {
-    console.log("Setting station ", idx, "to display", station_data_names[idx]);
-    console.log(stationData);
     setDataIdx(idx);
   }
 
