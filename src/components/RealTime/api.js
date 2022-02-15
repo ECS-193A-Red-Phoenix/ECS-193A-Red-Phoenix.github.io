@@ -6,7 +6,7 @@ const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1
 // These are the working stations at this time
 const NEAR_SHORE_STATION_INFO = [
     { 'id': 2, 'station_name': 'Dollar Point' , "coords": [    39.184,   -120.093] },
-    { 'id': 3, 'station_name': 'Glenbrook'    , "coords": [    39.088,   -119.942] },
+    // { 'id': 3, 'station_name': 'Glenbrook'    , "coords": [    39.088,   -119.942] },
     { 'id': 4, 'station_name': 'Homewood'     , "coords": [    39.090,   -120.161] },
     { 'id': 6, 'station_name': 'Rubicon'      , "coords": [    39.007,   -120.109] },
     { 'id': 7, 'station_name': 'Sand Harbor'  , "coords": [    39.201,   -119.931] },
@@ -43,7 +43,6 @@ async function get(url) {
 // Utility function for getting the current date in UTC
 function today(days) {
     days = days ? days : 0;
-    console.log(days)
     let now = new Date();
     now = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
     const year = String(now.getUTCFullYear());

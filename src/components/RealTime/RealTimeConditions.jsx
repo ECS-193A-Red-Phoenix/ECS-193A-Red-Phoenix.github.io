@@ -1,12 +1,16 @@
-import { MapContainer, Marker, Popup, TileLayer, SVGOverlay } from 'react-leaflet';
+import { MapContainer, Marker, Popup, TileLayer, SVGOverlay, useMapEvents } from 'react-leaflet';
 import { ALL_STATIONS, DATA_DISPLAYED } from './api';
 import React, { useState, useEffect } from 'react'
 import MapControlButton from './MapControlButton';
 import "./RealTimeConditions.css"
 import StationMarker from './StationMarker';
+import StationMap from './StationMap';
 import LinePlot from './LinePlot';
 
-const position = [39.08999983830667, -120.03681848915485] // Lake Tahoe coords
+const w = 0.1;
+const h = 0.2;
+
+// Lake Tahoe coords
 const leafletMapStyle = {
   width: "400px",
   height: "550px",
@@ -17,27 +21,27 @@ const leafletMapStyle = {
 function RealTimeConditions(props) {
   let [stationIdx, setStationIdx] = useState(0);
   let [stationData, setStationData] = useState([]);
-  let [time, setTime] = useState([]);
-  let [y_data, setYData] = useState([]);
   let [dataIdx, setDataIdx] = useState(0);
-  let current_data_displayed = DATA_DISPLAYED[dataIdx];
   
+  let current_data_displayed = DATA_DISPLAYED[dataIdx];
+  let time = [];
+  let y_data = [];
+  if (stationData[stationIdx]) {
+    time = stationData[stationIdx].map((x) => x['TimeStamp']);
+    y_data = stationData[stationIdx].map((x) => x[current_data_displayed.name]);
+  }
+
   useEffect(() => {
     // Retrieve data 
     for (let i = 0; i < ALL_STATIONS.length; i++) {
       let station = ALL_STATIONS[i];
       station.get_display_data().then((response) => {
         setStationData((prevStationData) => {
-          console.log("Got response for station", i, response);
           let stationDataCopy = [...prevStationData];
           if (response.length == 0) {
             stationDataCopy[i] = undefined;
           } else {
             stationDataCopy[i] = response;
-          }
-          if (i == stationIdx) {
-            setTime(response.map((x) => x['TimeStamp']));
-            setYData(response.map((x) => x[current_data_displayed.name]));
           }
           return stationDataCopy;
         });
@@ -61,10 +65,8 @@ function RealTimeConditions(props) {
   }
 
   function setDataDisplayed(idx) {
-    if (stationData[stationIdx]) {
-      setTime(stationData[stationIdx].map((x) => x['TimeStamp']));
-      setYData(stationData[stationIdx].map((x) => x[DATA_DISPLAYED[idx].name]));
-    }
+    console.log("Setting station ", idx, "to display", DATA_DISPLAYED[idx]);
+    console.log(stationData);
     setDataIdx(idx);
   }
 
@@ -89,22 +91,7 @@ function RealTimeConditions(props) {
             </div>
         </div>
 
-        <MapContainer style={leafletMapStyle} center={position} 
-        zoomSnap={0.01} zoom={10.6} zoomControl={false}
-        dragging={false}
-        scrollWheelZoom={false}
-        doubleClickZoom={false}>
-
-          {/* Map style chosen from here http://leaflet-extras.github.io/leaflet-providers/preview/ */}
-          <TileLayer
-              url='https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}'
-              attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              ext='png'
-          />
-
-          { stationMarkers }
-
-        </MapContainer>
+        <StationMap stationIdx={stationIdx} onClick={(i) => setStationIdx(i)}/>
 
       </div>
   )

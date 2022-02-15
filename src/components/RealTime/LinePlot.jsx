@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'; 
-import { select, scaleLinear, path, transition, easeLinear, interpolate } from 'd3';
+import { select, scaleLinear, area, line, transition, easeLinear, interpolate } from 'd3';
 import "./RealTimeConditions.css"
 
 const innerPadding = 0.1;
@@ -49,13 +49,12 @@ function LinePlot(props) {
         );
     }
 
-    const is_loading = !props.time || !props.y;
-    const unavailable = !is_loading && (props.time.length == 0 || props.y.length == 0);
+    const is_loading = props.time.length == 0 || props.y.length == 0;
+    const unavailable = !is_loading && (props.y[0] === undefined);
     const loading_text = 
         <text x={(x_e + x_s) / 2} y={(y_e + y_s) / 2} textAnchor="middle" dominantBaseline="middle" className="line-plot-loading">
         {is_loading ? "Loading" : unavailable ? "Data Temporarily Unavailable" : "Loaded"}
         </text>;
-    console.log(is_loading, unavailable, is_loading ? "Loading" : unavailable ? "Data Temporarily Unavailable" : "Loaded")
 
     const y_padding = 0.2 * (y_e - y_s);
     let x_scale, y_scale, t0, t1, y_min, y_max;
@@ -106,27 +105,31 @@ function LinePlot(props) {
     }
 
     useEffect(() => {
+        let svg = select(d3_ref.current);
         if (is_loading || unavailable) {
+            svg.select("#area")
+                .attr("d", "");
+            svg.select("#line")
+                .attr("d", "");
             return;
         }
 
-        let svg = select(d3_ref.current);
-        
-        const p = path();
-        p.moveTo(x_scale(0), y_scale(props.y[0]))
+        let data = [];
         for (let i = 0; i < props.time.length; i++) {
-            p.lineTo(x_scale(props.time[i] - t0), y_scale(props.y[i]));
+            data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])])
         }
         
-        svg.select("path")
-            .attr("d", p)
+        svg.select("#area")
+            .attr("d", area().y0(y_e)(data));
+        svg.select("#line")
+            .attr("d", line()(data))
+            
+        svg.select("#cover")
             .transition()
             .duration(1000)
             .ease(easeLinear)
-            .attrTween("stroke-dasharray", function() {
-                const length = this.getTotalLength();
-                return interpolate(`0,${length}`, `${length},${length}`);
-            });
+            .attr("x", x_e)
+
     }, [props.time, props.y]);
 
     return (
@@ -140,8 +143,10 @@ function LinePlot(props) {
             >
             
             <text x={x_s} y={y_s - 5} className="line-plot-title"> {props.title} </text>
-            <path stroke="steelblue" strokeWidth="2.5" fillOpacity="0" strokeDasharray="0,1"></path>
-            
+            <path id="line" stroke="steelblue" strokeWidth="2.5" fillOpacity="0"></path>
+            <path id="area" strokeWidth="0" fill="steelblue" fillOpacity="0.5"></path>
+            <rect id="cover" x={x_s} y={y_s} width={x_e - x_s} height={y_e - y_s} fill="white"></rect>
+
             { (is_loading || unavailable) && loading_text }
             { axes }
             { props.units && axes_units }
