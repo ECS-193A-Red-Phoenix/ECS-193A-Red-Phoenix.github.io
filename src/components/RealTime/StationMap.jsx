@@ -7,6 +7,8 @@ const bounds = [
     [38.88973786614013, -120.22406605972319],  // southWest
     [39.29014918866168, -119.84887189740661] // northEast
 ];
+const tag_width = 25; // Percentages
+const tag_height = 5;
 
 function StationMap(props) {
     let [lat1, lon1] = bounds[0];
@@ -49,13 +51,72 @@ function StationMap(props) {
         .attr("fill-opacity", (d, i) => {
             return (i == props.stationIdx) ? 1 : 0
         })
+        .style("cursor", "pointer")
         .on("click", function (e, d) {
             console.log("Set station index to", d.index);
             props.onClick(d.index);
         });
+        
+        // Station tags
+        let station_tags = select(".station-map-container > svg > g#station-tags")
+        .selectAll("g")
+        .data(stations_with_index)
+        .enter()
+        .append("g");
+
+        station_tags
+        .append("text")
+        .attr("y", (d) => {
+            let [lat, lon] = d.info.coords;
+            let center_y = 100 - (lat - lat1) / (lat2 - lat1) * 100;
+            return `${center_y - 1.5 * tag_height}%`;
+        })
+        .attr("x", (d) => {
+            let [lat, lon] = d.info.coords;
+            let center_x = (lon - lon1) / (lon2 - lon1) * 100;
+            return `${center_x}%`;
+        })
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .text((d) => d.info.station_name)
+
+        station_tags
+        .insert("rect", "text")
+        .attr("y", (d) => {
+            let [lat, lon] = d.info.coords;
+            let center_y = 100 - (lat - lat1) / (lat2 - lat1) * 100;
+            return `${center_y - 2 * tag_height}%`;
+        })
+        .attr("x", function (d) {
+            let [lat, lon] = d.info.coords;
+            let center_x = (lon - lon1) / (lon2 - lon1) * 100;
+            return `${center_x}%`;
+        })
+        .attr("width", function() {
+            return this.parentElement.childNodes[1].getComputedTextLength() + 10;
+        })
+        .attr("transform", function () {
+            let width = this.parentElement.childNodes[1].getComputedTextLength() + 10;
+            return `translate(${- width / 2})`;
+        })
+        .attr("height", `${tag_height}%`)
+        .attr("rx", "1%")
+        .attr("ry", "1%")
+        .attr("fill", "white");
+
+        // Turn off inactive station tags text
+        selectAll(".station-map-container > svg > g#station-tags rect")
+        .data(stations_with_index)
+        .join()
+        .attr("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
+        // Turn off inactive station tags rectangle
+        selectAll(".station-map-container > svg > g#station-tags text")
+        .data(stations_with_index)
+        .join()
+        .attr("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
 
     }, [props.stationIdx]);
-
+    
     return (
         <div className="station-map-container">
             <img src="map.PNG"/>
@@ -63,6 +124,7 @@ function StationMap(props) {
                 shapeRendering="geometricPrecision">
                 <g id="outer"></g>
                 <g id="inner"></g>
+                <g id="station-tags"></g>
             </svg>
         </div>
     );

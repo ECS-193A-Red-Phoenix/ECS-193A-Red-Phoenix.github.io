@@ -71,6 +71,11 @@ function RealTimeConditions(props) {
     setDataIdx(idx);
   }
 
+  function onSetStationIdx(idx) {
+    setDataDisplayed(0);
+    setStationIdx(idx);
+  }
+
   // Map Controls
   let mapControls = [];
   for (let i = 0; i < station_data_names.length; i++) {
@@ -92,7 +97,7 @@ function RealTimeConditions(props) {
             </div>
         </div>
 
-        <StationMap stationIdx={stationIdx} onClick={(i) => setStationIdx(i)}/>
+        <StationMap stationIdx={stationIdx} onClick={onSetStationIdx}/>
 
       </div>
   )
