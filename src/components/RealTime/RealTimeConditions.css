@@ -12,8 +12,8 @@
 
 .map-control-button {
     color: black;
-    border: 1px solid black;
     border-radius: 10px;
+    box-shadow: 3px 3px 10px #dedede;
     padding: 10px;
     margin: 10px;
 }

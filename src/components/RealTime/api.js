@@ -3,29 +3,33 @@
 const NEAR_SHORE_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/ns-station-range";
 const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/nasa-tb";
 
+// Near shore data to display
+const NEAR_SHORE_DATA = [
+    { name: "Water Temperature", units: "° F" },
+    { name: "Wave Height",       units: "Inches" }
+];
+
+// Buoy data to display
+const BUOY_DATA = [
+    { name: "Water Temperature", units: "° F" },
+    { name: "Wind Direction",    units: "Degrees" },
+    { name: "Wind Speed",        units: "MPH" },
+];
+
 // These are the working stations at this time
 const NEAR_SHORE_STATION_INFO = [
-    { 'id': 2, 'station_name': 'Dollar Point' , "coords": [    39.184,   -120.093] },
-    // { 'id': 3, 'station_name': 'Glenbrook'    , "coords": [    39.088,   -119.942] },
-    { 'id': 4, 'station_name': 'Homewood'     , "coords": [    39.090,   -120.161] },
-    { 'id': 6, 'station_name': 'Rubicon'      , "coords": [    39.007,   -120.109] },
-    { 'id': 7, 'station_name': 'Sand Harbor'  , "coords": [    39.201,   -119.931] },
-    { 'id': 9, 'station_name': 'Tahoe City'   , "coords": [39.1555087, -120.18275] }
+    { 'id': 2, 'station_name': 'Dollar Point' , "coords": [    39.184,   -120.093], "data": NEAR_SHORE_DATA },
+    { 'id': 4, 'station_name': 'Homewood'     , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
+    { 'id': 6, 'station_name': 'Rubicon'      , "coords": [    39.007,   -120.109], "data": NEAR_SHORE_DATA },
+    { 'id': 7, 'station_name': 'Sand Harbor'  , "coords": [    39.201,   -119.931], "data": NEAR_SHORE_DATA },
+    { 'id': 9, 'station_name': 'Tahoe City'   , "coords": [39.1555087, -120.18275], "data": NEAR_SHORE_DATA }
 ];
 
 const NASA_BUOY_INFO = [
-    { 'id': 1, 'station_name': 'tb1', "coords": [   39.153, -120.00033] },
-    { 'id': 2, 'station_name': 'tb2', "coords": [39.109366, -120.01075] },
-    { 'id': 3, 'station_name': 'tb3', "coords": [  39.1102, -120.07535] },
-    { 'id': 4, 'station_name': 'tb4', "coords": [   39.155, -120.07216] }
-];
-
-
-const DATA_DISPLAYED = [
-    { name: "Water Temperature", units: "° F" },
-    { name: "Wave Height",       units: "Inches" },
-    { name: "Wind Direction",    units: "Degrees" },
-    { name: "Wind Speed",        units: "MPH" },
+    { 'id': 1, 'station_name': 'tb1', "coords": [   39.153, -120.00033], "data": BUOY_DATA },
+    { 'id': 2, 'station_name': 'tb2', "coords": [39.109366, -120.01075], "data": BUOY_DATA },
+    { 'id': 3, 'station_name': 'tb3', "coords": [  39.1102, -120.07535], "data": BUOY_DATA },
+    { 'id': 4, 'station_name': 'tb4', "coords": [   39.155, -120.07216], "data": BUOY_DATA }
 ];
 
 // Utility function that makes a CORS GET request to a url
@@ -122,4 +126,4 @@ for (let i = 0; i < NASA_BUOY_INFO.length; i++)
 
 const ALL_STATIONS = [...NEAR_SHORE_STATIONS, ... NASA_BUOY_STATIONS];
 
-export { ALL_STATIONS, DATA_DISPLAYED };
+export { ALL_STATIONS };

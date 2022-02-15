@@ -1,5 +1,5 @@
 import { MapContainer, Marker, Popup, TileLayer, SVGOverlay, useMapEvents } from 'react-leaflet';
-import { ALL_STATIONS, DATA_DISPLAYED } from './api';
+import { ALL_STATIONS } from './api';
 import React, { useState, useEffect } from 'react'
 import MapControlButton from './MapControlButton';
 import "./RealTimeConditions.css"
@@ -23,7 +23,8 @@ function RealTimeConditions(props) {
   let [stationData, setStationData] = useState([]);
   let [dataIdx, setDataIdx] = useState(0);
   
-  let current_data_displayed = DATA_DISPLAYED[dataIdx];
+  let station_data_names = ALL_STATIONS[stationIdx].info.data;
+  let current_data_displayed = station_data_names[dataIdx];
   let time = [];
   let y_data = [];
   if (stationData[stationIdx]) {
@@ -65,16 +66,16 @@ function RealTimeConditions(props) {
   }
 
   function setDataDisplayed(idx) {
-    console.log("Setting station ", idx, "to display", DATA_DISPLAYED[idx]);
+    console.log("Setting station ", idx, "to display", station_data_names[idx]);
     console.log(stationData);
     setDataIdx(idx);
   }
 
   // Map Controls
   let mapControls = [];
-  for (let i = 0; i < DATA_DISPLAYED.length; i++) {
+  for (let i = 0; i < station_data_names.length; i++) {
     mapControls.push(
-      <MapControlButton key={DATA_DISPLAYED[i].name} name={DATA_DISPLAYED[i].name} active={i === dataIdx} 
+      <MapControlButton key={station_data_names[i].name} name={station_data_names[i].name} active={i === dataIdx} 
         onClick={() => setDataDisplayed(i)}/>
     );
   }
