@@ -88,17 +88,28 @@ function RealTimeConditions(props) {
   const chart_title = `${current_data_displayed.name} @ ${ALL_STATIONS[stationIdx].info.station_name}`;
 
   return (
-      <div className='real-time-conditions-container content-wrapper'>
+      <div className="content-wrapper">
 
-        <div className='time-plot-container'>
-            <LinePlot width={800} height={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
-            <div className="map-controls-container">
-                { mapControls }
+        <div className='image-container'>
+            <img src="lake-one.jpg"></img>
+            <div className='page-description-container'>
+                <div className='page-description-title'> Real Time Conditions </div>
+                <div className='page-description'> Explore Lake Tahoe conditions in real time, routinely updated in twenty minute intervals. </div>
             </div>
         </div>
 
-        <StationMap stationIdx={stationIdx} onClick={onSetStationIdx}/>
+        <div className='real-time-conditions-container'>
 
+            <div className='time-plot-container'>
+                <LinePlot width={800} height={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+                <div className="map-controls-container">
+                    { mapControls }
+                </div>
+            </div>
+
+            <StationMap stationIdx={stationIdx} onClick={onSetStationIdx}/>
+
+        </div>
       </div>
   )
 }
