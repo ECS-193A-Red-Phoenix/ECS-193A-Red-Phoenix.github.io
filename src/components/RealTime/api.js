@@ -22,7 +22,7 @@ const NEAR_SHORE_STATION_INFO = [
     { 'id': 4, 'station_name': 'Homewood'     , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
     { 'id': 6, 'station_name': 'Rubicon'      , "coords": [    39.007,   -120.109], "data": NEAR_SHORE_DATA },
     { 'id': 7, 'station_name': 'Sand Harbor'  , "coords": [    39.201,   -119.931], "data": NEAR_SHORE_DATA },
-    { 'id': 9, 'station_name': 'Tahoe City'   , "coords": [39.1555087, -120.18275], "data": NEAR_SHORE_DATA }
+    { 'id': 9, 'station_name': 'Tahoe City'   , "coords": [    39.152,   -120.147], "data": NEAR_SHORE_DATA }
 ];
 
 const NASA_BUOY_INFO = [
