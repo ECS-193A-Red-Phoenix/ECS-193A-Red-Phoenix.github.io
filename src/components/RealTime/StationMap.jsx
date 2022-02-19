@@ -54,14 +54,25 @@ function StationMap(props) {
         .style("cursor", "pointer")
         .on("click", function (e, d) {
             props.onClick(d.index);
+        })
+        .on("mouseover", (e, d) => {
+            select(`g#station-tag${d.index}`)
+            .style("display", "block");
+        })
+        .on("mouseleave", (e, d) => {
+            if (d.index == props.stationIdx)
+                return
+            select(`g#station-tag${d.index}`)
+            .style("display", "none");
         });
         
         // Station tags
-        let station_tags = select(".station-map-container > svg > g#station-tags")
+        let station_tags = select("g#station-tags")
         .selectAll("g")
         .data(stations_with_index)
         .enter()
-        .append("g");
+        .append("g")
+        .attr("id", (d) => `station-tag${d.index}`);
 
         station_tags
         .append("text")
@@ -103,17 +114,11 @@ function StationMap(props) {
         .attr("ry", "1%")
         .attr("fill", "white");
 
-        // Turn off inactive station tags text
-        selectAll(".station-map-container > svg > g#station-tags rect")
+        // Turn off inactive station tags
+        selectAll("g#station-tags > g")
         .data(stations_with_index)
         .join()
-        .attr("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
-        // Turn off inactive station tags rectangle
-        selectAll(".station-map-container > svg > g#station-tags text")
-        .data(stations_with_index)
-        .join()
-        .attr("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
-
+        .style("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
     }, [props.stationIdx]);
     
     return (
