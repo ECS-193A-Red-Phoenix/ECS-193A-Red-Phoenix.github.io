@@ -35,6 +35,11 @@
 }
 
 .line-plot {
+    font-size: 10px;
+}
+
+.line-plot > #cursor {
+    display: none;
 }
 
 .line-plot-title {

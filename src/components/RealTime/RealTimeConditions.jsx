@@ -5,16 +5,6 @@ import "./RealTimeConditions.css"
 import StationMap from './StationMap';
 import LinePlot from './LinePlot';
 
-const w = 0.1;
-const h = 0.2;
-
-// Lake Tahoe coords
-const leafletMapStyle = {
-  width: "400px",
-  height: "550px",
-  alignSelf: "center"
-}
-
 
 function RealTimeConditions(props) {
   let [stationIdx, setStationIdx] = useState(0);
