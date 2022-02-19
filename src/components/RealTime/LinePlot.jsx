@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'; 
-import { select, scaleLinear, area, line, transition, easeLinear, interpolate, pointer} from 'd3';
+import { select, scaleLinear, area, line, transition, easeLinear, interpolate, pointer, easeCubicInOut} from 'd3';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.1;
@@ -164,24 +164,14 @@ function LinePlot(props) {
                 .style('display', 'none');
         });
         
-        // svg.select("g#points")
-        //     .selectAll("circle")
-        //     .data(data)
-        //     .join("circle")
-        //     .attr("cx", (d) => d[0])
-        //     .attr("cy", (d) => d[1])
-        //     .attr("r", "2")
-        //     .attr("fill", "steelblue")
-
         svg.select("#line")
             .attr("d", line()(data))
             
         svg.select("#cover")
             .transition()
             .duration(1000)
-            .ease(easeLinear)
-            .attr("x", x_e)
-
+            .ease(easeCubicInOut)
+            .attr("x", x_e + 5)
     }, [props.time, props.y]);
 
     return (
