@@ -5,15 +5,14 @@ const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1
 
 // Near shore data to display
 const NEAR_SHORE_DATA = [
-    { name: "Water Temperature", units: "° F" },
-    { name: "Wave Height",       units: "Inches" }
+    { name: "Water Temperature", units: "° F"   , display_type: 'line'},
+    { name: "Wave Height",       units: "Inches", display_type: 'line'}
 ];
 
 // Buoy data to display
 const BUOY_DATA = [
-    { name: "Water Temperature", units: "° F" },
-    { name: "Wind Direction",    units: "Degrees" },
-    { name: "Wind Speed",        units: "MPH" },
+    { name: "Water Temperature", units: "° F", display_type: 'line' },
+    { name: "Wind Distribution", units: "MPH", display_type: 'polar'},
 ];
 
 // These are the working stations at this time
@@ -53,6 +52,12 @@ function today(days) {
     const month = String(now.getUTCMonth() + 1).padStart(2, "0");
     const day = String(now.getUTCDate()).padStart(2, "0");
     return `${year}${month}${day}`;
+}
+
+function mod(a, b) {
+    // Return a mod b; % is not the modulo operator in JS, see
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
+    return ((a % b) + b) % b;
 }
 
 /////////////////////////////////////////////////
@@ -105,8 +110,20 @@ class NASABuoyStation extends Station {
                 "Wind Speed":        Number.parseFloat(datum['WindSpeed_1'])
             });
             // Convert units
-            res[res.length - 1]['Water Temperature'] = res[res.length - 1]['Water Temperature'] * 9 / 5 + 32;
-            res[res.length - 1]['Wind Speed'] *= 2.23694; // ms to mph
+            let last_idx = res.length - 1;
+            res[last_idx]['Water Temperature'] = res[last_idx]['Water Temperature'] * 9 / 5 + 32; // C to F
+            res[last_idx]['Wind Speed'] *= 2.23694; // ms to mph
+            res[last_idx]['Wind Direction'] = mod(res[last_idx]['Wind Direction'], 360) // Ensure in [0, 360]
+
+            // Convert wind direction to the direction its going
+            res[last_idx]['Wind Direction'] = 270 - res[last_idx]['Wind Direction']
+            if (res[last_idx]['Wind Direction'] < 0)
+                res[last_idx]['Wind Direction'] += 360; // ensure positive
+
+            // Combine Wind Speed and Wind Dir into one datum
+            res[last_idx]['Wind Distribution'] = [res[res.length - 1]['Wind Speed'], res[last_idx]['Wind Direction']];
+            delete res[last_idx]['Wind Speed'];
+            delete res[last_idx]['Wind Direction'];
         }
         return res;
     }
@@ -126,4 +143,4 @@ for (let i = 0; i < NASA_BUOY_INFO.length; i++)
 
 const ALL_STATIONS = [...NEAR_SHORE_STATIONS, ... NASA_BUOY_STATIONS];
 
-export { ALL_STATIONS };
+export { ALL_STATIONS, mod };

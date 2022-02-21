@@ -34,6 +34,15 @@
     align-items: center;
 }
 
+.compass-plot {
+    font-size: 10px;
+}
+
+.compass-grid {
+    stroke: black;
+    stroke-opacity: 0.1;
+}
+
 .line-plot {
     font-size: 10px;
 }

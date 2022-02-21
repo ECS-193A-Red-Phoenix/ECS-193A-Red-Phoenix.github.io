@@ -4,12 +4,13 @@ import MapControlButton from './MapControlButton';
 import "./RealTimeConditions.css"
 import StationMap from './StationMap';
 import LinePlot from './LinePlot';
+import CompassPlot from './CompassPlot';
 
 
 function RealTimeConditions(props) {
-  let [stationIdx, setStationIdx] = useState(0);
+  let [stationIdx, setStationIdx] = useState(7);
   let [stationData, setStationData] = useState([]);
-  let [dataIdx, setDataIdx] = useState(0);
+  let [dataIdx, setDataIdx] = useState(1);
   
   let station_data_names = ALL_STATIONS[stationIdx].info.data;
   let current_data_displayed = station_data_names[dataIdx];
@@ -44,7 +45,6 @@ function RealTimeConditions(props) {
   }
 
   function onSetStationIdx(idx) {
-    setDataDisplayed(0);
     setStationIdx(idx);
   }
 
@@ -57,7 +57,19 @@ function RealTimeConditions(props) {
     );
   }
 
+  const chart_width = 800;
+  const chart_height = 500;
   const chart_title = `${current_data_displayed.name} @ ${ALL_STATIONS[stationIdx].info.station_name}`;
+  const chart_type = current_data_displayed.display_type; 
+  let chart;
+  switch (chart_type) {
+    case "line":
+      chart = <LinePlot width={chart_width} height={chart_height} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+      break;
+    case "polar":
+      chart = <CompassPlot radius={700} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+      break;
+  }
 
   return (
       <div className="content-wrapper">
@@ -73,7 +85,7 @@ function RealTimeConditions(props) {
         <div className='real-time-conditions-container'>
 
             <div className='time-plot-container'>
-                <LinePlot width={800} height={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+                { chart }
                 <div className="map-controls-container">
                     { mapControls }
                 </div>

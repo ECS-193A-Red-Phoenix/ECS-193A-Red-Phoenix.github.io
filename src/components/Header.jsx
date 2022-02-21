@@ -7,7 +7,7 @@ export default function Header() {
     <div className="header-container">
       <div className="title-and-logo">
         <img src="logo.png" alt="logo" className="logo--icon" />
-        <div className="title--name"> Lake Tahoe Simulated </div>
+        <div className="title--name"> Tahoe Now </div>
       </div>
     </div>
   );
