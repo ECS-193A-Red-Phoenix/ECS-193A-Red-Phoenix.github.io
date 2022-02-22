@@ -12,7 +12,7 @@ const NEAR_SHORE_DATA = [
 // Buoy data to display
 const BUOY_DATA = [
     { name: "Water Temperature", units: "° F", display_type: 'line' },
-    { name: "Wind Distribution", units: "MPH", display_type: 'polar'},
+    { name: "Wind", units: "MPH", display_type: 'polar'},
 ];
 
 // These are the working stations at this time
@@ -121,7 +121,7 @@ class NASABuoyStation extends Station {
                 res[last_idx]['Wind Direction'] += 360; // ensure positive
 
             // Combine Wind Speed and Wind Dir into one datum
-            res[last_idx]['Wind Distribution'] = [res[res.length - 1]['Wind Speed'], res[last_idx]['Wind Direction']];
+            res[last_idx]['Wind'] = [res[res.length - 1]['Wind Speed'], res[last_idx]['Wind Direction']];
             delete res[last_idx]['Wind Speed'];
             delete res[last_idx]['Wind Direction'];
         }

@@ -67,7 +67,7 @@ function RealTimeConditions(props) {
       chart = <LinePlot width={chart_width} height={chart_height} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
       break;
     case "polar":
-      chart = <CompassPlot radius={700} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+      chart = <CompassPlot radius={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
       break;
   }
 

@@ -35,13 +35,21 @@
 }
 
 .compass-plot {
-    font-size: 10px;
+    font-size: 20px;
 }
 
-.compass-grid {
-    stroke: black;
-    stroke-opacity: 0.1;
+#compass-title {
+    font-size: 15px;
 }
+
+#compass-number {
+    font-size: 30px;
+}
+
+#compass-unit {
+    font-size: 30px;
+}
+
 
 .line-plot {
     font-size: 10px;
