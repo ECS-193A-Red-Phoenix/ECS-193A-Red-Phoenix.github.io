@@ -1,9 +1,14 @@
+import CurrentChart from "./CurrentChart/CurrentChart";
 import "./styles/LakeConditions.css";
 
 function LakeConditions(props) {
   return (
     <div className="content-wrapper">
       <div className="page-title"> Lake Conditions </div>
+
+      <div className="center-content">
+        <CurrentChart width={800} height={600}/>
+      </div>
 
       <div className="Map1">
         <img src="LTPic.png" className="Pic" />
