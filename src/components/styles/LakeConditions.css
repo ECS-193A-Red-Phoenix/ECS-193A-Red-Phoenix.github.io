@@ -15,3 +15,27 @@
   color: white;
   margin-bottom: 1px;
 }
+
+.center-content {
+    display: flex;
+    justify-content: center;
+}
+
+.model-figure-container {
+    display: flex;
+    justify-content: center;
+}
+
+.model-figure-container > * {
+    margin: 50px 50px;
+}
+
+
+.fig-container {
+    height: 600px;
+}
+
+.fig-container > img {
+    display: block;
+    height: 100%;
+}
