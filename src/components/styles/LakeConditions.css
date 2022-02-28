@@ -24,12 +24,12 @@
 .model-figure-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 
 .model-figure-container > * {
     margin: 50px 50px;
 }
-
 
 .fig-container {
     height: 600px;
