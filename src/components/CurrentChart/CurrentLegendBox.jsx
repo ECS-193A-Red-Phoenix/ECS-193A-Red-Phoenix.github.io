@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { Particle, VectorField } from "./particle";
+import { Particle, VectorField } from "../particle";
 
 //////////////////////////////////////////////
 // Static constants
 //////////////////////////////////////////////
-const num_particles = 100;
+const num_particles = 60;
 const M_TO_FT = 196.85;
 const scale = 1.5;
 const aspect_ratio = 0.35;

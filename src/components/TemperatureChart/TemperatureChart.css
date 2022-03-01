@@ -72,26 +72,27 @@
 
 /* Legend CSS */
 
-.current-legend-container {
+.temperature-legend-container {
+    margin-left: 20px;
     display: flex;
-    flex-direction: column;
 }
 
-.current-legend-container > * {
-    margin: 7px 0px;
+.temperature-legend-units {
 }
 
-.current-legend-box-container {
+.temperature-legend-unit {
+    font-size: 10px;
+    position: absolute;
+    transform: translate(0%, -50%);
     display: flex;
-    justify-content: flex-end;
-    align-content: center;
+    align-items: center;
 }
 
-.current-legend-box-units {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    flex-direction: column;
-    margin-right: 7px;
-    font-size: 12px;
+.temperature-legend-unit::before {
+    content: "";
+    width: 4px;
+    height: 0.5px;
+    background-color: black;
+    margin-right: 5px;
+    transform: translate(-10%, -100%);
 }

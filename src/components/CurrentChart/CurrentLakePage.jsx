@@ -2,32 +2,21 @@ import CurrentLakeMap from "./CurrentLakeMap";
 import CurrentLegendBox from "./CurrentLegendBox";
 import { scaleLinear } from "d3";
 import "./CurrentChart.css";
+import { round, reversed } from "../util";
 
-//////////////////////////////////
-// Utility
-//////////////////////////////////
-function reversed(arr) {
-    let res = [];
-    for (let j = arr.length - 1; j > -1; j--)
-        res.push(arr[j]);
-    return res;
-}
 
 function average_speed(u, v) {
     let total = 0;
+    let count = 0;
     for (let j = 0; j < u.length; j++) {
         for (let i = 0; i < u[0].length; i++) {
-            if (typeof u[j][i] === 'number' && typeof v[j][i] === 'number')
+            if (typeof u[j][i] === 'number' && typeof v[j][i] === 'number') {
                 total += (u[j][i]**2 + v[j][i]**2)**0.5;
+                count += 1;
+            }
         }
     }
-    return total / (u.length * u[0].length);
-}
-
-function round(x, decimals) {
-    if (decimals === undefined)
-        decimals = 0;
-    return Math.floor(x * 10**decimals) / 10**decimals;
+    return total / count;
 }
 
 

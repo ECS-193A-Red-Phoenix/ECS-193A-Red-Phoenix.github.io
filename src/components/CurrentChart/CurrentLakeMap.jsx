@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Particle, VectorField } from "./particle";
+import { Particle, VectorField } from "../particle";
 import "./CurrentChart.css";
 
 
@@ -7,6 +7,7 @@ import "./CurrentChart.css";
 // Static Lake Map constants
 //////////////////////////////////
 const inner_padding = 0.01;
+const num_particles = 3500;
 
 
 function CurrentLakeMap(props) {
@@ -31,7 +32,6 @@ function CurrentLakeMap(props) {
     // Particle Generator
     ////////////////////////////////
     const vector_field = new VectorField(props.u, props.v);
-    const num_particles = 3500;
     const particles = [];
     for (let k = 0; k < num_particles; k++)
         particles.push( Particle.newRandom(vector_field) );
