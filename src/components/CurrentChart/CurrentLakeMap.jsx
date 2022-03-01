@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { Particle, VectorField } from "../particle";
 import "./CurrentChart.css";
 
@@ -31,11 +31,13 @@ function CurrentLakeMap(props) {
     ////////////////////////////////
     // Particle Generator
     ////////////////////////////////
-    const vector_field = new VectorField(props.u, props.v);
-    const particles = [];
-    for (let k = 0; k < num_particles; k++)
-        particles.push( Particle.newRandom(vector_field) );
-
+    const vector_field = useMemo(() => new VectorField(props.u, props.v), [props.u, props.v]);
+    const particles = useMemo(() => {
+        let res = [];
+        for (let k = 0; k < num_particles; k++)
+            res.push( Particle.newRandom(vector_field) );
+        return res;
+    }, [vector_field]);
 
     ////////////////////////////////////
     // Animation Loop
@@ -50,7 +52,7 @@ function CurrentLakeMap(props) {
             particles.forEach((p) => p.move());
         }, 50);
         return () => clearInterval(interval);
-      }, []);
+      }, [particles, square_size, vector_field, x_s, y_s]);
 
     return (
         <canvas ref={canvas_ref} width={chart_width} height={chart_height}></canvas>

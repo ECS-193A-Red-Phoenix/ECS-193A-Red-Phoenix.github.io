@@ -1,7 +1,4 @@
-import { scaleLinear } from "d3";
 import { useEffect, useRef } from "react"
-
-
 
 
 function TemperatureLegend(props) {
@@ -13,6 +10,7 @@ function TemperatureLegend(props) {
     useEffect(() => {
         const canvas = canvas_ref.current;
         const cx = canvas.getContext('2d');
+        const get_color = props.color_palette;
 
         // Create color bar
         let image_data = cx.createImageData(canvas_width, canvas_height);
@@ -21,7 +19,7 @@ function TemperatureLegend(props) {
                 // Nearest Neighbor
                 let T = (canvas_height - j) / canvas_height;
 
-                let [r, g, b] = props.color_palette(T);
+                let [r, g, b] = get_color(T);
                 let pixel_index = (j * (image_data.width * 4)) + (i * 4);
 
                 image_data.data[pixel_index + 0] = r;
@@ -31,7 +29,7 @@ function TemperatureLegend(props) {
             }
         }
         cx.putImageData(image_data, 0, 0);
-    }, [props.color_palette]);
+    }, [props.color_palette, canvas_height]);
 
     const num_units = 8;
     const units = [];

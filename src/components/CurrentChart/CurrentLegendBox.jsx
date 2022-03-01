@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Particle, VectorField } from "../particle";
 
 //////////////////////////////////////////////
@@ -24,12 +24,14 @@ function CurrentLegendBox(props) {
     ////////////////////////////////////
     // Particle generator
     ////////////////////////////////////
-    const particles = [];
-    const vector_field = new VectorField([[props.speed]], [[0]]);
-    for (let k = 0; k < num_particles; k++) {
-        particles.push( Particle.newRandom(vector_field) );
-    }
-    
+    const vector_field = useMemo(() => new VectorField([[props.speed]], [[0]]), [props.speed]);
+    const particles = useMemo(() => {
+        let res = [];
+        for (let k = 0; k < num_particles; k++)
+            res.push( Particle.newRandom(vector_field) );
+        return res;
+    }, [vector_field]);
+
     ////////////////////////////////////
     // Animation Loop
     ////////////////////////////////////
@@ -44,7 +46,7 @@ function CurrentLegendBox(props) {
             particles.forEach((p) => p.move());
         }, 50);
         return () => clearInterval(interval);
-    }, []);
+    }, [particles, vector_field, width, height]);
     
     let ft_per_min = props.speed * M_TO_FT; // convert m/s to ft/min
     ft_per_min = Math.round(ft_per_min * 10) / 10;
