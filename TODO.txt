@@ -2,8 +2,6 @@ TODO List
 
 - Implement auto update for real time charts
 
-- Try to implement a dynamic wind flow chart from model data
-
 - Fill up contact and about us page
 
 - Make website mobile friendly:
