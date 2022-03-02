@@ -1,3 +1,5 @@
+import { mod } from "../util";
+
 /////////////////////////////////////////////////
 // Global constants here
 const NEAR_SHORE_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/ns-station-range";
@@ -52,12 +54,6 @@ function today(days) {
     const month = String(now.getUTCMonth() + 1).padStart(2, "0");
     const day = String(now.getUTCDate()).padStart(2, "0");
     return `${year}${month}${day}`;
-}
-
-function mod(a, b) {
-    // Return a mod b; % is not the modulo operator in JS, see
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
-    return ((a % b) + b) % b;
 }
 
 /////////////////////////////////////////////////
@@ -143,4 +139,4 @@ for (let i = 0; i < NASA_BUOY_INFO.length; i++)
 
 const ALL_STATIONS = [...NEAR_SHORE_STATIONS, ... NASA_BUOY_STATIONS];
 
-export { ALL_STATIONS, mod };
+export { ALL_STATIONS };

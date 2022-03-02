@@ -52,4 +52,10 @@ function celsius_to_f(c) {
     return c * (9 / 5) + 32;
 }
 
-export { if_undefined, round, reversed, colorFromHex, colorScale, celsius_to_f };
+function mod(a, b) {
+    // Return a mod b; % is not the modulo operator in JS, see
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
+    return ((a % b) + b) % b;
+}
+
+export { if_undefined, round, reversed, colorFromHex, colorScale, celsius_to_f, mod };
