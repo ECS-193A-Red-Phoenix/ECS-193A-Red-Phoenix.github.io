@@ -27,15 +27,10 @@ export default function Navbar() {
           
           <Link to="/contact">
             <li className={is_active("/contact")}>
-              <span> Contact Us </span>
-            </li>
-          </Link>
-
-          <Link to="/about">
-            <li className={is_active("/about")}>
               <span> About Us </span>
             </li>
           </Link>
+
         </ul>
       </nav>
     </div>

@@ -47,3 +47,34 @@
   .nav--options a:visited {
     color: inherit;
   }
+
+  @media only screen and (max-width: 630px) {
+    .nav--options {
+      background-color: var(--BLUE);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .nav--bar {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      background-color: var(--BLUE);
+      height: 147px;
+    }
+  
+    .nav--options span {
+      transform: None; /* Unskew text */
+    }
+    .nav--options li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0px;
+      min-width: 1000px;
+      height: 100%;
+      color: white;
+      transform: None;
+      text-decoration: none;
+    }
+  }
