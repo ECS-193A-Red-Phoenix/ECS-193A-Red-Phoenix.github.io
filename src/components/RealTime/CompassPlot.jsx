@@ -57,7 +57,7 @@ function CompassPlot(props) {
         let x2 = x_mid + (compass_radius + tick_length_i) * Math.cos(angle);
         let y2 = y_mid - (compass_radius + tick_length_i) * Math.sin(angle);
         ticks.push(
-            <line x1={x1} y1={y1} x2={x2} y2={y2} strokeOpacity="1" stroke="black" strokeWidth={stroke_width}></line>
+            <line key={`compass-tick${i}`} x1={x1} y1={y1} x2={x2} y2={y2} strokeOpacity="1" stroke="black" strokeWidth={stroke_width}></line>
         );
     }
     
@@ -65,8 +65,8 @@ function CompassPlot(props) {
     // Center Label
     //////////////////////////////////////////////////
     let center_label = [
-        <circle cx={x_mid} cy={y_mid} r={compass_radius * 0.5} fill="#fdfdfd"></circle>,
-        <text x={x_mid} y={y_mid} textAnchor="middle">
+        <circle key="center-circle" cx={x_mid} cy={y_mid} r={compass_radius * 0.5} fill="#fdfdfd"></circle>,
+        <text key="center-text" x={x_mid} y={y_mid} textAnchor="middle">
             <tspan id="compass-title" dy="-1em"> {props.title} </tspan>
             {
                 data_available && 
