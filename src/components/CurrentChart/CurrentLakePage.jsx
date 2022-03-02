@@ -45,11 +45,11 @@ for (let i = 0; i < num_legend_boxes; i++)
 function CurrentLakePage() {
 
     return (
-        <div className="current-chart-container">
-            <div className="current-chart-left-column">
-                <div className="current-chart-description-container">
-                    <div className="current-chart-title"> Water Flow </div>
-                    <div className="current-chart-description">
+        <div className="lake-condition-container">
+            <div className="lake-condition-left-column">
+                <div className="lake-condition-description-container">
+                    <div className="lake-condition-title"> Water Flow </div>
+                    <div className="lake-condition-description">
                         Water flow is the movement of water in and around Lake Tahoe. Water currents in Lake Tahoe 
                         are primarily caused by wind, Earth's rotation, and gravity. As wind flows over the flat surface of Lake
                         Tahoe, particles of air drag water along the surface, creating currents of water. Moreover, the force
@@ -58,13 +58,9 @@ function CurrentLakePage() {
                         move water forward.
                     </div>
 
-                    <div className="current-chart-info">
-                        <div className="current-chart-date"> Monday 8:00 AM, February 28, 2022 </div>
-                        <div className="current-chart-speed"> Average Speed: {average_lake_speed} feet per minute </div>
-                        <div className="current-chart-controls">
-                            <div className="current-chart-control-button"> Move 2 hours backward </div>
-                            <div className="current-chart-control-button"> Move 2 hours forward </div>
-                        </div>
+                    <div className="lake-condition-info">
+                        <div className="lake-condition-date"> Monday 8:00 AM, February 28, 2022 </div>
+                        <div className="lake-condition-speed"> Average Speed: {average_lake_speed} feet per minute </div>
                     </div>
                 </div>
 

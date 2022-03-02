@@ -58,4 +58,13 @@ function mod(a, b) {
     return ((a % b) + b) % b;
 }
 
-export { if_undefined, round, reversed, colorFromHex, colorScale, celsius_to_f, mod };
+function parseMyDate(date_string) {
+    // This function parses a UTC date in the format YYYY-MM-DD HH
+    const year  = date_string.substring( 0,  4);
+    const month = date_string.substring( 5,  7);
+    const day   = date_string.substring( 8, 10);
+    const hour  = date_string.substring(11, 13);
+    return new Date(Date.parse(`${year}-${month}-${day}T${hour}:00Z`));
+}
+
+export { if_undefined, round, reversed, colorFromHex, colorScale, celsius_to_f, mod, parseMyDate };
