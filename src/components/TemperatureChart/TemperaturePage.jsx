@@ -37,9 +37,6 @@ const temperature_color = colorScale(
     DARKBLUE, BLUE, LIGHTBLUE, GREEN, YELLOW, RED, DARKRED
 );
 
-
-// let [T] = require('./slice.json');
-
 const temperature_data = require('./temperature.json');
 temperature_data.forEach((obj) => obj['time'] = parseMyDate(obj['time']));
 temperature_data.sort((o1, o2) => o1['time'] - o2['time']);
