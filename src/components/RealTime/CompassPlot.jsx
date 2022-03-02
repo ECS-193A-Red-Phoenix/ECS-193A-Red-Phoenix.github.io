@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'; 
-import { select, scaleLinear, path, easeElasticOut} from 'd3';
+import { select, path, easeElasticOut} from 'd3';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.15;

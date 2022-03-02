@@ -1,5 +1,6 @@
-import CurrentChart from "./CurrentChart/CurrentChart";
+import CurrentLakePage from "./CurrentChart/CurrentLakePage";
 import "./styles/LakeConditions.css";
+import TemperaturePage from "./TemperatureChart/TemperaturePage";
 
 function LakeConditions(props) {
   return (
@@ -16,10 +17,8 @@ function LakeConditions(props) {
         </div>
 
       <div className="model-figure-container">
-        <div className="fig-container">
-            <img src="LTPic.png" className="Pic" />
-        </div>
-        <CurrentChart height={600}/>
+        <TemperaturePage/>
+        <CurrentLakePage/>
       </div>
 
     </div>
