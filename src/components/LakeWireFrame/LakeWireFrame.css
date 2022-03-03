@@ -1,0 +1,32 @@
+.lake-wire-frame-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.lake-wire-frame-canvas-container {
+    height: 100vh;
+}
+
+.lake-wire-frame-description-container {
+    width: 1000px;
+}
+
+.lake-wire-frame-title {
+    font-size: 35px;
+    font-weight: 400;
+}
+
+.lake-wire-frame-description {
+    margin-top: 15px;
+    font-size: 14px;
+    line-height: 1.3em;
+}
+
+.lake-wire-frame {
+    display: block; 
+    width: 100%; 
+    height: 100%;
+}
