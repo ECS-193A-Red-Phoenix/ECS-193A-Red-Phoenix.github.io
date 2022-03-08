@@ -137,8 +137,8 @@ function points_in_lake_tahoe(width, height) {
     const res = [];
     for (let j = 0; j < height; j++)
         for (let i = 0; i < width; i++)
-            if (point_in_lake_tahoe([i / width, j / height]))
-                res.append([i, j])
+            if (point_in_lake_tahoe([i / width, 1 - j / height]))
+                res.push([i, j])
     lake_points_cache[key] = res;
     return res;
 }
