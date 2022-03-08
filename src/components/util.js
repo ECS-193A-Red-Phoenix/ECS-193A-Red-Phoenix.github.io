@@ -67,4 +67,82 @@ function parseMyDate(date_string) {
     return new Date(Date.parse(`${year}-${month}-${day}T${hour}:00Z`));
 }
 
-export { if_undefined, round, reversed, colorFromHex, colorScale, celsius_to_f, mod, parseMyDate };
+function point_in_polygon(point, polygon) {
+    // returns true if the point is inside the given polygon
+    // To do this, I implement the ray-casting algorithm shown here:
+    // https://rosettacode.org/wiki/Ray-casting_algorithm
+    //
+    // Arguments:
+    //  point: an array of size 2 [x, y]
+    //  polygon: an array containing x, y pairs [[x1, y1], [x2, y2], ...]
+
+    const epsilon = 0.0001;
+    function ray_intersects_segment(p1, p2) {
+        // returns 1 if eastward ray from point intersects line segment p1 -> p2
+        // for a mathematical explanation see https://www.desmos.com/calculator/fjmvdmryje
+        // avoid ray on vertex problem by shifting point up
+        let [x, y] = point;
+        if (y === p1[1] || y === p2[1])
+            y += epsilon;
+
+        const dy = p2[1] - p1[1];
+        if (dy === 0)
+            return 0;
+
+        const t_p = (y - p1[1]) / dy;
+        const t_r = p1[0] + (p2[0] - p1[0]) * t_p - x;
+        if (t_r >= 0 && 0 <= t_p && t_p <= 1)
+            return 1;
+        return 0;
+    }
+
+    let count = 0;
+    for (let i = 1; i < polygon.length; i++) {
+        let prev = polygon[i - 1];
+        let cur = polygon[i];
+        count += ray_intersects_segment(prev, cur);
+    }
+    count += ray_intersects_segment(polygon[polygon.length - 1], polygon[0]);
+
+    return count % 2 === 1;
+}
+
+
+// Cache point in lake tahoe for performance boost
+const point_lake_cache = {};
+const shoreline_path = require('./shoreline.json');
+function point_in_lake_tahoe(point) {
+    // returns true if the point exists within the boundaries of lake tahoe
+    // Arguments
+    //  point: an array of size 2 [x, y] with both 0 <= x, y <= 1
+    const p_string = String(point);
+    if (p_string in point_lake_cache)
+        return point_lake_cache[p_string];
+    const res = point_in_polygon(point, shoreline_path);
+    point_lake_cache[p_string] = res;
+    return res;
+}
+
+// Cache for performance boost
+const lake_points_cache = {};
+function points_in_lake_tahoe(width, height) {
+    // returns a list [(x, y), ...] of coordinates in lake tahoe
+    //  within the bounds of the rectangle (0, 0, width, height) 
+    // Arguments
+    //  width: width of rectangle
+    //  height: height of rectangle
+    const key = `${width}_${height}`;
+    if (key in lake_points_cache)
+        return lake_points_cache[key];
+    const res = [];
+    for (let j = 0; j < height; j++)
+        for (let i = 0; i < width; i++)
+            if (point_in_lake_tahoe([i / width, j / height]))
+                res.append([i, j])
+    lake_points_cache[key] = res;
+    return res;
+}
+
+export { if_undefined, round, reversed, colorFromHex,
+    colorScale, celsius_to_f, mod, parseMyDate, 
+    point_in_lake_tahoe, points_in_lake_tahoe};

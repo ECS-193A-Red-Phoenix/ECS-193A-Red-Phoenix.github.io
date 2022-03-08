@@ -57,13 +57,15 @@ class Matrix {
 
 // Bilinear Interpolation on a grid
 // See https://en.wikipedia.org/wiki/Bilinear_interpolation
-function bilinear(x, y, grid) {
+function bilinear(x, y, grid, default_value) {
+    if (default_value === undefined)
+        default_value = 0;
     let n_rows = grid.length;
     let n_cols = grid[0].length;
     let i = Math.floor(x);
     let j = Math.floor(y);
     let get_grid = (j, i) => (i >= 0 && i < n_cols && j >= 0 && j < n_rows && typeof grid[j][i] === 'number') ? grid[j][i] : undefined;
-    let f00 = if_undefined(get_grid(j, i), 0);
+    let f00 = if_undefined(get_grid(j, i), default_value);
     let f10 = if_undefined(get_grid(j, i + 1), f00);
     let f01 = if_undefined(get_grid(j + 1, i), f00);
     let f11 = if_undefined(get_grid(j + 1, i + 1), f00);
