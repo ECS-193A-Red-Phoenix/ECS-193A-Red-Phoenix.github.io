@@ -1,124 +1,149 @@
 .real-time-conditions-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 50px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 50px 0px;
 }
 
 .map-controls-container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .map-control-button {
-    color: black;
-    border-radius: 10px;
-    box-shadow: 3px 3px 10px #dedede;
-    padding: 10px;
-    margin: 10px;
+  color: black;
+  border-radius: 10px;
+  box-shadow: 3px 3px 10px #dedede;
+  padding: 10px;
+  margin: 10px;
 }
 
 .map-control-button:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .map-control-button-active {
-    background-color: aliceblue;
+  background-color: aliceblue;
 }
 
 .time-plot-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .compass-plot {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 #compass-title {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 #compass-number {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 #compass-unit {
-    font-size: 30px;
+  font-size: 30px;
 }
 
-
 .line-plot {
-    font-size: 10px;
+  font-size: 10px;
 }
 
 .line-plot > #cursor {
-    display: none;
+  display: none;
 }
 
 .line-plot-title {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .line-plot-label {
-    font-size: 10px;
+  font-size: 10px;
 }
 
 .station-map-container {
-    max-width: 400px;
-    position: relative;
+  max-width: 400px;
+  position: relative;
 }
 
 .station-map-container > img {
-    width: 100%;
-    display: block;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
+  width: 100%;
+  display: block;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .station-map-container > svg {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
 }
 
 .image-container {
-    width: 100%;
-    min-height: 300px;
-    position: relative;
+  width: 100%;
+  min-height: 300px;
+  position: relative;
 }
 
 .image-container > img {
-    display: block;
-    width: 100%;
+  display: block;
+  width: 100%;
 }
 
 .page-description-container {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 5px black;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(2, 40, 81, 0.5);
-    padding: 50px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(2, 40, 81, 0.5);
+  padding: 30px;
 }
 
 .page-description-title {
-    font-size: 50px;
+  font-size: 50px;
 }
 
 .page-description {
-    margin-top: 20px;
+  margin-top: 20px;
+}
+
+.image-container {
+  display: flex;
+}
+
+.content-wrapper {
+  position: relative;
+}
+
+@media only screen and (max-width: 1200px) {
+  .real-time-conditions-container {
+    display: block;
+  }
+
+  .station-map-container {
+    max-width: 400px;
+    position: relative;
+    margin: auto;
+    padding: 10px;
+  }
+
+  .line-plot {
+    font-size: 10px;
+    width: -webkit-fill-available;
+  }
 }

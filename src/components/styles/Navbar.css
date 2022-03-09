@@ -1,80 +1,81 @@
 .nav--bar {
+  display: flex;
+  align-items: center;
+  background-color: var(--BLUE);
+  height: 60px;
+}
+
+.nav--options {
+  list-style: none;
+  display: flex;
+  height: 100%;
+  margin-left: 15px;
+}
+
+.nav--options li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0px;
+  min-width: 150px;
+  height: 100%;
+  color: white;
+  transform: skewX(-20deg);
+  text-decoration: none;
+}
+
+.nav--options span {
+  transform: skewX(20deg); /* Unskew text */
+}
+
+.nav--options li:hover {
+  background-color: var(--GOLD);
+  color: var(--BLUE);
+}
+
+.nav--options .active {
+  background-color: var(--GOLD);
+  color: var(--BLUE);
+}
+
+.nav--options a {
+  display: block;
+  text-decoration: none;
+  color: white;
+}
+
+.nav--options a:visited {
+  color: inherit;
+}
+
+@media only screen and (max-width: 630px) {
+  .nav--options {
+    background-color: var(--BLUE);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: -webkit-fill-available;
+  }
+  .nav--bar {
     display: flex;
     align-items: center;
+    flex-direction: column;
     background-color: var(--BLUE);
-    height: 60px;
+    height: 147px;
   }
-  
-  .nav--options {
-    list-style: none;
-    display: flex;
-    height: 100%;
-    margin-left: 15px;
+
+  .nav--options span {
+    transform: None; /* Unskew text */
   }
-  
   .nav--options li {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px 0px;
-    min-width: 150px;
+    min-width: 1000px;
     height: 100%;
     color: white;
-    transform: skewX(-20deg);
+    transform: None;
     text-decoration: none;
   }
-
-  .nav--options span {
-      transform: skewX(20deg); /* Unskew text */
-  }
-  
-  .nav--options li:hover {
-    background-color: var(--GOLD);
-    color: var(--BLUE);
-  }
-
-  .nav--options .active {
-    background-color: var(--GOLD);
-    color: var(--BLUE);
-  }
-  
-  .nav--options a {
-    display: block;
-    text-decoration: none;
-    color: white;
-  }
-
-  .nav--options a:visited {
-    color: inherit;
-  }
-
-  @media only screen and (max-width: 630px) {
-    .nav--options {
-      background-color: var(--BLUE);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .nav--bar {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      background-color: var(--BLUE);
-      height: 147px;
-    }
-  
-    .nav--options span {
-      transform: None; /* Unskew text */
-    }
-    .nav--options li {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 0px;
-      min-width: 1000px;
-      height: 100%;
-      color: white;
-      transform: None;
-      text-decoration: none;
-    }
-  }
+}

@@ -1,21 +1,69 @@
-.text {
-  display: block;
-  width: 50%;
+.content {
+  display: flex;
+}
+
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+}
+
+.left {
+  flex: 1;
+  padding: 1rem;
+}
+
+.right {
+  flex: 1;
+  padding: 1rem;
+}
+
+.GP1 {
+  display: flex;
+  width: 30%;
 }
 
 .missionP {
   margin: 0.75em 15px 0.25em;
 }
 
+.names {
+  justify-content: center;
+  padding-bottom: 15px;
+}
+
+.pictures {
+  padding-bottom: 5px;
+}
+
+.team {
+  display: flex;
+  width: 50%;
+}
+
 ul {
   margin: 15px;
   list-style: none;
 }
-.aboutUsPic {
-  width: 100%;
-  height: 633px;
-  object-fit: cover;
-  object-position: 50% 50%;
+
+.page-description-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(2, 40, 81, 0.5);
+  padding: 30px;
+}
+
+.page-description-title {
+  font-size: 50px;
 }
 
 h2 {
@@ -30,46 +78,23 @@ h2 {
   font-size: 2.6055rem;
 }
 
-/* .picHolder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+.image-container {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
 }
 
-.lakeTahoePic {
-  object-fit: cover;
-  min-width: 100%;
-  height: 350px;
+.image-container > img {
+  display: block;
+  width: 100%;
 }
 
-.info {
-  padding: 0px 10px 10px;
+@media only screen and (max-width: 630px) {
+  .content {
+    display: block;
+  }
+  .GP1 {
+    display: flex;
+    width: 50%;
+  }
 }
-
-.pageStack {
-  list-style: none;
-  display: flex;
-  align-items: center;
-}
-
-.pageStack > li {
-  display: grid;
-  padding: 36px 5px;
-}
-
-.stack {
-  display: flex;
-  align-items: center;
-  height: 20px;
-}
-
-.currPage {
-  color: 4c4c4c;
-}
-
-.pageStack > li > a {
-  text-decoration: none;
-  color: #355b85;
-  font-weight: bolder;
-} */
