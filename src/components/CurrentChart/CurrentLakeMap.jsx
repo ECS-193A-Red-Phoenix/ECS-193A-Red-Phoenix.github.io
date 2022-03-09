@@ -1,5 +1,6 @@
 import { useRef, useEffect, useMemo } from "react";
 import { Particle, VectorField } from "../particle";
+import { draw_lake_tahoe } from "../util";
 import "./CurrentChart.css";
 
 
@@ -46,8 +47,11 @@ function CurrentLakeMap(props) {
         const canvas = canvas_ref.current;
         const cx = canvas.getContext('2d');
 
+        const black = 50;
+        cx.fillStyle = `rgba(${black}, ${black}, ${black}, 1)`;
         const interval = setInterval(() => {
-            vector_field.drawWetCells(cx, x_s, y_s, square_size);
+            draw_lake_tahoe(cx, x_s, y_s, chart_width, chart_height);
+
             particles.forEach((p) => p.draw(cx, x_s, y_s, square_size));
             particles.forEach((p) => p.move());
         }, 50);

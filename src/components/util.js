@@ -143,6 +143,26 @@ function points_in_lake_tahoe(width, height) {
     return res;
 }
 
+function draw_lake_tahoe(cx, x, y, width, height) {
+    // draws a closed polygon of lake tahoe using the given context
+    // Arguments:
+    //  cx: HTML Canvas 2D context
+    //  x: x coordinate of the top left corner of where to draw polygon
+    //  y: y coordinate of the top left corner of where to draw polygon
+    //  width: width of the polygon to draw
+    //  height: height of the polygon to draw
+    cx.beginPath();
+    let [x_poly_start, y_poly_start] = shoreline_path[0];
+    cx.moveTo(x + x_poly_start * width, y + (1 - y_poly_start) * height)
+    for (let i = 1; i < shoreline_path.length; i++) {
+        let [x_poly, y_poly] = shoreline_path[i];
+        cx.lineTo(x + x_poly * width, y + (1 - y_poly) * height);
+    }
+    cx.lineTo(x + x_poly_start * width, x + (1 - y_poly_start) * height);
+    cx.fill();
+}
+
 export { if_undefined, round, reversed, colorFromHex,
     colorScale, celsius_to_f, mod, parseMyDate, 
-    point_in_lake_tahoe, points_in_lake_tahoe};
+    point_in_lake_tahoe, points_in_lake_tahoe, draw_lake_tahoe
+};
