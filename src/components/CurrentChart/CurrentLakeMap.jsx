@@ -26,7 +26,7 @@ function CurrentLakeMap(props) {
         chart_x_s = 0;
 
     const [x_s, x_e] = [chart_x_s + chart_width * inner_padding, chart_x_s + chart_width * (1 - inner_padding)];
-    const y_s = props.height * inner_padding;
+    const [y_s, y_e] = [chart_height * inner_padding, chart_height * (1 - inner_padding)];
     const square_size = (x_e - x_s) / n_cols;
 
     ////////////////////////////////
@@ -50,7 +50,7 @@ function CurrentLakeMap(props) {
         const black = 50;
         cx.fillStyle = `rgba(${black}, ${black}, ${black}, 1)`;
         const interval = setInterval(() => {
-            draw_lake_tahoe(cx, x_s, y_s, chart_width, chart_height);
+            draw_lake_tahoe(cx, x_s, y_s, x_e - x_s, y_e - y_s);
 
             particles.forEach((p) => p.draw(cx, x_s, y_s, square_size));
             particles.forEach((p) => p.move());
