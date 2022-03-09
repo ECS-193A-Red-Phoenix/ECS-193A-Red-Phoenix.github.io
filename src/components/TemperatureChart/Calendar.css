@@ -1,8 +1,8 @@
 .calendar {
     margin-top: 50px;
     position: relative;
-    width: 600px;
     font-size: 10px;
+    user-select: none;
 }
 
 .calendar-block-container {
@@ -11,7 +11,8 @@
 
 .calendar-day {
     position: absolute;
-    transform: translate(-105%, -50%);
+    transform: translate(-50%, -150%);
+    white-space: nowrap;
     font-size: 12px;
 }
 
@@ -38,28 +39,27 @@
 .calendar-active-event {
     background-color: var(--GOLD);
     color: black;
+    font-weight: bold;
 }
 
 .calendar-hour {
     white-space: nowrap;
     position: absolute;
-    transform: translate(-50%, -125%);
+    transform: translate(-125%, -50%);
 }
 
 .calendar-hour-line {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.2);
-    fill-opacity: 0.1;
     color: white;
-    width: 1px;
-    bottom: -5%;
+    height: 1px;
+    right: -5px;
 }
 
 .calendar-day-line {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.2);
-    height: 1px;
-    padding: 0px;
-    left: -5px;
-    right: -5px;
+    width: 1px;
+    top: -5px;
+    bottom: -5px;
 }

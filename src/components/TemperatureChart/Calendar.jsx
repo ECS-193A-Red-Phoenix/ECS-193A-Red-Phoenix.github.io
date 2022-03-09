@@ -4,7 +4,8 @@ import "./Calendar.css";
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
-const block_height = 100;
+const block_width = 150;
+const calendar_height = 500;
 const block_margin = 10;
 const ONE_DAY = 24 * 60 * 60 * 1000; // ms in 1 day
 const event_padding = 0.5; // percent
@@ -43,8 +44,7 @@ function Calendar(props) {
     }
 
     // Compute calendar height
-    const calendar_height = days.length * (block_height + block_margin);
-
+    const calendar_width = days.length * (block_width + block_margin);
 
     ////////////////////////////////////
     // Day Labels
@@ -52,15 +52,15 @@ function Calendar(props) {
     const day_labels = [];
     for (let i = 0; i < days.length; i++) {
         const day_str = formatDate(days[i]);
-        const label_y = (block_height + block_margin) * (i + 0.5);
-        const line_y = (block_height + block_margin) * i;
+        const label_x = (block_width + block_margin) * (i + 0.5);
+        const line_x = (block_width + block_margin) * i + 1;
         day_labels.push(
-            <div style={{top: label_y}}
+            <div style={{left: label_x}}
                 key={`calendar-day${i}`}
                 className="calendar-day">
                 { day_str }
             </div>,
-            <div style={{top: line_y}}
+            <div style={{left: line_x}}
                 key={`calendar-day-line${i}`}
                 className="calendar-day-line">
             </div>
@@ -68,7 +68,7 @@ function Calendar(props) {
     }
     // Add line at the very end
     day_labels.push(
-        <div style={{top: (block_height + block_margin) * days.length - 1}}
+        <div style={{left: (block_width + block_margin) * days.length - 1}}
             key={`calendar-day-${days.length}`}
             className="calendar-day-line">
         </div>
@@ -80,9 +80,9 @@ function Calendar(props) {
     ////////////////////////////////////
     const hour_timeline = [];
     for (let i = 0; i <= 24; i += 4) {
-        const x = `${i / 24 * 100}%`;
-        const y = `-5%`;
-        const hour_string = `${militaryHourTo12Hour(i)} ${(i > 12) ? "PM" : "AM"}`;
+        const x = `-5px`;
+        const y = `${i / 24 * 100}%`;
+        const hour_string = `${militaryHourTo12Hour(i)} ${(Math.floor(i / 12) % 2 == 1) ? "PM" : "AM"}`;
         
         hour_timeline.push(
             <div key={`hour${i}`} className="calendar-hour"
@@ -104,10 +104,10 @@ function Calendar(props) {
         const { time, duration } = props.events[i];
 
         const days_from_start = Math.floor((time - start_date) / ONE_DAY);
-        const left = `${time.getHours() / 24 * 100 + event_padding}%`;
-        const right = `${(1 - ((time.getHours() + duration) / 24)) * 100 + event_padding}%`;
-        const top = `${(days_from_start / days.length) * 100 + event_padding}%`;
-        const bottom = `${(1 - ((days_from_start + 1) / days.length)) * 100 + event_padding}%`;
+        const top = `${time.getHours() / 24 * 100 + event_padding}%`;
+        const bottom = `${(1 - ((time.getHours() + duration) / 24)) * 100 + event_padding}%`;
+        const left = `${(days_from_start / days.length) * 100 + event_padding}%`;
+        const right = `${(1 - ((days_from_start + 1) / days.length)) * 100 + event_padding}%`;
 
         const hour = time.getHours();
         const hour_string = `${militaryHourTo12Hour(hour)} ${(hour > 12) ? "PM" : "AM"}`;
@@ -129,7 +129,7 @@ function Calendar(props) {
     }
 
     return (
-        <div className="calendar" style={{height: calendar_height}}>
+        <div className="calendar" style={{width: calendar_width, height: calendar_height}}>
             { day_labels }
             { hour_timeline }
             { events }
