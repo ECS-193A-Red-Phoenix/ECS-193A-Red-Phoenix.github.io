@@ -6,21 +6,8 @@ import { parseMyDate } from "../util";
 import "./TemperatureChart.css";
 import "../styles/LakeConditions.css";
 import { useState } from "react";
-import Calendar from "./Calendar";
+import Calendar from "../Calendar/Calendar";
 
-
-function average_temperature(grid) {
-    let total = 0;
-    let count = 0;
-    for (let j = 0; j < grid.length; j++)
-        for (let i = 0; i < grid[0].length; i++) {
-            if (typeof grid[j][i] === 'number') {
-                total += grid[j][i];
-                count += 1;
-            }
-        }
-    return total / count;
-}
 
 ////////////////////////////////////
 // Static Constants
@@ -31,7 +18,7 @@ const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 const DARKBLUE  = colorFromHex("#00008b");
 const BLUE      = colorFromHex("#0f52ba");
 const LIGHTBLUE = colorFromHex("#ace5ee");
-const GREEN     = colorFromHex("#7fff00");
+const GREEN     = colorFromHex("#006600");
 const YELLOW    = colorFromHex("#ffef00");
 const RED       = colorFromHex("#d0312d");
 const DARKRED   = colorFromHex("#710c04");
@@ -43,20 +30,6 @@ const temperature_color = colorScale(
 const temperature_data = require('./temperature.json');
 temperature_data.forEach((obj) => obj['time'] = parseMyDate(obj['time']));
 temperature_data.sort((o1, o2) => o1['time'] - o2['time']);
-
-function formatDate(date) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-    const day_of_week = days[date.getDay()];
-    const hour = (date.getHours() % 12) + 1
-    const minutes = String(date.getMinutes()).padStart(2, 0);
-    const am_pm = (date.getHours() >= 12) ? "PM" : "AM";
-    const month = months[date.getMonth()];
-    const day_of_month = date.getDate();
-
-    return `${day_of_week} ${hour}:${minutes} ${am_pm}, ${month} ${day_of_month}`;
-}
 
 function TemperaturePage() {
     const [activeIdx, setActiveIdx] = useState(0);
@@ -102,8 +75,10 @@ function TemperaturePage() {
                 </div>
             </div>
 
-            <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale}/>
-            <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
+            <div className="lake-visual-container">
+                <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale}/>
+                <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
+            </div>
 
         </div>
     );

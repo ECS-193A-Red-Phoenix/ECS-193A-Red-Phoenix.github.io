@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { bilinear } from "../particle";
-import { points_in_lake_tahoe, point_in_lake_tahoe } from "../util";
+import { points_in_lake_tahoe } from "../util";
 
 ////////////////////////////////////
 // Static Constants
@@ -15,8 +15,10 @@ function TemperatureMap(props) {
     const chart_height = props.height;
 
     useEffect(() => {
-        let canvas = canvas_ref.current;
-        let cx = canvas.getContext('2d');
+        const canvas = canvas_ref.current;
+        const cx = canvas.getContext('2d');
+        const T = props.T;
+        const color_palette = props.color_palette;
 
         // Create image object
         // See https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
@@ -31,32 +33,34 @@ function TemperatureMap(props) {
             let t_i = Math.floor(x);
 
             const pixel_index = (j * (image_data.width * 4)) + (i * 4);
-            let T = 0;
+            let temp = 0;
             
             // if this pixel is inside the lake but not defined by the temperature matrix
             // let it's temperature be the average of its defined neighbors
-            if (typeof props.T[t_j][t_i] !== 'number') {
-                T = 0;
+            if (typeof T[t_j][t_i] !== 'number') {
+                temp = 0;
                 let count = 0;
                 // Average Temperature of neighboring pixels
                 for (let m = 0; m < 3; m++)
                     for (let n = 0; n < 3; n++) {
                         if (0 <= t_j - 1 + m && t_j - 1 + m < n_rows && 
                             0 <= t_i - 1 + n && t_i - 1 + n < n_cols && 
-                            typeof props.T[t_j - 1 + m][t_i - 1 + n] === 'number') {
-                            T += props.T[t_j - 1 + m][t_i - 1 + n];
+                            typeof T[t_j - 1 + m][t_i - 1 + n] === 'number') {
+                            temp += T[t_j - 1 + m][t_i - 1 + n];
                             count += 1;
                         }
                     }
                 if (count > 0)
-                    T /= count;
+                    temp /= count;
             }
-                
-            // Nearest Neighbor
-            // T = props.T[t_j][t_i];
-            T = bilinear(x, y, props.T, T);
+            else {
+                // Nearest Neighbor
+                temp = T[t_j][t_i];
+            }
+            // Smooth with bilinear interpolation
+            temp = bilinear(x, y, T, temp);
 
-            let [r, g, b] = props.color_palette(T);
+            let [r, g, b] = color_palette(temp);
             image_data.data[pixel_index + 0] = r;
             image_data.data[pixel_index + 1] = g;
             image_data.data[pixel_index + 2] = b;
@@ -65,7 +69,7 @@ function TemperatureMap(props) {
         cx.putImageData(image_data, 0, 0);
         let end_time = Date.now();
         console.log(`Took ${end_time - start_time} ms to draw image`);
-    }, [props.T]);
+    }, [props.T, props.color_palette]);
     
     return (
         <canvas ref={canvas_ref} width={chart_width} height={chart_height}></canvas>

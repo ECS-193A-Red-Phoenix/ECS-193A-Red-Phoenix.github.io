@@ -52,8 +52,8 @@ function CurrentLegendBox(props) {
     ft_per_min = Math.round(ft_per_min * 10) / 10;
     return (
         <div className="current-legend-box-container">
-            <div className="current-legend-box-units"> {ft_per_min} feet per minute </div>
             <canvas ref={canvas_ref} width={width} height={height}></canvas>
+            <div className="current-legend-box-units"> {ft_per_min} feet per minute </div>
         </div>
     );
 }

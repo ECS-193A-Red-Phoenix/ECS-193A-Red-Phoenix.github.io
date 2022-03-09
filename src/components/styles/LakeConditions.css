@@ -45,6 +45,7 @@
     display: flex;
     justify-content: center;
     font-size: 14px;
+    align-items: center;
 }
 
 .lake-condition-left-column {
@@ -72,6 +73,12 @@
     margin-top: 20px;
     max-width: 500px;
     line-height: 1.3em;
+}
+
+.lake-visual-container {
+    display: flex;
+    flex-direction: row;
+    max-height: 90vh;
 }
 
 

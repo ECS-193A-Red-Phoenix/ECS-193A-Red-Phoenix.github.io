@@ -1,23 +1,10 @@
+import { useState } from 'react';
 import CurrentLakeMap from "./CurrentLakeMap";
 import CurrentLegendBox from "./CurrentLegendBox";
+import Calendar from '../Calendar/Calendar';
 import { scaleLinear } from "d3";
 import "./CurrentChart.css";
-import { round, reversed } from "../util";
-
-
-function average_speed(u, v) {
-    let total = 0;
-    let count = 0;
-    for (let j = 0; j < u.length; j++) {
-        for (let i = 0; i < u[0].length; i++) {
-            if (typeof u[j][i] === 'number' && typeof v[j][i] === 'number') {
-                total += (u[j][i]**2 + v[j][i]**2)**0.5;
-                count += 1;
-            }
-        }
-    }
-    return total / count;
-}
+import { reversed, parseMyDate } from "../util";
 
 
 ////////////////////////////////////
@@ -26,13 +13,7 @@ function average_speed(u, v) {
 const num_legend_boxes = 5;
 const legend_speed = scaleLinear().domain([0, num_legend_boxes - 1]).range([0.01, 0.1016]); // mps
 const lake_height = 700;
-const M_TO_FT = 196.85;
-
-let [u, v] = require('./slice.json'); 
-u = reversed(u);
-v = reversed(v);
-let average_lake_speed = average_speed(u, v) * M_TO_FT;
-average_lake_speed = round(average_lake_speed, 1);
+const FRAME_DURATION = 2;
 
 // Create legend
 const legend_boxes = [];
@@ -41,8 +22,20 @@ for (let i = 0; i < num_legend_boxes; i++)
         <CurrentLegendBox key={`legend-box${i}`} speed={legend_speed(i)}/>
     );
 
+const flow_data = require('./flow.json');
+flow_data.forEach((obj) => obj['time'] = parseMyDate(obj['time']));
+flow_data.sort((o1, o2) => o1['time'] - o2['time']);
 
 function CurrentLakePage() {
+    const [activeIdx, setActiveIdx] = useState(0);
+
+    const flow_events = flow_data.map(
+        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
+    );
+
+    let [u, v] = flow_data[activeIdx]['matrices'];
+    u = reversed(u);
+    v = reversed(v);
 
     return (
         <div className="lake-condition-container">
@@ -58,19 +51,18 @@ function CurrentLakePage() {
                         move water forward.
                     </div>
 
-                    <div className="lake-condition-info">
-                        <div className="lake-condition-date"> Monday 8:00 AM, February 28, 2022 </div>
-                        <div className="lake-condition-speed"> Average Speed: {average_lake_speed} feet per minute </div>
-                    </div>
+                    <Calendar events={flow_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
                 </div>
+            </div>
 
-
+            <div className="lake-visual-container">
+                <CurrentLakeMap height={lake_height} u={u} v={v}/>
                 <div className="current-legend-container">
                     { legend_boxes }
                 </div>
             </div>
-
-            <CurrentLakeMap height={lake_height} u={u} v={v}/>
 
         </div>
     );
