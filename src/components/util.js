@@ -162,7 +162,16 @@ function draw_lake_tahoe(cx, x, y, width, height) {
     cx.fill();
 }
 
+function militaryHourTo12Hour(hour) {
+    // converts military hour to the 12 hour format
+    // For a math explanation see https://www.desmos.com/calculator/xqlinlqtns
+    // Arguments:
+    //  hour: an integer between 0 and 24
+    return mod(hour - 1, 12) + 1;
+}
+
 export { if_undefined, round, reversed, colorFromHex,
     colorScale, celsius_to_f, mod, parseMyDate, 
-    point_in_lake_tahoe, points_in_lake_tahoe, draw_lake_tahoe
+    point_in_lake_tahoe, points_in_lake_tahoe, draw_lake_tahoe,
+    militaryHourTo12Hour
 };

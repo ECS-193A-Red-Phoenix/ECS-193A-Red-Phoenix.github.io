@@ -6,6 +6,7 @@ import { parseMyDate } from "../util";
 import "./TemperatureChart.css";
 import "../styles/LakeConditions.css";
 import { useState } from "react";
+import Calendar from "./Calendar";
 
 
 function average_temperature(grid) {
@@ -24,6 +25,8 @@ function average_temperature(grid) {
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
+
+const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 
 const DARKBLUE  = colorFromHex("#00008b");
 const BLUE      = colorFromHex("#0f52ba");
@@ -58,19 +61,9 @@ function formatDate(date) {
 function TemperaturePage() {
     const [activeIdx, setActiveIdx] = useState(0);
 
-    const dates = [];
-    for (let i = 0; i < temperature_data.length; i++) {
-        let date = temperature_data[i]['time'];
-        let T = temperature_data[i]['matrices'][0];
-        let avg_temp = round(average_temperature(T), 1);
-        let class_name = "lake-condition-info" + ((i == activeIdx) ? " lake-condition-info-active" : "");
-        dates.push(
-            <div key={`lake-condition-info${i}`} className={class_name} onClick={() => setActiveIdx(i)}>
-                <div className="lake-condition-date"> {formatDate(date)} </div>
-                <div className="lake-condition-value"> Average Temperature: {avg_temp} °F </div>
-            </div>
-        )
-    }
+    const temperature_events = temperature_data.map(
+        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
+    );
 
     let T = temperature_data[activeIdx]['matrices'][0];
     T = reversed(T);
@@ -103,7 +96,9 @@ function TemperaturePage() {
                         should be prepared for dangerously cold conditions.
                     </div>
 
-                    {dates}
+                    <Calendar events={temperature_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
                 </div>
             </div>
 
