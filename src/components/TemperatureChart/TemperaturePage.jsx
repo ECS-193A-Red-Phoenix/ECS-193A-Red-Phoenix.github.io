@@ -1,7 +1,7 @@
 import TemperatureMap from "./TemperatureMap";
 import { scaleLinear } from "d3";
 import TemperatureLegend from "./TemperatureLegend";
-import { colorFromHex, colorScale, reversed, round } from "../util";
+import { ice_to_fire, reversed } from "../util";
 import { parseMyDate } from "../util";
 import "./TemperatureChart.css";
 import "../styles/LakeConditions.css";
@@ -14,18 +14,7 @@ import Calendar from "../Calendar/Calendar";
 ////////////////////////////////////
 
 const FRAME_DURATION = 2; // duration in hours for 1 temperature map
-
-const DARKBLUE  = colorFromHex("#00008b");
-const BLUE      = colorFromHex("#0f52ba");
-const LIGHTBLUE = colorFromHex("#ace5ee");
-const GREEN     = colorFromHex("#006600");
-const YELLOW    = colorFromHex("#ffef00");
-const RED       = colorFromHex("#d0312d");
-const DARKRED   = colorFromHex("#710c04");
-
-const temperature_color = colorScale(
-    DARKBLUE, BLUE, LIGHTBLUE, GREEN, YELLOW, RED, DARKRED
-);
+const temperature_color = ice_to_fire; 
 
 const temperature_data = require('./temperature.json');
 temperature_data.forEach((obj) => obj['time'] = parseMyDate(obj['time']));
@@ -41,18 +30,9 @@ function TemperaturePage() {
     let T = temperature_data[activeIdx]['matrices'][0];
     T = reversed(T);
     const lake_height = 700;
-    const [n_rows, n_cols] = [T.length, T[0].length];
 
-    let min_T = Number.MAX_VALUE;
-    let max_T = -Number.MAX_VALUE;
-    for (let j = 0; j < n_rows; j++) {
-        for (let i = 0; i < n_cols; i++) {
-            if (typeof T[j][i] === 'number') {
-                min_T = Math.min(min_T, T[j][i]);
-                max_T = Math.max(max_T, T[j][i]);
-            }
-        }
-    }
+    let min_T = 35;
+    let max_T = 65;
 
     let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
     let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
