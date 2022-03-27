@@ -7,15 +7,16 @@ const bounds = [
     [38.88973786614013, -120.22406605972319],  // southWest
     [39.29014918866168, -119.84887189740661] // northEast
 ];
-const tag_width = 25; // Percentages
-const tag_height = 5;
+const [lat1, lon1] = bounds[0];
+const [lat2, lon2] = bounds[1];
+const tag_height = 5; // Percentage
 
 function StationMap(props) {
-    let [lat1, lon1] = bounds[0];
-    let [lat2, lon2] = bounds[1];
+    let { stationIdx, onClick } = props;
 
     useEffect(() => {
         const stations_with_index = ALL_STATIONS.map((d, i) => ({ ...d, index: i}));
+
         // Outer circle
         select(".station-map-container > svg > g#outer")
         .selectAll("circle")
@@ -49,18 +50,18 @@ function StationMap(props) {
         .attr("r", 14)
         .attr("fill", "white")
         .attr("fill-opacity", (d, i) => {
-            return (i == props.stationIdx) ? 1 : 0
+            return (i === stationIdx) ? 1 : 0
         })
         .style("cursor", "pointer")
         .on("click", function (e, d) {
-            props.onClick(d.index);
+            onClick(d.index);
         })
         .on("mouseover", (e, d) => {
             select(`g#station-tag${d.index}`)
             .style("display", "block");
         })
         .on("mouseleave", (e, d) => {
-            if (d.index == props.stationIdx)
+            if (d.index === stationIdx)
                 return
             select(`g#station-tag${d.index}`)
             .style("display", "none");
@@ -118,12 +119,12 @@ function StationMap(props) {
         selectAll("g#station-tags > g")
         .data(stations_with_index)
         .join()
-        .style("display", (d) => (d.index == props.stationIdx) ? "block" : "none")
-    }, [props.stationIdx]);
+        .style("display", (d) => (d.index === stationIdx) ? "block" : "none")
+    }, [stationIdx, onClick]);
     
     return (
         <div className="station-map-container">
-            <img src="map.PNG"/>
+            <img alt="Lake Tahoe Map" src="map.PNG"/>
             <svg height="100%" width="100%" 
                 shapeRendering="geometricPrecision">
                 <g id="outer"></g>

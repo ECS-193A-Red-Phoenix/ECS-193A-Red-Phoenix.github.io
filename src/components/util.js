@@ -2,24 +2,28 @@
 // Utility
 //////////////////////////////////
 
-function if_undefined(x, my_default) {
+export function if_undefined(x, my_default) {
     return (x === undefined) ? my_default : x;
 }
 
-function reversed(arr) {
+export function reversed(arr) {
     let res = [];
     for (let j = arr.length - 1; j > -1; j--)
         res.push(arr[j]);
     return res;
 }
 
-function round(x, decimals) {
+export function round(x, decimals) {
+    // Rounds x to the nearest decimal place
+    // Arguments
+    //  x: a Number
+    //  decimals (optional, default=0): the number of decimal places to round to
     if (decimals === undefined)
         decimals = 0;
     return Math.floor(x * 10**decimals) / 10**decimals;
 }
 
-function colorFromHex(hex_code) {
+export function colorFromHex(hex_code) {
     let res = [];
     let start_index = (hex_code[0] === '#') ? 1 : 0;
     for (let i = start_index; i < hex_code.length; i += 2)
@@ -27,7 +31,13 @@ function colorFromHex(hex_code) {
     return res;
 }
 
-function colorScale(...colors) {
+export function colorScale(colors, discrete) {
+    // returns a function that maps a percent in [0, 1] to a range of colors
+    // Arguments:
+    //  colors: an array of 3-length rgb arrays (e.g [[0, 0, 0], [255, 255, 0]])
+    //  discrete (optional, default=false): whether to create a discrete color map
+    if (discrete === undefined)
+        discrete = false;
     return (percent) => {
         if (percent <= 0)
             return colors[0];
@@ -36,8 +46,11 @@ function colorScale(...colors) {
         let color_index = Math.floor(percent * (colors.length - 1)); 
         let c1 = colors[color_index];
         let c2 = colors[color_index + 1];
-        // return c1; // Return here for a discrete color map
+        if (discrete) {
+            return c1;
+        }
         
+        // Linearly interpolate between c1 and c2
         let c1_percent = color_index / (colors.length - 1);
         let c2_percent = (color_index + 1) / (colors.length - 1);
         percent = (percent - c1_percent) / (c2_percent - c1_percent);
@@ -49,27 +62,27 @@ function colorScale(...colors) {
 }
  
 // Colors taken from https://github.com/Kitware/ParaView/blob/6777e1303f9d1eb341131354616241dbc5851340/Wrapping/Python/paraview/_colorMaps.py#L1599
-const ice_to_fire = colorScale(
-    [0, 0, 0], [0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
+export const ice_to_fire = colorScale(
+    [[0, 0, 0], [0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
     [155, 228, 239], [225, 233, 209], [243, 213, 115], [231, 176, 0], [218, 130, 0], [198, 84, 0],
-    [172, 35, 0], [130, 0, 0], [76, 0, 0], [4, 0, 0]
+    [172, 35, 0], [130, 0, 0], [76, 0, 0], [4, 0, 0]]
 );
 
 export const dark_ocean = colorScale(
-    ...(["010108","000240","22226b","37377d","2C6FC7"].map(colorFromHex))
+    ["010108","000240","22226b","37377d","2C6FC7"].map(colorFromHex)
 );
 
-function celsius_to_f(c) {
+export function celsius_to_f(c) {
     return c * (9 / 5) + 32;
 }
 
-function mod(a, b) {
+export function mod(a, b) {
     // Return a mod b; % is not the modulo operator in JS, see
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder
     return ((a % b) + b) % b;
 }
 
-function parseMyDate(date_string) {
+export function parseMyDate(date_string) {
     // This function parses a UTC date in the format YYYY-MM-DD HH
     const year  = date_string.substring( 0,  4);
     const month = date_string.substring( 5,  7);
@@ -78,7 +91,7 @@ function parseMyDate(date_string) {
     return new Date(Date.parse(`${year}-${month}-${day}T${hour}:00Z`));
 }
 
-function point_in_polygon(point, polygon) {
+export function point_in_polygon(point, polygon) {
     // returns true if the point is inside the given polygon
     // To do this, I implement the ray-casting algorithm shown here:
     // https://rosettacode.org/wiki/Ray-casting_algorithm
@@ -120,7 +133,7 @@ function point_in_polygon(point, polygon) {
 
 // Bilinear Interpolation on a grid
 // See https://en.wikipedia.org/wiki/Bilinear_interpolation
-function bilinear(x, y, grid, default_value) {
+export function bilinear(x, y, grid, default_value) {
     if (default_value === undefined)
         default_value = 0;
     let n_rows = grid.length;
@@ -140,7 +153,7 @@ function bilinear(x, y, grid, default_value) {
 // Cache point in lake tahoe for performance boost
 const point_lake_cache = {};
 const shoreline_path = require('./shoreline.json');
-function point_in_lake_tahoe(point) {
+export function point_in_lake_tahoe(point) {
     // returns true if the point exists within the boundaries of lake tahoe
     // Arguments
     //  point: an array of size 2 [x, y] with both 0 <= x, y <= 1
@@ -154,7 +167,7 @@ function point_in_lake_tahoe(point) {
 
 // Cache for performance boost
 const lake_points_cache = {};
-function points_in_lake_tahoe(width, height) {
+export function points_in_lake_tahoe(width, height) {
     // returns a list [(x, y), ...] of coordinates in lake tahoe
     //  within the bounds of the rectangle (0, 0, width, height) 
     // Arguments
@@ -172,7 +185,7 @@ function points_in_lake_tahoe(width, height) {
     return res;
 }
 
-function draw_lake_tahoe(cx, x, y, width, height) {
+export function draw_lake_tahoe(cx, x, y, width, height) {
     // draws a closed polygon of lake tahoe using the given context
     // Arguments:
     //  cx: HTML Canvas 2D context
@@ -192,7 +205,7 @@ function draw_lake_tahoe(cx, x, y, width, height) {
 }
 
 const heatmap_cache = {};
-function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette, offsetX, offsetY, key) {
+export function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette, offsetX, offsetY, key) {
     // draws a heatmap of lake tahoe using the given context
     // Arguments:
     //  cx: HTML Canvas 2d context
@@ -265,16 +278,10 @@ function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette, offse
         heatmap_cache[key] = image_data;
 }
 
-function militaryHourTo12Hour(hour) {
+export function militaryHourTo12Hour(hour) {
     // converts military hour to the 12 hour format
     // For a math explanation see https://www.desmos.com/calculator/xqlinlqtns
     // Arguments:
     //  hour: an integer between 0 and 24
     return mod(hour - 1, 12) + 1;
 }
-
-export { if_undefined, round, reversed, colorFromHex,
-    colorScale, celsius_to_f, mod, parseMyDate, 
-    point_in_lake_tahoe, points_in_lake_tahoe, draw_lake_tahoe,
-    militaryHourTo12Hour, ice_to_fire, bilinear, draw_lake_heatmap
-};

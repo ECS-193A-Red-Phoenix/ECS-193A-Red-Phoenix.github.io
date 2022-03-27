@@ -6,7 +6,7 @@ export default function Navbar() {
   let location = useLocation();
 
   let is_active = (path) => {
-    return location.pathname == path ? "active" : "";
+    return location.pathname === path ? "active" : "";
   }
 
   return (

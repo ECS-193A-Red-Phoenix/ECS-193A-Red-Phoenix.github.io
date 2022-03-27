@@ -28,7 +28,7 @@ function RealTimeConditions(props) {
       station.get_display_data().then((response) => {
         setStationData((prevStationData) => {
           let stationDataCopy = [...prevStationData];
-          if (response.length == 0) {
+          if (response.length === 0) {
             stationDataCopy[i] = undefined;
           } else {
             stationDataCopy[i] = response;
@@ -69,6 +69,8 @@ function RealTimeConditions(props) {
     case "polar":
       chart = <CompassPlot radius={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
       break;
+    default:
+        console.log(`Unexpected chart type "${chart_type}"`);
   }
 
   return (

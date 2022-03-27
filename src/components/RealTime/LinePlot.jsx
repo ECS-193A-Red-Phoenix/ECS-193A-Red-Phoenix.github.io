@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'; 
-import { select, scaleLinear, area, line, transition, easeLinear, interpolate, pointer, easeCubicInOut} from 'd3';
+import { select, scaleLinear, line, pointer, easeCubicInOut} from 'd3';
+import { round } from '../util';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.1;
@@ -44,7 +45,7 @@ function LinePlot(props) {
         );
     }
 
-    const is_loading = props.time.length == 0 || props.y.length == 0;
+    const is_loading = props.time.length === 0 || props.y.length === 0;
     const unavailable = !is_loading && (props.y[0] === undefined);
     const loading_text = 
         <text x={(x_e + x_s) / 2} y={(y_e + y_s) / 2} textAnchor="middle" dominantBaseline="middle" className="line-plot-loading">
@@ -86,7 +87,7 @@ function LinePlot(props) {
             let x1 = x_s;
             labels.push(
                 <text key={`y-label${i}`} x={x1 - label_margin} y={y1} textAnchor="end" dominantBaseline="middle" className='line-plot-label'> 
-                    {Math.round(y_label_scale(y1) * 10) / 10} 
+                    {round(y_label_scale(y1), 1)} 
                 </text>,
                 <line key={`y-line${i}`} x1={x1} y1={y1} x2={x_e} y2={y1} stroke='black' strokeOpacity="0.1" strokeDasharray="3"></line>
             )
@@ -119,7 +120,7 @@ function LinePlot(props) {
             return;
         }
 
-        set_cursor_val(Math.round(props.y[props.y.length - 1] * 10) / 10);
+        set_cursor_val(round(props.y[props.y.length - 1], 1));
         let data = [];
         for (let i = 0; i < props.time.length; i++) {
             data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])])
@@ -139,7 +140,7 @@ function LinePlot(props) {
                         break;
                     }
                 }
-                set_cursor_val(Math.round(y_value * 10) / 10);
+                set_cursor_val(round(y_value, 1));
 
                 svg.select("#cursor")
                     .style('display', 'block');
@@ -155,7 +156,7 @@ function LinePlot(props) {
             } else {
                 svg.select("#cursor")
                     .style('display', 'none');
-                set_cursor_val(Math.round(props.y[props.y.length - 1] * 10) / 10)
+                set_cursor_val(round(props.y[props.y.length - 1]))
             }
         });
             
@@ -172,7 +173,7 @@ function LinePlot(props) {
             .duration(1000)
             .ease(easeCubicInOut)
             .attr("x", x_e + 5)
-    }, [props.time, props.y]);
+    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, x_scale, y_e, y_s, y_scale]);
 
     return (
         <svg 
