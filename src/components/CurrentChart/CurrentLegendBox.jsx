@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Particle, VectorField } from "../particle";
+import { round } from "../util";
 
 //////////////////////////////////////////////
 // Static constants
 //////////////////////////////////////////////
 const num_particles = 60;
-const M_TO_FT = 196.85;
+const conversion_ratio = 2.23694;
+const units = "MPH";
 const scale = 1.5;
 const aspect_ratio = 0.35;
 
@@ -24,7 +26,7 @@ function CurrentLegendBox(props) {
     ////////////////////////////////////
     // Particle generator
     ////////////////////////////////////
-    const vector_field = useMemo(() => new VectorField([[props.speed]], [[0]]), [props.speed]);
+    const vector_field = useMemo(() => new VectorField([[props.speed]], [[0]], width, height), [props.speed]);
     const particles = useMemo(() => {
         let res = [];
         for (let k = 0; k < num_particles; k++)
@@ -40,20 +42,20 @@ function CurrentLegendBox(props) {
         const cx = canvas.getContext('2d');
 
         const interval = setInterval(() => {
-            vector_field.drawWetCells(cx, 0, 0, width, height);
+            vector_field.drawWetCells(cx, 0, 0, props.color_palette);
             
-            particles.forEach((p) => p.draw(cx, 0, 0, width, height));
+            particles.forEach((p) => p.draw(cx, 0, 0));
             particles.forEach((p) => p.move());
         }, 50);
         return () => clearInterval(interval);
     }, [particles, vector_field, width, height]);
     
-    let ft_per_min = props.speed * M_TO_FT; // convert m/s to ft/min
-    ft_per_min = Math.round(ft_per_min * 10) / 10;
+    let units_value = props.speed * conversion_ratio; // convert m/s to specified units
+    units_value = round(units_value, 1);
     return (
         <div className="current-legend-box-container">
             <canvas ref={canvas_ref} width={width} height={height}></canvas>
-            <div className="current-legend-box-units"> {ft_per_min} feet per minute </div>
+            <div className="current-legend-box-units"> {units_value} {units} </div>
         </div>
     );
 }

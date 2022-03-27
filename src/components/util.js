@@ -55,6 +55,9 @@ const ice_to_fire = colorScale(
     [172, 35, 0], [130, 0, 0], [76, 0, 0], [4, 0, 0]
 );
 
+export const dark_ocean = colorScale(
+    ...(["010108","000240","22226b","37377d","2C6FC7"].map(colorFromHex))
+);
 
 function celsius_to_f(c) {
     return c * (9 / 5) + 32;
@@ -115,6 +118,24 @@ function point_in_polygon(point, polygon) {
     return count % 2 === 1;
 }
 
+// Bilinear Interpolation on a grid
+// See https://en.wikipedia.org/wiki/Bilinear_interpolation
+function bilinear(x, y, grid, default_value) {
+    if (default_value === undefined)
+        default_value = 0;
+    let n_rows = grid.length;
+    let n_cols = grid[0].length;
+    let i = Math.floor(x);
+    let j = Math.floor(y);
+    let get_grid = (j, i) => (i >= 0 && i < n_cols && j >= 0 && j < n_rows && typeof grid[j][i] === 'number') ? grid[j][i] : undefined;
+    let f00 = if_undefined(get_grid(j, i), default_value);
+    let f10 = if_undefined(get_grid(j, i + 1), f00);
+    let f01 = if_undefined(get_grid(j + 1, i), f00);
+    let f11 = if_undefined(get_grid(j + 1, i + 1), f00);
+    x -= i;
+    y -= j;
+    return f00 + (f10 - f00) * x + (f01 - f00) * y + (f11 - f10 - f01 + f00) * x * y;
+}
 
 // Cache point in lake tahoe for performance boost
 const point_lake_cache = {};
@@ -170,6 +191,80 @@ function draw_lake_tahoe(cx, x, y, width, height) {
     cx.fill();
 }
 
+const heatmap_cache = {};
+function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette, offsetX, offsetY, key) {
+    // draws a heatmap of lake tahoe using the given context
+    // Arguments:
+    //  cx: HTML Canvas 2d context
+    //  width: the width of the heatmap
+    //  height: the height of the heatmap
+    //  heatmap_data: a 2D matrix with scalar values
+    //  offsetX (optional): starting x coordinate of where to draw the heatmap, default is 0
+    //  offsetY (optional): starting y coordinate of where to draw the heatmap, default is 0
+    //  key (optional): a string hash for the heatmap data, used in caching image creation for performance boost
+
+    if (offsetX === undefined) offsetX = 0;
+    if (offsetY === undefined) offsetY = 0;
+
+    const [n_rows, n_cols] = [heatmap_data.length, heatmap_data[0].length];
+    const T = heatmap_data;
+
+    if (key in heatmap_cache) {
+        const image_data = heatmap_cache[key];
+        cx.putImageData(image_data, offsetX, offsetY);
+        return;
+    }
+
+    // Create image object
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
+    // For more details
+    const image_data = cx.createImageData(width, height);
+    const points_in_lake = points_in_lake_tahoe(width, height);
+    for (let [i, j] of points_in_lake) {
+        let x = i / width * n_cols;
+        let y = j / height * n_rows;
+        let t_j = Math.floor(y);
+        let t_i = Math.floor(x);
+
+        const pixel_index = (j * (image_data.width * 4)) + (i * 4);
+        let val = 0;
+        
+        // if this pixel is inside the lake but not defined by the heatmap matrix
+        // let it's value be the average of its defined neighbors
+        if (typeof T[t_j][t_i] !== 'number') {
+            val = 0;
+            let count = 0;
+            // Average Temperature of neighboring pixels
+            for (let m = 0; m < 3; m++)
+                for (let n = 0; n < 3; n++) {
+                    if (0 <= t_j - 1 + m && t_j - 1 + m < n_rows && 
+                        0 <= t_i - 1 + n && t_i - 1 + n < n_cols && 
+                        typeof T[t_j - 1 + m][t_i - 1 + n] === 'number') {
+                        val += T[t_j - 1 + m][t_i - 1 + n];
+                        count += 1;
+                    }
+                }
+            if (count > 0)
+                val /= count;
+        }
+        else {
+            // Nearest Neighbor
+            val = T[t_j][t_i];
+        }
+        // Smooth with bilinear interpolation
+        val = bilinear(x, y, T, val);
+
+        let [r, g, b] = color_palette(val);
+        image_data.data[pixel_index + 0] = r;
+        image_data.data[pixel_index + 1] = g;
+        image_data.data[pixel_index + 2] = b;
+        image_data.data[pixel_index + 3] = 255;
+    }
+    cx.putImageData(image_data, offsetX, offsetY);
+    if (key !== undefined)
+        heatmap_cache[key] = image_data;
+}
+
 function militaryHourTo12Hour(hour) {
     // converts military hour to the 12 hour format
     // For a math explanation see https://www.desmos.com/calculator/xqlinlqtns
@@ -181,5 +276,5 @@ function militaryHourTo12Hour(hour) {
 export { if_undefined, round, reversed, colorFromHex,
     colorScale, celsius_to_f, mod, parseMyDate, 
     point_in_lake_tahoe, points_in_lake_tahoe, draw_lake_tahoe,
-    militaryHourTo12Hour, ice_to_fire
+    militaryHourTo12Hour, ice_to_fire, bilinear, draw_lake_heatmap
 };

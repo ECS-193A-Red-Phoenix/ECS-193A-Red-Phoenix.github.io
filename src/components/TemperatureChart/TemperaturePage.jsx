@@ -22,7 +22,6 @@ temperature_data.sort((o1, o2) => o1['time'] - o2['time']);
 
 function TemperaturePage() {
     const [activeIdx, setActiveIdx] = useState(0);
-
     const temperature_events = temperature_data.map(
         (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
     );

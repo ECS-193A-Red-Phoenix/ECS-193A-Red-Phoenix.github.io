@@ -1,6 +1,7 @@
+import { scaleLinear } from "d3";
 import { useRef, useEffect, useMemo } from "react";
 import { Particle, VectorField } from "../particle";
-import { draw_lake_tahoe } from "../util";
+import { dark_ocean, draw_lake_heatmap, ice_to_fire } from "../util";
 import "./CurrentChart.css";
 
 
@@ -9,7 +10,6 @@ import "./CurrentChart.css";
 //////////////////////////////////
 const inner_padding = 0.01;
 const num_particles = 3500;
-
 
 function CurrentLakeMap(props) {
     ////////////////////////////////////
@@ -32,7 +32,7 @@ function CurrentLakeMap(props) {
     ////////////////////////////////
     // Particle Generator
     ////////////////////////////////
-    const vector_field = useMemo(() => new VectorField(props.u, props.v), [props.u, props.v]);
+    const vector_field = useMemo(() => new VectorField(props.u, props.v, square_size), [props.u, props.v]);
     const particles = useMemo(() => {
         let res = [];
         for (let k = 0; k < num_particles; k++)
@@ -46,13 +46,28 @@ function CurrentLakeMap(props) {
     useEffect(() => {
         const canvas = canvas_ref.current;
         const cx = canvas.getContext('2d');
+        const lake_width = x_e - x_s;
+        const lake_height = y_e - y_s;
 
-        const black = 50;
-        cx.fillStyle = `rgba(${black}, ${black}, ${black}, 1)`;
+        const speeds = [];
+        for (let j = 0; j < n_rows; j++) {
+            const row = [];
+            for (let i = 0; i < n_cols; i++) {
+                if (typeof props.u[j][i] !== 'number' || typeof props.v[j][i] !== 'number') {
+                    row.push("nan");
+                    continue;
+                }
+                let speed = (props.u[j][i]**2 + props.v[j][i]**2)**0.5;
+                row.push(speed);
+            }
+            speeds.push(row);
+        }
+        const v_key = `current-map-${props.activeIdx}`;
+
         const interval = setInterval(() => {
-            draw_lake_tahoe(cx, x_s, y_s, x_e - x_s, y_e - y_s);
+            draw_lake_heatmap(cx, lake_width, lake_height, speeds, props.color_palette, x_s, y_s, v_key);
 
-            particles.forEach((p) => p.draw(cx, x_s, y_s, square_size));
+            particles.forEach((p) => p.draw(cx, x_s, y_s));
             particles.forEach((p) => p.move());
         }, 50);
         return () => clearInterval(interval);

@@ -1,10 +1,5 @@
 import { useEffect, useRef } from "react";
-import { bilinear } from "../particle";
-import { points_in_lake_tahoe } from "../util";
-
-////////////////////////////////////
-// Static Constants
-////////////////////////////////////
+import { draw_lake_heatmap } from "../util";
 
 function TemperatureMap(props) {
     const canvas_ref = useRef();
@@ -20,54 +15,10 @@ function TemperatureMap(props) {
         const T = props.T;
         const color_palette = props.color_palette;
 
-        // Create image object
-        // See https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
-        // For more details
         let start_time = Date.now();
-        let image_data = cx.createImageData(chart_width, chart_height);
-        let points_in_lake = points_in_lake_tahoe(chart_width, chart_height);
-        for (let [i, j] of points_in_lake) {
-            let x = i / chart_width * n_cols;
-            let y = j / chart_height * n_rows;
-            let t_j = Math.floor(y);
-            let t_i = Math.floor(x);
-
-            const pixel_index = (j * (image_data.width * 4)) + (i * 4);
-            let temp = 0;
-            
-            // if this pixel is inside the lake but not defined by the temperature matrix
-            // let it's temperature be the average of its defined neighbors
-            if (typeof T[t_j][t_i] !== 'number') {
-                temp = 0;
-                let count = 0;
-                // Average Temperature of neighboring pixels
-                for (let m = 0; m < 3; m++)
-                    for (let n = 0; n < 3; n++) {
-                        if (0 <= t_j - 1 + m && t_j - 1 + m < n_rows && 
-                            0 <= t_i - 1 + n && t_i - 1 + n < n_cols && 
-                            typeof T[t_j - 1 + m][t_i - 1 + n] === 'number') {
-                            temp += T[t_j - 1 + m][t_i - 1 + n];
-                            count += 1;
-                        }
-                    }
-                if (count > 0)
-                    temp /= count;
-            }
-            else {
-                // Nearest Neighbor
-                temp = T[t_j][t_i];
-            }
-            // Smooth with bilinear interpolation
-            temp = bilinear(x, y, T, temp);
-
-            let [r, g, b] = color_palette(temp);
-            image_data.data[pixel_index + 0] = r;
-            image_data.data[pixel_index + 1] = g;
-            image_data.data[pixel_index + 2] = b;
-            image_data.data[pixel_index + 3] = 255;
-        }
-        cx.putImageData(image_data, 0, 0);
+        draw_lake_heatmap(cx, chart_width, chart_height, T, color_palette);
         let end_time = Date.now();
+
         console.log(`Took ${end_time - start_time} ms to draw image`);
     }, [props.T, props.color_palette]);
     

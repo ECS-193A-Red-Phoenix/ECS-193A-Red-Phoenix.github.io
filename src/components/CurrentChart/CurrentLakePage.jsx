@@ -4,22 +4,28 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import { scaleLinear } from "d3";
 import "./CurrentChart.css";
-import { reversed, parseMyDate } from "../util";
+import { reversed, parseMyDate, dark_ocean } from "../util";
 
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
-const num_legend_boxes = 5;
-const legend_speed = scaleLinear().domain([0, num_legend_boxes - 1]).range([0.01, 0.1016]); // mps
+const legend_speeds = [0.44704, 0.89408, 1.34112, 1.78816, 2.2352] // m/s
 const lake_height = 700;
 const FRAME_DURATION = 2;
 
+const speed_scale = scaleLinear().domain([0, 2.6]).range([0, 1]);
+const color_palette = (speed) => dark_ocean(speed_scale(speed));
+
 // Create legend
 const legend_boxes = [];
-for (let i = 0; i < num_legend_boxes; i++)
+for (let i = 0; i < legend_speeds.length; i++)
     legend_boxes.push(
-        <CurrentLegendBox key={`legend-box${i}`} speed={legend_speed(i)}/>
+        <CurrentLegendBox 
+            key={`legend-box${i}`} 
+            speed={legend_speeds[i]}
+            color_palette={color_palette}
+        />
     );
 
 const flow_data = require('./flow.json');
@@ -58,7 +64,14 @@ function CurrentLakePage() {
             </div>
 
             <div className="lake-visual-container">
-                <CurrentLakeMap height={lake_height} u={u} v={v}/>
+                <CurrentLakeMap 
+                    height={lake_height} 
+                    u={u} 
+                    v={v} 
+                    activeIdx={activeIdx}
+                    color_palette={color_palette}
+                    />
+
                 <div className="current-legend-container">
                     { legend_boxes }
                 </div>
