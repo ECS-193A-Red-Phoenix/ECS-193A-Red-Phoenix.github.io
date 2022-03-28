@@ -55,7 +55,7 @@ function TemperaturePage() {
             </div>
 
             <div className="lake-visual-container">
-                <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale}/>
+                <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale} activeIdx={activeIdx}/>
                 <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
             </div>
 

@@ -16,7 +16,8 @@ function TemperatureMap(props) {
         const color_palette = props.color_palette;
 
         let start_time = Date.now();
-        draw_lake_heatmap(cx, chart_width, chart_height, T, color_palette);
+        let cache_key = `temperature-${props.activeIdx}`;
+        draw_lake_heatmap(cx, chart_width, chart_height, T, color_palette, 0, 0, cache_key);
         let end_time = Date.now();
 
         console.log(`Took ${end_time - start_time} ms to draw image`);
