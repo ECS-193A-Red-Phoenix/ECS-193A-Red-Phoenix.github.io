@@ -71,8 +71,8 @@ function CompassPlot(props) {
             {
                 data_available && 
                 [
-                    <tspan id="compass-number" x={x_mid} dy="1.2em"> {average_speed} </tspan>,
-                    <tspan id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
+                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> {average_speed} </tspan>,
+                    <tspan key="compass-unit" id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
                 ]
             }
             {
