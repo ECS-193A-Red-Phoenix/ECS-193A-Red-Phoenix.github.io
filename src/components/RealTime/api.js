@@ -7,23 +7,25 @@ const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1
 
 // Near shore data to display
 const NEAR_SHORE_DATA = [
-    { name: "Water Temperature", units: "° F"   , display_type: 'line'},
-    { name: "Wave Height",       units: "Inches", display_type: 'line'}
+    { name: "Water Temperature", units: "° F"   , display_type: 'line' },
+    { name: "Wave Height"      , units: "Inches", display_type: 'line' }
 ];
 
 // Buoy data to display
 const BUOY_DATA = [
-    { name: "Water Temperature", units: "° F", display_type: 'line' },
-    { name: "Wind", units: "MPH", display_type: 'polar'},
+    { name: "Water Temperature", units: "° F", display_type: 'line'  },
+    { name: "Wind"             , units: "MPH", display_type: 'polar' },
 ];
 
-// These are the working stations at this time
 const NEAR_SHORE_STATION_INFO = [
-    { 'id': 2, 'station_name': 'Dollar Point' , "coords": [    39.184,   -120.093], "data": NEAR_SHORE_DATA },
-    { 'id': 4, 'station_name': 'Homewood'     , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
-    { 'id': 6, 'station_name': 'Rubicon'      , "coords": [    39.007,   -120.109], "data": NEAR_SHORE_DATA },
-    { 'id': 7, 'station_name': 'Sand Harbor'  , "coords": [    39.201,   -119.931], "data": NEAR_SHORE_DATA },
-    { 'id': 9, 'station_name': 'Tahoe City'   , "coords": [    39.152,   -120.147], "data": NEAR_SHORE_DATA }
+    { 'id':  1, 'station_name': 'Cascade'         , "coords": [    38.947,   -120.089], "data": NEAR_SHORE_DATA },
+    { 'id':  2, 'station_name': 'Dollar Point'    , "coords": [    39.184,   -120.093], "data": NEAR_SHORE_DATA },
+    { 'id':  3, 'station_name': 'Glenbrook'       , "coords": [    39.088,   -119.942], "data": NEAR_SHORE_DATA },
+    { 'id':  4, 'station_name': 'Homewood'        , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
+    { 'id':  6, 'station_name': 'Rubicon'         , "coords": [    39.007,   -120.109], "data": NEAR_SHORE_DATA },
+    { 'id':  7, 'station_name': 'Sand Harbor'     , "coords": [    39.201,   -119.931], "data": NEAR_SHORE_DATA },
+    { 'id':  9, 'station_name': 'Tahoe City'      , "coords": [    39.152,   -120.147], "data": NEAR_SHORE_DATA },
+    { 'id': 10, 'station_name': 'Camp Richardson' , "coords": [    38.941,   -120.040], "data": NEAR_SHORE_DATA }
 ];
 
 const NASA_BUOY_INFO = [

@@ -14,31 +14,25 @@ function RealTimeConditions(props) {
   
   let station_data_names = ALL_STATIONS[stationIdx].info.data;
   let current_data_displayed = station_data_names[dataIdx];
-  let time = [];
-  let y_data = [];
-  if (stationData[stationIdx]) {
+  let time, y_data;
+  if (stationIdx < stationData.length && stationData[stationIdx] !== undefined) {
     time = stationData[stationIdx].map((x) => x['TimeStamp']);
     y_data = stationData[stationIdx].map((x) => x[current_data_displayed.name]);
   }
 
   useEffect(() => {
-    // Retrieve data 
+    // Retrieve data for each station
     for (let i = 0; i < ALL_STATIONS.length; i++) {
       let station = ALL_STATIONS[i];
       station.get_display_data().then((response) => {
         setStationData((prevStationData) => {
           let stationDataCopy = [...prevStationData];
-          if (response.length === 0) {
-            stationDataCopy[i] = undefined;
-          } else {
-            stationDataCopy[i] = response;
-          }
+          stationDataCopy[i] = response;
           return stationDataCopy;
         });
       })
     }
   }, []);
-
 
   function setDataDisplayed(idx) {
     setDataIdx(idx);
@@ -64,10 +58,23 @@ function RealTimeConditions(props) {
   let chart;
   switch (chart_type) {
     case "line":
-      chart = <LinePlot width={chart_width} height={chart_height} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+      chart = <LinePlot 
+        width={chart_width} 
+        height={chart_height} 
+        time={time} 
+        y={y_data} 
+        title={chart_title} 
+        units={current_data_displayed.units}
+        />
       break;
     case "polar":
-      chart = <CompassPlot radius={500} time={time} y={y_data} title={chart_title} units={current_data_displayed.units}/>
+      chart = <CompassPlot 
+        radius={500} 
+        time={time} 
+        y={y_data} 
+        title={chart_title} 
+        units={current_data_displayed.units}
+        />
       break;
     default:
         console.log(`Unexpected chart type "${chart_type}"`);
