@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'; 
 import { select, scaleLinear, line, pointer, easeCubicInOut} from 'd3';
-import { if_undefined, round } from '../util';
+import { round } from '../util';
 import "./RealTimeConditions.css"
 
 //////////////////////////////////////////////
@@ -150,7 +150,7 @@ function LinePlot(props) {
         set_cursor_val(round(props.y[props.y.length - 1], 1));
         let data = [];
         for (let i = 0; i < props.time.length; i++) {
-            data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])])
+            data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])]);
         }
 
         svg.on('mousemove', function(event) {
@@ -200,7 +200,7 @@ function LinePlot(props) {
             .duration(1000)
             .ease(easeCubicInOut)
             .attr("x", x_e + 5)
-    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, x_scale, y_e, y_s, y_scale]);
+    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, y_e, y_s]);
 
     let chart_subtitle;
     if (unavailable) {
