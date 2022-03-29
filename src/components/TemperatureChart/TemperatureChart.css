@@ -25,3 +25,19 @@
     margin-right: 3px;
     transform: translate(-10%, 0%);
 }
+
+.temperature-chart-container {
+    position: relative;
+}
+
+.temperature-cursor {
+    position: absolute;
+    font-size: 12px;
+    left: 50%;
+    top: 50%;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transform: translate(-50%, -100%);
+    white-space: nowrap;
+}
