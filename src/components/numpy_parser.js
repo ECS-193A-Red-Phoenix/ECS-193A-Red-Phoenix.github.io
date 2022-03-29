@@ -61,9 +61,56 @@ class Tensor {
 
         return this.array[index];
     }
+
+    toArray() {
+        // Converts tensor to a vanilla JS Array
+        // !!! Warning !!!
+        // - This function is only implemented for tensors of 3 or less dimensions.
+        // the reason for this is I don't have the time to think about how to generalize it
+        // to more dimensions, and we are only using 2 and 3 dimensions for our use case.
+        
+        const length = numElements(this.shape);
+        const res = [];
+        if (this.shape.length === 0) {
+            return res;
+        } 
+        else if (this.shape.length === 1) {
+            for (let i = 0; i < length; i++)
+                res.push(this.array[i]);
+        } 
+        else if (this.shape.length === 2) {
+            let [rows, cols] = this.shape;
+            for (let r = 0; r < rows; r++) {
+                const row_values = [];
+                for (let c = 0; c < cols; c++) {
+                    row_values.push(this.array[r * cols + c]);
+                }
+                res.push(row_values)
+            }
+        } else if (this.shape.length === 3) {
+            let [dz, dy, dx] = this.shape;
+            for (let z = 0; z < dz; z++) {
+                const z_values = [];
+                for (let y = 0; y < dy; y++) {
+                    const y_values = [];
+                    for (let x = 0; x < dx; x++) {
+                        y_values.push(this.array[z * dy * dx + y * dx + x])
+                    }
+                    z_values.push(y_values);
+                }
+                res.push(z_values)
+            }
+        }
+        else {
+            throw new Error(`UnImplemented Error: Tensor has an unsupported number of 
+                dimensions (${this.shape.length}). TODO: Generalize this function`);
+        }
+
+        return res;
+    }
 }
 
-export async function load_npy(blob) {
+export async function loadNPY(blob) {
     // Reads a .npy file and loads it into an array
     // Equivalent to numpy.load in python
     //
@@ -135,6 +182,21 @@ export async function load_npy(blob) {
     let data_array = array_buffer.slice(pos, pos + bytesLeft);
     data_array = typed_array_creator(data_array);
 
-    // Wrap it with a class that makes it easy to access values
-    return new Tensor(data_array, shape, dtype);
+    // Convert to vanilla Array
+    return new Tensor(data_array, shape, dtype).toArray();
+}
+
+export async function openLocalFile(file_path) {
+    const response = await fetch(file_path, {
+        headers : { 
+            'Content-Type': 'application/octet-stream',
+            'Accept': 'application/octet-stream'
+        }
+    });
+    return response.blob();
+}
+
+export async function loadNumpyFile(file_path) {
+    let blob = await openLocalFile(file_path);
+    return loadNPY(blob);
 }

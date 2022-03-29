@@ -6,8 +6,8 @@ import { round } from "../util";
 // Static constants
 //////////////////////////////////////////////
 const num_particles = 60;
-const conversion_ratio = 2.23694;
-const units = "MPH";
+const conversion_ratio = 196.85;
+const units = "feet per minute";
 const scale = 1.5;
 const aspect_ratio = 0.35;
 
@@ -51,7 +51,7 @@ function CurrentLegendBox(props) {
     }, [particles, vector_field, width, height]);
     
     let units_value = props.speed * conversion_ratio; // convert m/s to specified units
-    units_value = round(units_value, 1);
+    units_value = round(units_value, 0);
     return (
         <div className="current-legend-box-container">
             <canvas ref={canvas_ref} width={width} height={height}></canvas>

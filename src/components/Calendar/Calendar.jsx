@@ -30,6 +30,9 @@ function Calendar(props) {
     ////////////////////////////////////
     // Expected props:
     //  props.events: a list of events [{'time': Date object, 'duration': hours}]
+    if (props.events.length === 0) {
+        throw new Error("Expected non-empty list of events");
+    }
 
     // Ensure events are sorted by time
     props.events.sort((o1, o2) => o1['time'] - o2['time']);

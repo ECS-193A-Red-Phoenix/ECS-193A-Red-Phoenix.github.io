@@ -20,7 +20,7 @@ export function round(x, decimals) {
     //  decimals (optional, default=0): the number of decimal places to round to
     if (decimals === undefined)
         decimals = 0;
-    return Math.floor(x * 10**decimals) / 10**decimals;
+    return Math.round(x * 10**decimals) / 10**decimals;
 }
 
 export function colorFromHex(hex_code) {
@@ -140,7 +140,7 @@ export function bilinear(x, y, grid, default_value) {
     let n_cols = grid[0].length;
     let i = Math.floor(x);
     let j = Math.floor(y);
-    let get_grid = (j, i) => (i >= 0 && i < n_cols && j >= 0 && j < n_rows && typeof grid[j][i] === 'number') ? grid[j][i] : undefined;
+    let get_grid = (j, i) => (i >= 0 && i < n_cols && j >= 0 && j < n_rows && isFinite(grid[j][i])) ? grid[j][i] : undefined;
     let f00 = if_undefined(get_grid(j, i), default_value);
     let f10 = if_undefined(get_grid(j, i + 1), f00);
     let f01 = if_undefined(get_grid(j + 1, i), f00);
@@ -211,7 +211,7 @@ export function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette
     //  cx: HTML Canvas 2d context
     //  width: the width of the heatmap
     //  height: the height of the heatmap
-    //  heatmap_data: a 2D matrix with scalar values
+    //  heatmap_data: a 2D matrix with scalar Number values, NaN's are okay
     //  offsetX (optional): starting x coordinate of where to draw the heatmap, default is 0
     //  offsetY (optional): starting y coordinate of where to draw the heatmap, default is 0
     //  key (optional): a string hash for the heatmap data, used in caching image creation for performance boost
@@ -244,16 +244,18 @@ export function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette
         
         // if this pixel is inside the lake but not defined by the heatmap matrix
         // let it's value be the average of its defined neighbors
-        if (typeof T[t_j][t_i] !== 'number') {
+        if (isNaN(T[t_j][t_i])) {
             val = 0;
             let count = 0;
             // Average Temperature of neighboring pixels
             for (let m = 0; m < 3; m++)
                 for (let n = 0; n < 3; n++) {
-                    if (0 <= t_j - 1 + m && t_j - 1 + m < n_rows && 
-                        0 <= t_i - 1 + n && t_i - 1 + n < n_cols && 
-                        typeof T[t_j - 1 + m][t_i - 1 + n] === 'number') {
-                        val += T[t_j - 1 + m][t_i - 1 + n];
+                    const neighbor_j = t_j - 1 + m;
+                    const neighbor_i = t_i - 1 + n;
+                    if (0 <= neighbor_j && neighbor_j < n_rows && 
+                        0 <= neighbor_i && neighbor_i < n_cols && 
+                        isFinite(T[neighbor_j][neighbor_i])) {
+                        val += T[neighbor_j][neighbor_i];
                         count += 1;
                     }
                 }
@@ -284,4 +286,16 @@ export function militaryHourTo12Hour(hour) {
     // Arguments:
     //  hour: an integer between 0 and 24
     return mod(hour - 1, 12) + 1;
+}
+
+export function apply(array, callback_fn) {
+    // Applies a callback function to every value of a multi-dimensional array
+    // Similar to Array.prototype.map, except in-place and multi-dimensional
+    for (let [idx, value] of array.entries()) {
+        if (Array.isArray(value))
+            apply(value, callback_fn);
+        else
+            array[idx] = callback_fn(value);
+    }
+    return array;
 }

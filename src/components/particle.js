@@ -127,6 +127,6 @@ class Particle {
 }
 Particle.prototype.max_age = 50;
 Particle.prototype.max_history = 8;
-Particle.prototype.speed_scale = 1;
+Particle.prototype.speed_scale = 3;
 
 export { Particle, VectorField };
