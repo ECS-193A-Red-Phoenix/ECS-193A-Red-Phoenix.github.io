@@ -87,13 +87,13 @@ function CurrentLakePage() {
                         move water forward.
                     </div>
 
-                    {
-                        !is_loading &&
-                        <Calendar events={flow_events} 
-                            active_event_idx={activeIdx}
-                            on_event_selected={(idx) => setActiveIdx(idx)}/>
-                    }
                 </div>
+                {
+                    !is_loading &&
+                    <Calendar events={flow_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                }
             </div>
 
             {
