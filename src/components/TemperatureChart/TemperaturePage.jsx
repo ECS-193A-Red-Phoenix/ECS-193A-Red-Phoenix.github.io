@@ -61,7 +61,6 @@ function TemperaturePage() {
         T = temperature_data[activeIdx]['matrices'];
         T = reversed(T);
     } 
-    console.log(temperature_data)
 
     return (
         <div className="lake-condition-container">

@@ -57,7 +57,6 @@ function CurrentLakePage() {
         }
 
         Promise.all(file_promises).then((result) => {
-            console.log(result[0])
             setFlowData(result);
         });
     }, []);
