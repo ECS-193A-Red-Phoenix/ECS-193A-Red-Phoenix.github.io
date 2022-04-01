@@ -74,14 +74,14 @@ function TemperaturePage() {
                         on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
                         should be prepared for dangerously cold conditions.
                     </div>
-
-                    {
-                        !is_loading &&
-                        <Calendar events={temperature_events} 
-                            active_event_idx={activeIdx}
-                            on_event_selected={(idx) => setActiveIdx(idx)}/>
-                    }
                 </div>
+
+                {
+                    !is_loading &&
+                    <Calendar events={temperature_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                }
             </div>
 
             {

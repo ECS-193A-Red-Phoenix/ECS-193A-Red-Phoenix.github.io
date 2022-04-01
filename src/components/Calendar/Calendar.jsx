@@ -1,14 +1,10 @@
-import { militaryHourTo12Hour } from "../util";
 import "./Calendar.css";
+import { useState, useRef } from "react";
+import { militaryHourTo12Hour } from "../util";
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
-const block_width = 150;
-const calendar_height = 500;
-const block_margin = 10;
-const ONE_DAY = 24 * 60 * 60 * 1000; // ms in 1 day
-const event_padding = 2; // pixels
 
 function formatDate(date) {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -21,123 +17,86 @@ function formatDate(date) {
     return `${day_of_week}, ${month} ${day_of_month}`;
 }
 
-function roundToDay(date) {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+function formatHourString(date) {
+    const am_pm = (date.getHours() < 12) ? "AM" : "PM";
+    return `${militaryHourTo12Hour(date.getHours())} ${am_pm}`;
 }
 
-
 function Calendar(props) {
+    const [active_event_idx, set_active_event_idx] = useState(0);
+    const day_select_ref = useRef();
+    const hour_select_ref = useRef();
+
     ////////////////////////////////////
     // Expected props:
     //  props.events: a list of events [{'time': Date object, 'duration': hours}]
+    //  props.on_event_selected: a callback function when a new event is selected
     if (props.events.length === 0) {
-        throw new Error("Expected non-empty list of events");
+        throw new Error("Expected non-empty list of events")
     }
-
+    
     // Ensure events are sorted by time
     props.events.sort((o1, o2) => o1['time'] - o2['time']);
-    const min_date = props.events[0]['time'];
-    const max_date = props.events[props.events.length - 1]['time'];
+    props.events.forEach((e, idx) => e.idx = idx);
 
-    // Get the days of the month that are listed in the data
-    const start_date = roundToDay(min_date);
-    const days = [];
-    for (let date = start_date; date <= max_date; date = new Date(date.getTime() + ONE_DAY)) {
-        days.push(date);
+    // Create a hashmap that maps date_string -> events on that day
+    // Example: 'Sunday, January 23' -> [event1, event2]
+    const dates = {};
+    for (let event of props.events) {
+        const date_string = formatDate(event.time);
+        if (date_string in dates)
+            dates[date_string].push(event);
+        else
+            dates[date_string] = [event];
     }
 
-    // Compute calendar height
-    const calendar_width = days.length * (block_width + block_margin);
-
-    ////////////////////////////////////
-    // Day Labels
-    ////////////////////////////////////
-    const day_labels = [];
-    for (let i = 0; i < days.length; i++) {
-        const day_str = formatDate(days[i]);
-        const label_x = (block_width + block_margin) * (i + 0.5);
-        const line_x = (block_width + block_margin) * i;
-        day_labels.push(
-            <div style={{left: label_x}}
-                key={`calendar-day${i}`}
-                className="calendar-day">
-                { day_str }
-            </div>,
-            <div style={{left: line_x}}
-                key={`calendar-day-line${i}`}
-                className="calendar-day-line">
-            </div>
-        );
-    }
-    // Add line at the very end
-    day_labels.push(
-        <div style={{left: (block_width + block_margin) * days.length - 1}}
-            key={`calendar-day-${days.length}`}
-            className="calendar-day-line">
-        </div>
+    const day_options = Object.keys(dates).map(
+        (date_string, idx) => 
+            <option 
+                key={`day-option-${idx}`} 
+                className="day-option"> 
+                    { date_string }
+            </option>
     )
 
+    const active_event = props.events[active_event_idx];
+    const hour_options = dates[formatDate(active_event.time)].map(
+        (date_event) =>
+            <option 
+                key={`hour-option-${date_event.idx}`}
+                className="hour-option">
+                    { formatHourString(date_event.time) }
+            </option> 
+    )
 
-    ////////////////////////////////////
-    // Hour timeline
-    ////////////////////////////////////
-    const hour_timeline = [];
-    for (let i = 0; i <= 24; i += 4) {
-        const x = `-5px`;
-        const y = `${i / 24 * 100}%`;
-        const hour_string = `${militaryHourTo12Hour(i)} ${(Math.floor(i / 12) % 2 === 1) ? "PM" : "AM"}`;
-        
-        hour_timeline.push(
-            <div key={`hour${i}`} className="calendar-hour"
-                style={{left: x, top: y}}>
-                { hour_string }
-            </div>,
-            <div key={`hour-line${i}`} className="calendar-hour-line"
-                style={{left: x, top: y}}>
-            </div>
-        )
+    // Event callback function when day selector is changed
+    function on_day_changed() {
+        const selector = day_select_ref.current;
+        const selected_date = selector.options[selector.selectedIndex].text;
+        const selected_event_idx = dates[selected_date][0].idx;
+        props.on_event_selected(selected_event_idx);
+        set_active_event_idx(selected_event_idx);
     }
 
-    
-    ////////////////////////////////////
-    // Events
-    ////////////////////////////////////
-    const events = [];
-    const padding_height = (event_padding / calendar_height) * 100;
-    const padding_width = (event_padding / calendar_width) * 100;
-    for (let i = 0; i < props.events.length; i++) {
-        const { time, duration } = props.events[i];
-
-        const days_from_start = Math.floor((time - start_date) / ONE_DAY);
-        const top = `${time.getHours() / 24 * 100 + padding_height}%`;
-        const bottom = `${(1 - ((time.getHours() + duration) / 24)) * 100 + padding_height}%`;
-        const left = `${(days_from_start / days.length) * 100 + padding_width}%`;
-        const right = `${(1 - ((days_from_start + 1) / days.length)) * 100 + padding_width}%`;
-
-        const hour = time.getHours();
-        const hour_string = `${militaryHourTo12Hour(hour)} ${(hour > 12) ? "PM" : "AM"}`;
-
-        let class_name = "calendar-event";
-        if (i === props.active_event_idx)
-            class_name += " calendar-active-event";
-
-        events.push(
-            <div 
-                style={{left: left, right: right, bottom: bottom, top: top}}
-                key={`calendar-event${i}`}
-                className={class_name}
-                onClick={() => props.on_event_selected(i)}
-                >
-                { hour_string }
-            </div>
-        )
+    // Event callback function when hour selector is changed
+    function on_hour_changed() {
+        const day_select = day_select_ref.current;
+        const selected_date = day_select.options[day_select.selectedIndex].text;
+        const hour_select = hour_select_ref.current;
+        const selected_hour = hour_select.selectedIndex;
+        const selected_event_idx = dates[selected_date][selected_hour].idx;
+        props.on_event_selected(selected_event_idx);
+        set_active_event_idx(selected_event_idx);
     }
 
     return (
-        <div className="calendar" style={{width: calendar_width, height: calendar_height}}>
-            { day_labels }
-            { hour_timeline }
-            { events }
+        <div className="calendar">
+            <select ref={day_select_ref} className="calendar-day-select" onChange={on_day_changed}>
+                { day_options }
+            </select>
+            <select ref={hour_select_ref} className="calendar-hour-select" onChange={on_hour_changed}>
+                { hour_options }
+            </select>
         </div>
     );
 }
