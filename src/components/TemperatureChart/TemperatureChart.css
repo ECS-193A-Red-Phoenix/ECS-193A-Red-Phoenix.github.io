@@ -31,6 +31,7 @@
 }
 
 .temperature-cursor {
+    display: none;
     position: absolute;
     font-size: 12px;
     left: 50%;
