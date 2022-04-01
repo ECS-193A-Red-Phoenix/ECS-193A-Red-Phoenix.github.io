@@ -17,7 +17,7 @@ import { loadNumpyFile } from "../numpy_parser";
 
 const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 const temperature_color = ice_to_fire; 
-const lake_height = 700;
+const lake_height = 650;
 const min_T = 35;
 const max_T = 65;
 let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
@@ -66,14 +66,16 @@ function TemperaturePage() {
     return (
         <div className="lake-condition-container">
             <div className="lake-condition-left-column">
-                <div className="lake-condition-description-container">
-                    <div className="lake-condition-title"> Water Temperature </div>
-                    <div className="lake-condition-description">
-                        Lake Tahoe water is cold for most swimmers, with surface temperatures ranging 
-                        from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing 
-                        on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
-                        should be prepared for dangerously cold conditions.
-                    </div>
+                <div className="lake-condition-title"> Water Temperature </div>
+                <div className="lake-condition-description">
+                    Lake Tahoe water is cold for most swimmers, with surface temperatures ranging 
+                    from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing 
+                    on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
+                    should be prepared for dangerously cold conditions.
+
+                    <br/><br/>
+
+                    Select a day and time below to view our model's forecast of Lake Tahoe surface temperature.
                 </div>
 
                 {

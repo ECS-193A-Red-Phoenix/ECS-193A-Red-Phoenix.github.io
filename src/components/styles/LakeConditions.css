@@ -43,26 +43,18 @@
 .lake-condition-container {
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     font-size: 14px;
-    align-items: center;
 }
 
 .lake-condition-left-column {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
 
 
 /* Lake Condition Block */
-
-.lake-condition-description-container {
-    display: flex;
-    flex-direction: column;
-    margin-right: 50px;
-}
 
 .lake-condition-title {
     font-size: 35px;
@@ -71,6 +63,7 @@
 
 .lake-condition-description {
     margin-top: 20px;
+    margin-bottom: 40px;
     max-width: 500px;
     line-height: 1.3em;
 }
@@ -78,7 +71,6 @@
 .lake-visual-container {
     display: flex;
     flex-direction: row;
-    max-height: 90vh;
 }
 
 

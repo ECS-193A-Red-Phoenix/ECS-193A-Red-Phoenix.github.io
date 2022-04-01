@@ -32,7 +32,7 @@ function Calendar(props) {
     //  props.events: a list of events [{'time': Date object, 'duration': hours}]
     //  props.on_event_selected: a callback function when a new event is selected
     if (props.events.length === 0) {
-        throw new Error("Expected non-empty list of events")
+        return <div className="calendar"> No forecasts are available </div>
     }
     
     // Ensure events are sorted by time
@@ -91,9 +91,11 @@ function Calendar(props) {
 
     return (
         <div className="calendar">
+            <span> Showing forecasts for </span>
             <select ref={day_select_ref} className="calendar-day-select" onChange={on_day_changed}>
                 { day_options }
             </select>
+            <span> at </span>
             <select ref={hour_select_ref} className="calendar-hour-select" onChange={on_hour_changed}>
                 { hour_options }
             </select>
