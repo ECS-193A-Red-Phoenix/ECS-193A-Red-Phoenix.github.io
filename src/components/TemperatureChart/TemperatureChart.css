@@ -1,6 +1,7 @@
 /* Legend CSS */
 
 .temperature-legend-container {
+    position: relative;
     margin-left: 20px;
     display: flex;
 }
@@ -17,10 +18,27 @@
 }
 
 .temperature-legend-unit::before {
-    content: "";
-    width: 4px;
+    content: '';
+    width: 15px;
     height: 0.5px;
     background-color: black;
-    margin-right: 5px;
-    transform: translate(-10%, -100%);
+    margin-right: 3px;
+    transform: translate(-10%, 0%);
+}
+
+.temperature-chart-container {
+    position: relative;
+}
+
+.temperature-cursor {
+    display: none;
+    position: absolute;
+    font-size: 12px;
+    left: 50%;
+    top: 50%;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transform: translate(-50%, -200%);
+    white-space: nowrap;
 }

@@ -1,48 +1,76 @@
+import { useState, useEffect } from 'react';
+import { scaleLinear } from "d3";
+
 import CurrentLakeMap from "./CurrentLakeMap";
 import CurrentLegendBox from "./CurrentLegendBox";
-import { scaleLinear } from "d3";
+import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
-import { round, reversed } from "../util";
 
-
-function average_speed(u, v) {
-    let total = 0;
-    let count = 0;
-    for (let j = 0; j < u.length; j++) {
-        for (let i = 0; i < u[0].length; i++) {
-            if (typeof u[j][i] === 'number' && typeof v[j][i] === 'number') {
-                total += (u[j][i]**2 + v[j][i]**2)**0.5;
-                count += 1;
-            }
-        }
-    }
-    return total / count;
-}
+import { reversed, parseMyDate, dark_ocean } from "../util";
+import { loadNumpyFile } from '../numpy_parser';
 
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
-const num_legend_boxes = 5;
-const legend_speed = scaleLinear().domain([0, num_legend_boxes - 1]).range([0.01, 0.1016]); // mps
+const legend_speeds = [0.1016, 0.2032, 0.3048, 0.508] // m/s
 const lake_height = 700;
-const M_TO_FT = 196.85;
+const FRAME_DURATION = 2;
 
-let [u, v] = require('./slice.json'); 
-u = reversed(u);
-v = reversed(v);
-let average_lake_speed = average_speed(u, v) * M_TO_FT;
-average_lake_speed = round(average_lake_speed, 1);
+const speed_scale = scaleLinear().domain([0, 0.5]).range([0, 1]);
+const color_palette = (speed) => dark_ocean(speed_scale(speed));
 
 // Create legend
 const legend_boxes = [];
-for (let i = 0; i < num_legend_boxes; i++)
+for (let i = 0; i < legend_speeds.length; i++)
     legend_boxes.push(
-        <CurrentLegendBox key={`legend-box${i}`} speed={legend_speed(i)}/>
+        <CurrentLegendBox 
+            key={`legend-box${i}`} 
+            speed={legend_speeds[i]}
+            color_palette={color_palette}
+        />
     );
 
+const flow_files = ['2022-02-14 18.npy', '2022-02-14 20.npy', '2022-02-14 22.npy', '2022-02-15 00.npy', '2022-02-15 02.npy', '2022-02-15 04.npy', '2022-02-15 06.npy', '2022-02-15 08.npy', '2022-02-15 10.npy', '2022-02-15 12.npy', '2022-02-15 14.npy', '2022-02-15 16.npy', '2022-02-15 18.npy', '2022-02-15 20.npy', '2022-02-15 22.npy', '2022-02-16 00.npy', '2022-02-16 02.npy', '2022-02-16 04.npy', '2022-02-16 06.npy', '2022-02-16 08.npy', '2022-02-16 10.npy', '2022-02-16 12.npy', '2022-02-16 14.npy', '2022-02-16 16.npy'];
+const FLOW_DIR = "static/flow/";
 
 function CurrentLakePage() {
+    const [activeIdx, setActiveIdx] = useState(0);
+
+    const [flow_data, setFlowData] = useState([]);
+    const is_loading = flow_data.length === 0;
+
+    ////////////////////////////////////
+    // Load Flow binary files
+    ////////////////////////////////////
+    useEffect(() => {
+        const file_promises = [];
+        for (let file of flow_files) {
+            const file_path = FLOW_DIR + file;
+            const date = parseMyDate(file.substring(0, 13));
+            
+            file_promises.push(new Promise((resolve) => {
+                loadNumpyFile(file_path).then(
+                    (uv_matrix) => resolve({ 'time': date, 'matrices': uv_matrix })
+                );
+            }));
+        }
+
+        Promise.all(file_promises).then((result) => {
+            setFlowData(result);
+        });
+    }, []);
+
+    const flow_events = flow_data.map(
+        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
+    );
+    
+    let u, v;
+    if (!is_loading) {
+        [u, v] = flow_data[activeIdx]['matrices'];
+        u = reversed(u);
+        v = reversed(v);
+    }
 
     return (
         <div className="lake-condition-container">
@@ -58,19 +86,35 @@ function CurrentLakePage() {
                         move water forward.
                     </div>
 
-                    <div className="lake-condition-info">
-                        <div className="lake-condition-date"> Monday 8:00 AM, February 28, 2022 </div>
-                        <div className="lake-condition-speed"> Average Speed: {average_lake_speed} feet per minute </div>
-                    </div>
                 </div>
-
-
-                <div className="current-legend-container">
-                    { legend_boxes }
-                </div>
+                {
+                    !is_loading &&
+                    <Calendar events={flow_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                }
             </div>
 
-            <CurrentLakeMap height={lake_height} u={u} v={v}/>
+            {
+                is_loading && <div> Loading </div>
+            }
+
+            {
+                !is_loading &&
+                <div className="lake-visual-container">
+                    <CurrentLakeMap 
+                        height={lake_height} 
+                        u={u} 
+                        v={v} 
+                        activeIdx={activeIdx}
+                        color_palette={color_palette}
+                        />
+
+                    <div className="current-legend-container">
+                        { legend_boxes }
+                    </div>
+                </div>
+            }
 
         </div>
     );

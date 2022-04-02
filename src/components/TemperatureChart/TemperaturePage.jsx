@@ -1,114 +1,98 @@
-import TemperatureMap from "./TemperatureMap";
+import { useState, useEffect } from "react";
 import { scaleLinear } from "d3";
+
+import TemperatureMap from "./TemperatureMap";
 import TemperatureLegend from "./TemperatureLegend";
-import { colorFromHex, colorScale, reversed, round } from "../util";
-import { parseMyDate } from "../util";
+import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
 import "../styles/LakeConditions.css";
-import { useState } from "react";
 
+import { celsius_to_f, ice_to_fire, parseMyDate, apply, reversed } from "../util";
+import { loadNumpyFile } from "../numpy_parser";
 
-function average_temperature(grid) {
-    let total = 0;
-    let count = 0;
-    for (let j = 0; j < grid.length; j++)
-        for (let i = 0; i < grid[0].length; i++) {
-            if (typeof grid[j][i] === 'number') {
-                total += grid[j][i];
-                count += 1;
-            }
-        }
-    return total / count;
-}
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
 
-const DARKBLUE  = colorFromHex("#00008b");
-const BLUE      = colorFromHex("#0f52ba");
-const LIGHTBLUE = colorFromHex("#ace5ee");
-const GREEN     = colorFromHex("#7fff00");
-const YELLOW    = colorFromHex("#ffef00");
-const RED       = colorFromHex("#d0312d");
-const DARKRED   = colorFromHex("#710c04");
+const FRAME_DURATION = 2; // duration in hours for 1 temperature map
+const temperature_color = ice_to_fire; 
+const lake_height = 650;
+const min_T = 35;
+const max_T = 65;
+let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
+let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
 
-const temperature_color = colorScale(
-    DARKBLUE, BLUE, LIGHTBLUE, GREEN, YELLOW, RED, DARKRED
-);
-
-const temperature_data = require('./temperature.json');
-temperature_data.forEach((obj) => obj['time'] = parseMyDate(obj['time']));
-temperature_data.sort((o1, o2) => o1['time'] - o2['time']);
-
-function formatDate(date) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-    const day_of_week = days[date.getDay()];
-    const hour = (date.getHours() % 12) + 1
-    const minutes = String(date.getMinutes()).padStart(2, 0);
-    const am_pm = (date.getHours() >= 12) ? "PM" : "AM";
-    const month = months[date.getMonth()];
-    const day_of_month = date.getDate();
-
-    return `${day_of_week} ${hour}:${minutes} ${am_pm}, ${month} ${day_of_month}`;
-}
+const temperature_files = ['2022-02-20 08.npy', '2022-02-20 10.npy', '2022-02-20 12.npy', '2022-02-20 14.npy', '2022-02-20 16.npy', '2022-02-20 18.npy', '2022-02-20 20.npy', '2022-02-20 22.npy', '2022-02-21 00.npy', '2022-02-21 02.npy', '2022-02-21 04.npy', '2022-02-21 06.npy', '2022-02-21 08.npy', '2022-02-21 10.npy', '2022-02-21 12.npy', '2022-02-21 14.npy', '2022-02-21 16.npy', '2022-02-21 18.npy', '2022-02-21 20.npy', '2022-02-21 22.npy', '2022-02-22 00.npy', '2022-02-22 02.npy', '2022-02-22 04.npy', '2022-02-22 06.npy', '2022-02-22 08.npy', '2022-02-22 10.npy', '2022-02-22 12.npy', '2022-02-22 14.npy', '2022-02-22 16.npy', '2022-02-22 18.npy', '2022-02-22 20.npy', '2022-02-22 22.npy', '2022-02-23 00.npy'];
+const TEMPERATURE_DIR = "static/temperature/";
 
 function TemperaturePage() {
-    const [activeIdx, setActiveIdx] = useState(0);
+    const [temperature_data, setTempData] = useState([]);
+    const is_loading = temperature_data.length === 0;
 
-    const dates = [];
-    for (let i = 0; i < temperature_data.length; i++) {
-        let date = temperature_data[i]['time'];
-        let T = temperature_data[i]['matrices'][0];
-        let avg_temp = round(average_temperature(T), 1);
-        let class_name = "lake-condition-info" + ((i == activeIdx) ? " lake-condition-info-active" : "");
-        dates.push(
-            <div key={`lake-condition-info${i}`} className={class_name} onClick={() => setActiveIdx(i)}>
-                <div className="lake-condition-date"> {formatDate(date)} </div>
-                <div className="lake-condition-value"> Average Temperature: {avg_temp} °F </div>
-            </div>
-        )
-    }
-
-    let T = temperature_data[activeIdx]['matrices'][0];
-    T = reversed(T);
-    const lake_height = 700;
-    const [n_rows, n_cols] = [T.length, T[0].length];
-
-    let min_T = Number.MAX_VALUE;
-    let max_T = -Number.MAX_VALUE;
-    for (let j = 0; j < n_rows; j++) {
-        for (let i = 0; i < n_cols; i++) {
-            if (typeof T[j][i] === 'number') {
-                min_T = Math.min(min_T, T[j][i]);
-                max_T = Math.max(max_T, T[j][i]);
-            }
+    ////////////////////////////////////
+    // Load temperature binary files
+    ////////////////////////////////////
+    useEffect(() => {
+        const file_promises = [];
+        for (let file of temperature_files) {
+            const file_path = TEMPERATURE_DIR + file;
+            const date = parseMyDate(file.substring(0, 13));
+            
+            file_promises.push(new Promise((resolve) => {
+                loadNumpyFile(file_path).then(
+                    (T_matrix) => resolve({ 'time': date, 'matrices': apply(T_matrix, celsius_to_f) }) 
+                );
+            }));
         }
-    }
 
-    let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
-    let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
+        Promise.all(file_promises).then((result) => {
+            setTempData(result);
+        });
+    }, []);
+
+    const [activeIdx, setActiveIdx] = useState(0);
+    const temperature_events = temperature_data.map(
+        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
+    );
+
+    let T;
+    if (!is_loading) {
+        T = temperature_data[activeIdx]['matrices'];
+        T = reversed(T);
+    } 
 
     return (
         <div className="lake-condition-container">
             <div className="lake-condition-left-column">
-                <div className="lake-condition-description-container">
-                    <div className="lake-condition-title"> Water Temperature </div>
-                    <div className="lake-condition-description">
-                        Lake Tahoe water is cold for most swimmers, with surface temperatures ranging 
-                        from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing 
-                        on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
-                        should be prepared for dangerously cold conditions.
-                    </div>
+                <div className="lake-condition-title"> Water Temperature </div>
+                <div className="lake-condition-description">
+                    Lake Tahoe water is cold for most swimmers, with surface temperatures ranging 
+                    from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing 
+                    on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
+                    should be prepared for dangerously cold conditions.
 
-                    {dates}
+                    <br/><br/>
+
+                    Select a day and time below to view our model's forecast of Lake Tahoe surface temperature.
                 </div>
+
+                {
+                    !is_loading &&
+                    <Calendar events={temperature_events} 
+                        active_event_idx={activeIdx}
+                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                }
             </div>
 
-            <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale}/>
-            <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
+            {
+                (is_loading) ? 
+                    <div> Loading </div> :
+                    <div className="lake-visual-container">
+                        <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale} activeIdx={activeIdx}/>
+                        <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
+                    </div>
+            }
 
         </div>
     );

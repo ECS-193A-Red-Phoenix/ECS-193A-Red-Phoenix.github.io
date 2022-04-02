@@ -1,14 +1,18 @@
 import { useRef, useEffect, useState } from 'react'; 
-import { select, scaleLinear, area, line, transition, easeLinear, interpolate, pointer, easeCubicInOut} from 'd3';
+import { select, scaleLinear, line, pointer, easeCubicInOut} from 'd3';
+import { round } from '../util';
 import "./RealTimeConditions.css"
 
-const inner_padding = 0.1;
-const num_ticks = 8;
-const tick_length = 0.01;
-const y_padding = 0.1;
-const label_margin = 5;
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+//////////////////////////////////////////////
+// Static Constants
+////////////////////////////////////////////// 
+const inner_padding = 0.1;  // chart padding, a percentage in [0, 1.0]
+const num_ticks = 8;        // ticks on the x-axis, 
+const tick_length = 0.01;   // length of ticks on each axis, a percentage in [0, 1.0]
+const y_padding = 0.1;      // extra y padding for title and x-ticks, a percentage in [0, 1.0]
+const label_margin = 5;     // distance between tick labels and axises, in pixels
 
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function format_date(date) {
     let day = DAYS[date.getDay()];
     let hours = String((date.getHours() % 12) + 1).padStart(2, 0);
@@ -17,24 +21,42 @@ function format_date(date) {
     return `${day} ${hours}:${minutes} ${am_pm}`;
 }
 
+function containsNaN(array) {
+    for (let value of array) {
+        if (typeof value !== 'number' || isNaN(value))
+            return true;
+    }
+    return false;
+}
+
 function LinePlot(props) {
     let d3_ref = useRef();
     let [cursor_value, set_cursor_val] = useState(undefined);
 
     const [x_s, x_e] = [props.width * inner_padding, props.width * (1 - inner_padding)];
     const [y_s, y_e] = [props.height * inner_padding, props.height * (1 - inner_padding)];
+    const y_padding_px = y_padding * (y_e - y_s);
+    
+    const is_loading = props.time === undefined || props.y === undefined;
+    const unavailable = !is_loading && (props.y.length === 0 || props.time.length === 0 || containsNaN(props.y))
 
-    let axes = [
-        <line key="x-axis" x1={x_s} y1={y_e} x2={x_e} y2={y_e} stroke="black" strokeLinecap="square"></line>,
-        // <line key="y-axis" x1={x_s} y1={y_e} x2={x_s} y2={y_s} stroke="black" strokeLinecap="square"></line>
-    ];
-    let axes_units = <text x={x_s - 40} y={(y_s + y_e) / 2} textAnchor="end" dominantBaseline="middle" className="line-plot-label">
-        {props.units ? props.units : ""}
+    const loading_text = 
+        <text x={(x_e + x_s) / 2} y={(y_e + y_s) / 2} textAnchor="middle" dominantBaseline="middle" className="line-plot-loading">
+            {is_loading ? "Loading" : unavailable ? "Data Temporarily Unavailable" : "Loaded"}
+        </text>;
+
+    //////////////////////////////////////////////
+    // Axes Creation
+    ////////////////////////////////////////////// 
+    let axes = <line key="x-axis" x1={x_s} y1={y_e} x2={x_e} y2={y_e} stroke="black" strokeLinecap="square"></line>;
+    let axes_units = 
+    <text x={x_s - 40} y={(y_s + y_e) / 2} textAnchor="end" dominantBaseline="middle" className="line-plot-label">
+        { (unavailable) ? "" : props.units }
     </text>
 
+    // X axis, tiny upwards ticks
     let ticks = [];
     for (let i = 0; i <= num_ticks; i++) {
-        // X tick
         let y1 = y_e;
         let y2 = y1 - (y_e - y_s) * tick_length;
         let x1 = x_s + (x_e - x_s) * (i / num_ticks);
@@ -44,14 +66,9 @@ function LinePlot(props) {
         );
     }
 
-    const is_loading = props.time.length == 0 || props.y.length == 0;
-    const unavailable = !is_loading && (props.y[0] === undefined);
-    const loading_text = 
-        <text x={(x_e + x_s) / 2} y={(y_e + y_s) / 2} textAnchor="middle" dominantBaseline="middle" className="line-plot-loading">
-        {is_loading ? "Loading" : unavailable ? "Data Temporarily Unavailable" : "Loaded"}
-        </text>;
-
-    const y_padding_px = y_padding * (y_e - y_s);
+    //////////////////////////////////////////////
+    // Time and Y Data Processing
+    ////////////////////////////////////////////// 
     let x_scale, y_scale, t0, t1, y_min, y_max;
     if (!is_loading && !unavailable) {
         [t0, t1] = [props.time[0], props.time[props.time.length - 1]];
@@ -66,9 +83,12 @@ function LinePlot(props) {
             .range([y_e - y_padding_px, y_s + y_padding_px]);
     }
 
+    //////////////////////////////////////////////
+    // Create labels for each axis, if data available
+    ////////////////////////////////////////////// 
     const labels = [];
     if (!is_loading && !unavailable) {
-        // Y labels
+        // Y labels measurements
         let y_label_scale = scaleLinear()
             .domain([y_e - y_padding_px, y_s + y_padding_px])
             .range([y_min, y_max]);
@@ -76,23 +96,27 @@ function LinePlot(props) {
         let y_max_label = Math.floor(y_label_scale(y_s));
         let y_label_increment = Math.max(0.5, Math.ceil((y_max_label - y_min_label) / num_ticks));
         let num_y_ticks = (y_max_label - y_min_label) / y_label_increment;
+
         // Remove bottom y label if we have more than 2 ticks
         if (num_y_ticks >= 2) {
             y_min_label += y_label_increment;
             num_y_ticks -= 1;
         }
+
+        // Create Y axis labels
         for (let i = 0; i <= num_y_ticks; i++) {
-            let y1 = y_scale(y_min_label + i * y_label_increment);
+            const y_label_value = y_min_label + i * y_label_increment
+            let y1 = y_scale(y_label_value);
             let x1 = x_s;
             labels.push(
                 <text key={`y-label${i}`} x={x1 - label_margin} y={y1} textAnchor="end" dominantBaseline="middle" className='line-plot-label'> 
-                    {Math.round(y_label_scale(y1) * 10) / 10} 
+                    {round(y_label_value)} 
                 </text>,
                 <line key={`y-line${i}`} x1={x1} y1={y1} x2={x_e} y2={y1} stroke='black' strokeOpacity="0.1" strokeDasharray="3"></line>
             )
         }
 
-        // X labels
+        // Create X axis labels
         for (let i = 1; i < num_ticks; i++) {
             let x1 = x_s + (x_e - x_s) * (i / num_ticks);
             let y1 = y_e
@@ -111,18 +135,22 @@ function LinePlot(props) {
         )
     }
 
+    //////////////////////////////////////////////
+    // Create line from data
+    ////////////////////////////////////////////// 
     useEffect(() => {
         let svg = select(d3_ref.current);
         if (is_loading || unavailable) {
-            svg.select("#line")
-                .attr("d", "");
+            svg.select("#line").attr("d", "");
+            svg.on('mousemove', () => {});
+            svg.on('mouseleave', () => {});
             return;
         }
 
-        set_cursor_val(Math.round(props.y[props.y.length - 1] * 10) / 10);
+        set_cursor_val(round(props.y[props.y.length - 1], 1));
         let data = [];
         for (let i = 0; i < props.time.length; i++) {
-            data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])])
+            data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])]);
         }
 
         svg.on('mousemove', function(event) {
@@ -139,7 +167,7 @@ function LinePlot(props) {
                         break;
                     }
                 }
-                set_cursor_val(Math.round(y_value * 10) / 10);
+                set_cursor_val(round(y_value, 1));
 
                 svg.select("#cursor")
                     .style('display', 'block');
@@ -155,7 +183,7 @@ function LinePlot(props) {
             } else {
                 svg.select("#cursor")
                     .style('display', 'none');
-                set_cursor_val(Math.round(props.y[props.y.length - 1] * 10) / 10)
+                set_cursor_val(round(props.y[props.y.length - 1]))
             }
         });
             
@@ -172,8 +200,17 @@ function LinePlot(props) {
             .duration(1000)
             .ease(easeCubicInOut)
             .attr("x", x_e + 5)
-    }, [props.time, props.y]);
+    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, y_e, y_s]);
 
+    let chart_subtitle;
+    if (unavailable) {
+        chart_subtitle = "Unavailable";
+    } else if (isNaN(cursor_value)) {
+        chart_subtitle = "";
+    } else {
+        chart_subtitle = `${cursor_value} ${props.units}`;
+    }
+    
     return (
         <svg 
             className="line-plot"
@@ -187,7 +224,7 @@ function LinePlot(props) {
             {/* Title */}
             <text x={x_s} y={0} dominantBaseline="hanging" className='line-plot-title'>
                 <tspan> {props.title} </tspan>
-                <tspan x={x_s} dy='18px' style={{fontSize: "2.5em"}}> {cursor_value} {props.units} </tspan>
+                <tspan x={x_s} dy='18px' style={{fontSize: "2.5em"}}> {chart_subtitle} </tspan>
             </text>
 
 

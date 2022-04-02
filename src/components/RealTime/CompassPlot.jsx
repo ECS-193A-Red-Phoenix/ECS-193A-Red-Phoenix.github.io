@@ -30,7 +30,7 @@ function CompassPlot(props) {
     // If Data Available
     //////////////////////////////////////////////////
     const data_available = props.time && props.y && props.time.length > 0 && props.y.length > 0;
-    let t0, current_speed, average_speed, average_direction;
+    let t0, average_speed, average_direction;
     if (data_available) {
         t0 = props.time[0];
         let data = [];
@@ -47,7 +47,7 @@ function CompassPlot(props) {
     //////////////////////////////////////////////////
     let ticks = [];
     for (let i = 0; i < num_ticks; i++) {
-        let is_bold = (i % (num_ticks / num_bold_ticks)) == 0;
+        let is_bold = (i % (num_ticks / num_bold_ticks)) === 0;
         let stroke_width = is_bold ? 3 : 1;
         let tick_length_i = is_bold ? tick_length * 1.5 : tick_length;
 
@@ -71,8 +71,8 @@ function CompassPlot(props) {
             {
                 data_available && 
                 [
-                    <tspan id="compass-number" x={x_mid} dy="1.2em"> {average_speed} </tspan>,
-                    <tspan id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
+                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> {average_speed} </tspan>,
+                    <tspan key="compass-unit" id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
                 ]
             }
             {
@@ -132,7 +132,7 @@ function CompassPlot(props) {
                 }
             });
 
-    }, [props.time, props.y]);
+    }, [props.time, props.y, data_available, x_mid, y_mid, average_direction]);
 
     const loading_text = <text x={x_mid} y={y_mid} textAnchor="middle" dominantBaseline="middle"> Loading </text>
 
