@@ -84,6 +84,10 @@ function CurrentLakePage() {
                         of gravity combined with Earth's rotation creates tidal forces that propel the movement of water.
                         Lastly, the flow of water in and out of Lake Tahoe's rivers create additional hydraulic forces that
                         move water forward.
+
+                        <br/><br/>
+
+                        Select a day and time below to view our model's forecast of Lake Tahoe's surface currents.
                     </div>
 
                 </div>

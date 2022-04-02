@@ -74,7 +74,7 @@ function TemperaturePage() {
 
                     <br/><br/>
 
-                    Select a day and time below to view our model's forecast of Lake Tahoe surface temperature.
+                    Select a day and time below to view our model's forecast of Lake Tahoe's surface temperature.
                 </div>
 
                 {
