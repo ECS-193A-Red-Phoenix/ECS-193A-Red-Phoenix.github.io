@@ -15,13 +15,13 @@ export default function Footer() {
             <p>|</p>
           </li>
           <li>
-            <Link to="/contact">Contact Us</Link>
+            <Link to="/real-time">Real Time</Link>
           </li>
           <li>
             <p>|</p>
           </li>
           <li>
-            <Link to="/about">About Us</Link>
+            <Link to="/contact">About Us</Link>
           </li>
         </ul>
       </nav>

@@ -17,27 +17,27 @@
 }
 
 .center-content {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .model-figure-container {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .model-figure-container > * {
-    margin: 50px 50px;
+  margin: 50px 50px;
 }
 
 .fig-container {
-    height: 600px;
+  height: 600px;
 }
 
 .fig-container > img {
-    display: block;
-    height: 100%;
+  display: block;
+  height: 100%;
 }
 
 .lake-condition-container {
@@ -52,13 +52,11 @@
     flex-direction: column;
 }
 
-
-
 /* Lake Condition Block */
 
 .lake-condition-title {
-    font-size: 35px;
-    font-weight: 400;
+  font-size: 35px;
+  font-weight: 400;
 }
 
 .lake-condition-description {
@@ -77,35 +75,43 @@
 /* Lake Forecast Information */
 
 .lake-condition-info {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    color: black;
-    border-radius: 20px;
-    box-shadow: 3px 3px 10px #dedede;
-    transition: box-shadow 0.2s linear;
-    padding: 20px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  color: black;
+  border-radius: 20px;
+  box-shadow: 3px 3px 10px #dedede;
+  transition: box-shadow 0.2s linear;
+  padding: 20px;
 }
 
 .lake-condition-info:hover {
-    cursor: pointer;
-    box-shadow: 3px 3px 40px #dedede;
+  cursor: pointer;
+  box-shadow: 3px 3px 40px #dedede;
 }
 
 .lake-condition-info-active {
-    box-shadow: 3px 3px 40px #dedede;
+  box-shadow: 3px 3px 40px #dedede;
 }
 
 .lake-condition-date {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .lake-condition-value {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .lake-condition-controls {
-    display: flex;
-    flex-direction: row;
-    margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+}
+
+.image-container {
+  display: flex;
+}
+
+.content-wrapper {
+  position: relative;
 }
