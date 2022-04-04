@@ -1,6 +1,7 @@
 import "./Calendar.css";
 import { useState, useRef } from "react";
-import { militaryHourTo12Hour } from "../util";
+import { clamp, militaryHourTo12Hour } from "../util";
+import UpDownArrow from "./UpDownArrow";
 
 ////////////////////////////////////
 // Static Constants
@@ -89,16 +90,38 @@ function Calendar(props) {
         set_active_event_idx(selected_event_idx);
     }
 
+    // Event callback function for when up down arrow is pressed
+    function change_hour(amount) {
+        // Arguments:
+        //  amount: an integer; how many hour events to go forward or backward
+        const day_select = day_select_ref.current;
+        const selected_date = day_select.options[day_select.selectedIndex].text;
+        const hour_select = hour_select_ref.current;
+        const selected_hour = hour_select.selectedIndex;
+
+        const new_hour_idx = clamp(selected_hour + amount, 0, hour_select.options.length - 1);
+        hour_select.selectedIndex = new_hour_idx;
+
+        const new_event_idx = dates[selected_date][selected_hour].idx;
+        props.on_event_selected(new_event_idx);
+        set_active_event_idx(new_event_idx);
+    }
+
     return (
-        <div className="calendar">
-            <span> Showing forecasts for </span>
-            <select ref={day_select_ref} className="calendar-day-select" onChange={on_day_changed}>
-                { day_options }
-            </select>
-            <span> at </span>
-            <select ref={hour_select_ref} className="calendar-hour-select" onChange={on_hour_changed}>
-                { hour_options }
-            </select>
+        <div className="calendar-container">
+            <div className="calendar-description">
+                { props.description }
+            </div>
+            <div className="calendar">
+                <select ref={day_select_ref} className="calendar-day-select" onChange={on_day_changed}>
+                    { day_options }
+                </select>
+                <span> at </span>
+                <select ref={hour_select_ref} className="calendar-hour-select" onChange={on_hour_changed}>
+                    { hour_options }
+                </select>
+                <UpDownArrow on_up={() => change_hour(-1)} on_down={() => change_hour(1)}/>
+            </div>
         </div>
     );
 }

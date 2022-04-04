@@ -34,6 +34,8 @@ for (let i = 0; i < legend_speeds.length; i++)
 const flow_files = ['2022-02-14 18.npy', '2022-02-14 20.npy', '2022-02-14 22.npy', '2022-02-15 00.npy', '2022-02-15 02.npy', '2022-02-15 04.npy', '2022-02-15 06.npy', '2022-02-15 08.npy', '2022-02-15 10.npy', '2022-02-15 12.npy', '2022-02-15 14.npy', '2022-02-15 16.npy', '2022-02-15 18.npy', '2022-02-15 20.npy', '2022-02-15 22.npy', '2022-02-16 00.npy', '2022-02-16 02.npy', '2022-02-16 04.npy', '2022-02-16 06.npy', '2022-02-16 08.npy', '2022-02-16 10.npy', '2022-02-16 12.npy', '2022-02-16 14.npy', '2022-02-16 16.npy'];
 const FLOW_DIR = "static/flow/";
 
+const calendar_description = "Select a forecast of Lake Tahoe's surface water currents";
+
 function CurrentLakePage() {
     const [activeIdx, setActiveIdx] = useState(0);
 
@@ -84,10 +86,6 @@ function CurrentLakePage() {
                         of gravity combined with Earth's rotation creates tidal forces that propel the movement of water.
                         Lastly, the flow of water in and out of Lake Tahoe's rivers create additional hydraulic forces that
                         move water forward.
-
-                        <br/><br/>
-
-                        Select a day and time below to view our model's forecast of Lake Tahoe's surface currents.
                     </div>
 
                 </div>
@@ -95,7 +93,8 @@ function CurrentLakePage() {
                     !is_loading &&
                     <Calendar events={flow_events} 
                         active_event_idx={activeIdx}
-                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                        on_event_selected={(idx) => setActiveIdx(idx)}
+                        description={calendar_description}/>
                 }
             </div>
 

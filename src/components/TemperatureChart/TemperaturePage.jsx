@@ -25,6 +25,8 @@ let temperature_color_scale = (temperature) => temperature_color(temperature_sca
 const temperature_files = ['2022-02-20 08.npy', '2022-02-20 10.npy', '2022-02-20 12.npy', '2022-02-20 14.npy', '2022-02-20 16.npy', '2022-02-20 18.npy', '2022-02-20 20.npy', '2022-02-20 22.npy', '2022-02-21 00.npy', '2022-02-21 02.npy', '2022-02-21 04.npy', '2022-02-21 06.npy', '2022-02-21 08.npy', '2022-02-21 10.npy', '2022-02-21 12.npy', '2022-02-21 14.npy', '2022-02-21 16.npy', '2022-02-21 18.npy', '2022-02-21 20.npy', '2022-02-21 22.npy', '2022-02-22 00.npy', '2022-02-22 02.npy', '2022-02-22 04.npy', '2022-02-22 06.npy', '2022-02-22 08.npy', '2022-02-22 10.npy', '2022-02-22 12.npy', '2022-02-22 14.npy', '2022-02-22 16.npy', '2022-02-22 18.npy', '2022-02-22 20.npy', '2022-02-22 22.npy', '2022-02-23 00.npy'];
 const TEMPERATURE_DIR = "static/temperature/";
 
+const calendar_description = "Select a forecast of Lake Tahoe's surface temperature";
+
 function TemperaturePage() {
     const [temperature_data, setTempData] = useState([]);
     const is_loading = temperature_data.length === 0;
@@ -70,17 +72,14 @@ function TemperaturePage() {
                     from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing 
                     on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers 
                     should be prepared for dangerously cold conditions.
-
-                    <br/><br/>
-
-                    Select a day and time below to view our model's forecast of Lake Tahoe's surface temperature.
                 </div>
 
                 {
                     !is_loading &&
-                    <Calendar events={temperature_events} 
-                        active_event_idx={activeIdx}
-                        on_event_selected={(idx) => setActiveIdx(idx)}/>
+                        <Calendar events={temperature_events} 
+                            active_event_idx={activeIdx}
+                            on_event_selected={(idx) => setActiveIdx(idx)}
+                            description={calendar_description}/>
                 }
             </div>
 

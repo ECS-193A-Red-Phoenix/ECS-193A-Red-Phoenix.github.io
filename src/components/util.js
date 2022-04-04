@@ -299,3 +299,14 @@ export function apply(array, callback_fn) {
     }
     return array;
 }
+
+export function clamp(x, min, max) {
+    // Clips x between [min, max] 
+    // Arguments:
+    //  x: the value to clip; a Number
+    //  min: the minimum bound of x; a Number
+    //  max: the maximum bound of x; a Number
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+}
