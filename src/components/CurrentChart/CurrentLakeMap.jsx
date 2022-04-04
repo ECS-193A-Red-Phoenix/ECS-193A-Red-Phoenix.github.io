@@ -8,7 +8,7 @@ import "./CurrentChart.css";
 //////////////////////////////////
 // Static Lake Map constants
 //////////////////////////////////
-const inner_padding = 0.01;
+const inner_padding = 0;
 const num_particles = 3500;
 const MS_TO_FTM = 196.85;
 
@@ -19,47 +19,37 @@ function CurrentLakeMap(props) {
     const canvas_ref = useRef();
     const v_key = `current-map-${props.activeIdx}`;
 
-    const [n_rows, n_cols] = [props.u.length, props.u[0].length];
+    const {u, v, color_palette} = props;
+    const [n_rows, n_cols] = [u.length, u[0].length];
     const aspect_ratio = n_cols / n_rows;
-    const chart_width = props.height * aspect_ratio;
-    const chart_height = props.height;
-    let chart_x_s = (props.width - chart_width) / 2;
-    if (props.width === undefined)
-        chart_x_s = 0;
-
-    const [x_s, x_e] = [chart_x_s + chart_width * inner_padding, chart_x_s + chart_width * (1 - inner_padding)];
-    const [y_s, y_e] = [chart_height * inner_padding, chart_height * (1 - inner_padding)];
-    const square_size = (x_e - x_s) / n_cols;
-
-    ////////////////////////////////
-    // Particle Generator
-    ////////////////////////////////
-    const vector_field = useMemo(() => new VectorField(props.u, props.v, square_size), [props.u, props.v]);
-    const particles = useMemo(() => {
-        let res = [];
-        for (let k = 0; k < num_particles; k++)
-            res.push( Particle.newRandom(vector_field) );
-        return res;
-    }, [vector_field]);
 
     const speeds = [];
     for (let j = 0; j < n_rows; j++) {
         const row = [];
         for (let i = 0; i < n_cols; i++) {
-            if (typeof props.u[j][i] !== 'number' || typeof props.v[j][i] !== 'number') {
+            if (typeof u[j][i] !== 'number' || typeof v[j][i] !== 'number') {
                 row.push("nan");
                 continue;
             }
-            const speed = (props.u[j][i]**2 + props.v[j][i]**2)**0.5;
+            const speed = (u[j][i]**2 + v[j][i]**2)**0.5;
             row.push(speed);
         }
         speeds.push(row);
     }
 
-    ////////////////////////////////////
-    // Cursor Hover Event
-    ////////////////////////////////////
     useEffect(() => {
+        const canvas = canvas_ref.current;
+        const cx = canvas.getContext('2d');
+        // Resize canvas
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.width / aspect_ratio;
+
+        const chart_width = canvas.width;
+        const chart_height = canvas.height;
+
+        ////////////////////////////////////
+        // Cursor Hover Event
+        ////////////////////////////////////
         select(canvas_ref.current).on("mousemove", function (event) {
             const [x, y] = pointer(event);
             const [i, j] = [Math.floor(x / chart_width * n_cols), Math.floor(y / chart_height * n_rows)];
@@ -81,29 +71,32 @@ function CurrentLakeMap(props) {
             select(".current-chart-cursor")
                 .style("display", "none");
         });
-    }, [chart_height, chart_width, n_cols, n_rows, speeds]);
-    
-    ////////////////////////////////////
-    // Animation Loop
-    ////////////////////////////////////
-    useEffect(() => {
-        const canvas = canvas_ref.current;
-        const cx = canvas.getContext('2d');
-        const lake_width = x_e - x_s;
-        const lake_height = y_e - y_s;
 
+        ////////////////////////////////
+        // Particle Generator
+        ////////////////////////////////
+        const square_size = (chart_width) / n_cols;
+
+        const vector_field = new VectorField(u, v, square_size);
+        const particles = [];
+        for (let k = 0; k < num_particles; k++)
+            particles.push( Particle.newRandom(vector_field) );
+
+        ////////////////////////////////////
+        // Animation Loop
+        ////////////////////////////////////
         const interval = setInterval(() => {
-            draw_lake_heatmap(cx, lake_width, lake_height, speeds, props.color_palette, x_s, y_s, v_key);
+            draw_lake_heatmap(canvas, speeds, color_palette, v_key);
 
-            particles.forEach((p) => p.draw(cx, x_s, y_s));
+            particles.forEach((p) => p.draw(cx));
             particles.forEach((p) => p.move());
         }, 50);
         return () => clearInterval(interval);
-      }, [particles, x_s, y_s]);
+      }, [u, v, color_palette, speeds]);
 
     return (
         <div className="current-chart-canvas-container">
-            <canvas ref={canvas_ref} width={chart_width} height={chart_height}></canvas>
+            <canvas ref={canvas_ref}></canvas>
             <div className="current-chart-cursor"> Cursor </div>
         </div>
     );

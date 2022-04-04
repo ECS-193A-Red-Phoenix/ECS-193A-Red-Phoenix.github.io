@@ -4,6 +4,8 @@ TODO List
 
 - Fill up contact and about us page
 
+- Change temperature scale to start at 40 F
+
 - Make website mobile friendly:
     - Hamburger button for tabs
     - Charts dynamically resize as screen size get smaller

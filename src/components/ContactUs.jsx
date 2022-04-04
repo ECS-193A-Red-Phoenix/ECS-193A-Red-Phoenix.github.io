@@ -75,7 +75,7 @@ export default function ContactUs() {
             environmental stewardship.
           </p>
           <h2 className="missionTitle">Contact Us</h2>
-          <ul>
+          <ul className="address-list">
             <a href="https://tahoe.ucdavis.edu/directions-tces/">
               Tahoe Center for Environmental Sciences
             </a>

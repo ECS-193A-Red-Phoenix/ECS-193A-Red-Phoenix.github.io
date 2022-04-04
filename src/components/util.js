@@ -205,19 +205,19 @@ export function draw_lake_tahoe(cx, x, y, width, height) {
 }
 
 const heatmap_cache = {};
-export function draw_lake_heatmap(cx, width, height, heatmap_data, color_palette, offsetX, offsetY, key) {
+export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
     // draws a heatmap of lake tahoe using the given context
     // Arguments:
-    //  cx: HTML Canvas 2d context
-    //  width: the width of the heatmap
-    //  height: the height of the heatmap
+    //  canvas: a canvas HTML element
     //  heatmap_data: a 2D matrix with scalar Number values, NaN's are okay
-    //  offsetX (optional): starting x coordinate of where to draw the heatmap, default is 0
-    //  offsetY (optional): starting y coordinate of where to draw the heatmap, default is 0
+    //  color_palette: a function that maps heatmap scalar values to an integer rgb color array
     //  key (optional): a string hash for the heatmap data, used in caching image creation for performance boost
 
-    if (offsetX === undefined) offsetX = 0;
-    if (offsetY === undefined) offsetY = 0;
+    const cx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const offsetX = 0;
+    const offsetY = 0;
 
     const [n_rows, n_cols] = [heatmap_data.length, heatmap_data[0].length];
     const T = heatmap_data;

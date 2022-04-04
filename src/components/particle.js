@@ -96,6 +96,13 @@ class Particle {
     }
     
     draw(context, x_s, y_s) {
+        // Draws the particle using a canvas context
+        // Arguments:
+        //   context: the canvas context to draw on
+        //   x_s (optional, default is 0): offset x coordinate
+        //   y_s (optional, default is 0): offset y coordinate
+        x_s = if_undefined(x_s, 0);
+        y_s = if_undefined(y_s, 0);
         context.strokeStyle = "rgba(255, 255, 255, 0.4)";
 
         let x = (i) => x_s + i;
@@ -127,6 +134,6 @@ class Particle {
 }
 Particle.prototype.max_age = 50;
 Particle.prototype.max_history = 8;
-Particle.prototype.speed_scale = 3;
+Particle.prototype.speed_scale = 4;
 
 export { Particle, VectorField };

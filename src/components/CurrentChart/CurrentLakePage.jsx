@@ -102,18 +102,15 @@ function CurrentLakePage() {
             {
                 is_loading && <div> Loading </div>
             }
-
             {
                 !is_loading &&
-                <div className="lake-visual-container">
+                <div className="lake-visual-container" id="current-visual-container">
                     <CurrentLakeMap 
-                        height={lake_height} 
                         u={u} 
-                        v={v} 
+                        v={v}
                         activeIdx={activeIdx}
                         color_palette={color_palette}
                         />
-
                     <div className="current-legend-container">
                         { legend_boxes }
                     </div>

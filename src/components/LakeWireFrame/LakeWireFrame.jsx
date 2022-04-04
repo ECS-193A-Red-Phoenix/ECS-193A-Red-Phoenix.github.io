@@ -60,7 +60,6 @@ function LakeWireFrame() {
         light.position.set(0, 10000, 0)
         scene.add(light);
 
-        const boxSide = dx;
         // Lines for each row
         for (let j = 0; j < rows; j++) {
             const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
@@ -117,8 +116,8 @@ function LakeWireFrame() {
             // Update camera x, z
             const camera_radius = 20000;
             const camera_f = 0.0001;  // rev / sec
-            camera.position.x = Math.cos(time * camera_f) * camera_radius
-            camera.position.z = Math.sin(time * camera_f) * camera_radius
+            camera.position.x = Math.cos(time * camera_f) * camera_radius;
+            camera.position.z = Math.sin(time * camera_f) * camera_radius;
             camera.lookAt(0, 0, 0);
             
             renderer.render( scene, camera );
@@ -127,7 +126,7 @@ function LakeWireFrame() {
         };
         
         request_ref.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(request_ref.current)
+        return () => cancelAnimationFrame(request_ref.current);
     }, []);
     
     return (

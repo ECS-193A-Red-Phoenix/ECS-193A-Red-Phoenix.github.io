@@ -41,7 +41,7 @@
   width: 50%;
 }
 
-ul {
+.address-list {
   margin: 15px;
   list-style: none;
 }
@@ -76,17 +76,6 @@ h2 {
   line-height: 1.2;
   color: #13639e;
   font-size: 2.6055rem;
-}
-
-.image-container {
-  width: 100%;
-  min-height: 300px;
-  position: relative;
-}
-
-.image-container > img {
-  display: block;
-  width: 100%;
 }
 
 @media only screen and (max-width: 630px) {

@@ -2,24 +2,24 @@ import { useEffect, useRef } from "react"
 
 
 function TemperatureLegend(props) {
-    const canvas_ref = useRef()
-    
-    const canvas_width = 20;
-    const canvas_height = props.height;
+    const canvas_ref = useRef();
+    const { color_palette, min_T, max_T } = props;
 
     useEffect(() => {
         const canvas = canvas_ref.current;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
         const cx = canvas.getContext('2d');
-        const get_color = props.color_palette;
 
         // Create color bar
-        let image_data = cx.createImageData(canvas_width, canvas_height);
-        for (let j = 0; j < canvas_height; j++) {
-            for (let i = 0; i < canvas_width; i++) {
+        let image_data = cx.createImageData(canvas.width, canvas.height);
+        for (let j = 0; j < canvas.height; j++) {
+            for (let i = 0; i < canvas.width; i++) {
                 // Nearest Neighbor
-                let T = (canvas_height - j) / canvas_height;
+                let T = (canvas.height - j) / canvas.height;
 
-                let [r, g, b] = get_color(T);
+                let [r, g, b] = color_palette(T);
                 let pixel_index = (j * (image_data.width * 4)) + (i * 4);
 
                 image_data.data[pixel_index + 0] = r;
@@ -29,16 +29,18 @@ function TemperatureLegend(props) {
             }
         }
         cx.putImageData(image_data, 0, 0);
-    }, [props.color_palette, canvas_height]);
+    }, [color_palette]);
 
     const num_units = 8;
     const units = [];
     for (let i = 0; i < num_units; i++) {
         let percent = i / (num_units - 1);
-        let temperature = props.min_T + (props.max_T - props.min_T) * percent;
+        let temperature = min_T + (max_T - min_T) * percent;
         temperature = Math.floor(temperature * 10) / 10;
         units.push(
-            <div key={`legend-unit${i}`} className="temperature-legend-unit" style={{"top": `${(1 - percent) * 100}%`}}>
+            <div key={`legend-unit${i}`}
+                className="temperature-legend-unit" 
+                style={{"top": `${(1 - percent) * 100}%`}}>
                 <div>{`${temperature} °F`}</div>
             </div>
         );
@@ -46,7 +48,7 @@ function TemperatureLegend(props) {
 
     return (
         <div className="temperature-legend-container">
-            <canvas ref={canvas_ref} width={canvas_width} height={canvas_height}></canvas>
+            <canvas ref={canvas_ref}></canvas>
             <div className="temperature-legend-units">
                 { units }
             </div>

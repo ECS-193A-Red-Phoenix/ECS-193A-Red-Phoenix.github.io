@@ -89,13 +89,14 @@
 
 .image-container {
   width: 100%;
-  min-height: 300px;
+  min-height: 450px;
   position: relative;
 }
 
 .image-container > img {
   display: block;
   width: 100%;
+  object-fit: cover;
 }
 
 .page-description-container {
@@ -112,10 +113,11 @@
   align-items: center;
   background-color: rgba(2, 40, 81, 0.5);
   padding: 30px;
+  max-height: 100%;
 }
 
 .page-description-title {
-  font-size: 50px;
+  font-size: 35px;
 }
 
 .page-description {

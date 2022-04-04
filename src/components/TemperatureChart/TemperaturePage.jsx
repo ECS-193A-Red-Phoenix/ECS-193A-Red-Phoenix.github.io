@@ -17,7 +17,6 @@ import { loadNumpyFile } from "../numpy_parser";
 
 const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 const temperature_color = ice_to_fire; 
-const lake_height = 650;
 const min_T = 35;
 const max_T = 65;
 let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
@@ -88,9 +87,9 @@ function TemperaturePage() {
             {
                 (is_loading) ? 
                     <div> Loading </div> :
-                    <div className="lake-visual-container">
-                        <TemperatureMap height={lake_height} T={T} color_palette={temperature_color_scale} activeIdx={activeIdx}/>
-                        <TemperatureLegend height={lake_height} min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
+                    <div className="lake-visual-container" id="temperature-visual-container">
+                        <TemperatureMap T={T} color_palette={temperature_color_scale} activeIdx={activeIdx}/>
+                        <TemperatureLegend min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
                     </div>
             }
 
