@@ -18,7 +18,6 @@ const BUOY_DATA = [
 ];
 
 const NEAR_SHORE_STATION_INFO = [
-    { 'id':  1, 'station_name': 'Cascade'         , "coords": [    38.947,   -120.089], "data": NEAR_SHORE_DATA },
     { 'id':  2, 'station_name': 'Dollar Point'    , "coords": [    39.184,   -120.093], "data": NEAR_SHORE_DATA },
     { 'id':  3, 'station_name': 'Glenbrook'       , "coords": [    39.088,   -119.942], "data": NEAR_SHORE_DATA },
     { 'id':  4, 'station_name': 'Homewood'        , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
@@ -58,6 +57,17 @@ function today(days) {
     return `${year}${month}${day}`;
 }
 
+function parseMyDate(date_string) {
+    // Parses a date string in the format "YYYY-MM-DD HH:MM:SS"
+    date_string = date_string.trim();
+    date_string = date_string.replace(" ", "T");
+    date_string += "Z";
+
+    // For new Date(string) specification see below
+    // https://262.ecma-international.org/5.1/#sec-15.9.1.15
+    return new Date(date_string);
+}
+
 /////////////////////////////////////////////////
 // Station Objects
 // - An object is a station if it implements the following
@@ -84,7 +94,7 @@ class NearShoreStation extends Station {
         const res = [];
         for (let datum of data) {
             res.push({
-                "TimeStamp":         new Date(datum['TmStamp'] + " UTC"),
+                "TimeStamp":         parseMyDate(datum['TmStamp']),
                 "Water Temperature": Number.parseFloat(datum['LS_Temp_Avg']),
                 "Wave Height":       Number.parseFloat(datum['WaveHeight'])
             });
@@ -101,8 +111,9 @@ class NASABuoyStation extends Station {
         const data = await this.get_data();
         const res = [];
         for (let datum of data) {
+            console.log(datum['TmStamp'], "-----", parseMyDate(datum['TmStamp']));
             res.push({
-                "TimeStamp":         new Date(datum['TmStamp'] + " UTC"),
+                "TimeStamp":         parseMyDate(datum['TmStamp']),
                 "Water Temperature": Number.parseFloat(datum['RBR_0p5_m']),
                 "Wind Direction":    Number.parseFloat(datum['WindDir_1']),
                 "Wind Speed":        Number.parseFloat(datum['WindSpeed_1'])

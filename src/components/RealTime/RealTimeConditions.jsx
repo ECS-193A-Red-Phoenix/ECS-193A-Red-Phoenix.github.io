@@ -17,6 +17,7 @@ function RealTimeConditions(props) {
   if (stationIdx < stationData.length && stationData[stationIdx] !== undefined) {
     time = stationData[stationIdx].map((x) => x['TimeStamp']);
     y_data = stationData[stationIdx].map((x) => x[current_data_displayed.name]);
+    // console.log(ALL_STATIONS[stationIdx].info.station_name, time, y_data);
   }
 
   useEffect(() => {
