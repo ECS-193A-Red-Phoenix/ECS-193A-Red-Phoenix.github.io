@@ -16,7 +16,6 @@ function TemperatureMap(props) {
     // Draw Heatmap
     ////////////////////////////////////
     useEffect(() => {
-        console.log(n_rows, n_cols);
         const canvas = canvas_ref.current;
         const color_palette = props.color_palette;
 

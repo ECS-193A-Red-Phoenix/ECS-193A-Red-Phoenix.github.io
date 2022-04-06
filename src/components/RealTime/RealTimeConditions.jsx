@@ -7,9 +7,9 @@ import LinePlot from "./LinePlot";
 import CompassPlot from "./CompassPlot";
 
 function RealTimeConditions(props) {
-  let [stationIdx, setStationIdx] = useState(7);
+  let [stationIdx, setStationIdx] = useState(0);
   let [stationData, setStationData] = useState([]);
-  let [dataIdx, setDataIdx] = useState(1);
+  let [dataIdx, setDataIdx] = useState(0);
 
   let station_data_names = ALL_STATIONS[stationIdx].info.data;
   let current_data_displayed = station_data_names[dataIdx];
@@ -17,7 +17,6 @@ function RealTimeConditions(props) {
   if (stationIdx < stationData.length && stationData[stationIdx] !== undefined) {
     time = stationData[stationIdx].map((x) => x['TimeStamp']);
     y_data = stationData[stationIdx].map((x) => x[current_data_displayed.name]);
-    // console.log(ALL_STATIONS[stationIdx].info.station_name, time, y_data);
   }
 
   useEffect(() => {
@@ -97,11 +96,10 @@ function RealTimeConditions(props) {
           <div className="page-description">
             {" "}
             Explore Lake Tahoe conditions in real time, routinely updated in
-            twenty minute intervals.{" "}
+            twenty minute intervals. {" "}
           </div>
           <div className="page-last-updated">
             {" "}
-            Last updated at 6:05 PM February 22, 2022
           </div>
         </div>
       </div>

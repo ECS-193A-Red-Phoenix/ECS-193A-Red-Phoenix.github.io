@@ -4,6 +4,7 @@ import { mod } from "../util";
 // Global constants here
 const NEAR_SHORE_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/ns-station-range";
 const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/nasa-tb";
+const DAYS_OF_DATA = 3;  // days of data to retrieve from these api's
 
 // Near shore data to display
 const NEAR_SHORE_DATA = [
@@ -18,24 +19,25 @@ const BUOY_DATA = [
 ];
 
 const NEAR_SHORE_STATION_INFO = [
-    { 'id':  2, 'station_name': 'Dollar Point'    , "coords": [    39.184,   -120.093], "data": NEAR_SHORE_DATA },
-    { 'id':  3, 'station_name': 'Glenbrook'       , "coords": [    39.088,   -119.942], "data": NEAR_SHORE_DATA },
-    { 'id':  4, 'station_name': 'Homewood'        , "coords": [    39.090,   -120.161], "data": NEAR_SHORE_DATA },
-    { 'id':  6, 'station_name': 'Rubicon'         , "coords": [    39.007,   -120.109], "data": NEAR_SHORE_DATA },
-    { 'id':  7, 'station_name': 'Sand Harbor'     , "coords": [    39.201,   -119.931], "data": NEAR_SHORE_DATA },
-    { 'id':  9, 'station_name': 'Tahoe City'      , "coords": [    39.152,   -120.147], "data": NEAR_SHORE_DATA },
-    { 'id': 10, 'station_name': 'Camp Richardson' , "coords": [    38.941,   -120.040], "data": NEAR_SHORE_DATA }
+    { 'id':  2, 'station_name': 'Dollar Point'    , "coords": [ 39.184, -120.093 ], "data": NEAR_SHORE_DATA },
+    { 'id':  3, 'station_name': 'Glenbrook'       , "coords": [ 39.088, -119.942 ], "data": NEAR_SHORE_DATA },
+    { 'id':  4, 'station_name': 'Homewood'        , "coords": [ 39.090, -120.161 ], "data": NEAR_SHORE_DATA },
+    { 'id':  6, 'station_name': 'Rubicon'         , "coords": [ 39.007, -120.109 ], "data": NEAR_SHORE_DATA },
+    { 'id':  7, 'station_name': 'Sand Harbor'     , "coords": [ 39.201, -119.931 ], "data": NEAR_SHORE_DATA },
+    { 'id':  9, 'station_name': 'Tahoe City'      , "coords": [ 39.152, -120.147 ], "data": NEAR_SHORE_DATA },
+    { 'id': 10, 'station_name': 'Camp Richardson' , "coords": [ 38.941, -120.040 ], "data": NEAR_SHORE_DATA },
+    { 'id': 11, 'station_name': 'Timber Cove'     , "coords": [ 38.947, -119.966 ], "data": NEAR_SHORE_DATA },
 ];
 
 const NASA_BUOY_INFO = [
-    { 'id': 1, 'station_name': 'tb1', "coords": [   39.153, -120.00033], "data": BUOY_DATA },
-    { 'id': 2, 'station_name': 'tb2', "coords": [39.109366, -120.01075], "data": BUOY_DATA },
-    { 'id': 3, 'station_name': 'tb3', "coords": [  39.1102, -120.07535], "data": BUOY_DATA },
-    { 'id': 4, 'station_name': 'tb4', "coords": [   39.155, -120.07216], "data": BUOY_DATA }
+    { 'id': 1, 'station_name': 'tb1', "coords": [    39.153, -120.00033], "data": BUOY_DATA },
+    { 'id': 2, 'station_name': 'tb2', "coords": [ 39.109366, -120.01075], "data": BUOY_DATA },
+    { 'id': 3, 'station_name': 'tb3', "coords": [   39.1102, -120.07535], "data": BUOY_DATA },
+    { 'id': 4, 'station_name': 'tb4', "coords": [    39.155, -120.07216], "data": BUOY_DATA }
 ];
 
 // Utility function that makes a CORS GET request to a url
-async function get(url) {
+async function get_json(url) {
     let request = await fetch(url, {
         method: "GET",
         mode: "cors",
@@ -82,9 +84,9 @@ class Station {
 
     async get_data() {
         const url_obj = new URL(this.url);
-        const params = { "id": this.info.id, "rptdate": today(3), "rptend": today()};
+        const params = { "id": this.info.id, "rptdate": today(DAYS_OF_DATA), "rptend": today()};
         url_obj.search = new URLSearchParams(params).toString();
-        return get(url_obj);
+        return get_json(url_obj);
     }
 }
 
@@ -111,7 +113,6 @@ class NASABuoyStation extends Station {
         const data = await this.get_data();
         const res = [];
         for (let datum of data) {
-            console.log(datum['TmStamp'], "-----", parseMyDate(datum['TmStamp']));
             res.push({
                 "TimeStamp":         parseMyDate(datum['TmStamp']),
                 "Water Temperature": Number.parseFloat(datum['RBR_0p5_m']),

@@ -140,8 +140,6 @@ function CompassPlot(props) {
         <svg 
             className="compass-plot"
             viewBox={`0 0 ${props.radius} ${props.radius}`}
-            width={props.radius}
-            height={props.radius}
             ref={d3_ref}
             shapeRendering="geometricPrecision"
             >

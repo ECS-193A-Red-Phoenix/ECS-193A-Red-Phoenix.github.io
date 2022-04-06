@@ -6,11 +6,12 @@ import "./RealTimeConditions.css"
 //////////////////////////////////////////////
 // Static Constants
 ////////////////////////////////////////////// 
-const inner_padding = 0.1;  // chart padding, a percentage in [0, 1.0]
-const num_ticks = 8;        // ticks on the x-axis, 
-const tick_length = 0.01;   // length of ticks on each axis, a percentage in [0, 1.0]
-const y_padding = 0.1;      // extra y padding for title and x-ticks, a percentage in [0, 1.0]
-const label_margin = 5;     // distance between tick labels and axises, in pixels
+const padding_horizontal = 0.03;  // chart padding in horizontal direction, a percentage of width in [0, 1.0]
+const padding_vertical = 0.05; // chart padding in vertical direction, a percentage of height in [0, 1.0]
+const num_ticks = 8;           // ticks on the x-axis, 
+const tick_length = 0.01;      // length of ticks on each axis, a percentage in [0, 1.0]
+const y_padding = 0.1;         // extra y padding for title and x-ticks, a percentage in [0, 1.0]
+const label_margin = 5;        // distance between tick labels and axises, in pixels
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function format_date(date) {
@@ -33,8 +34,8 @@ function LinePlot(props) {
     let d3_ref = useRef();
     let [cursor_value, set_cursor_val] = useState(undefined);
 
-    const [x_s, x_e] = [props.width * inner_padding, props.width * (1 - inner_padding)];
-    const [y_s, y_e] = [props.height * inner_padding, props.height * (1 - inner_padding)];
+    const [x_s, x_e] = [props.width * padding_horizontal, props.width * (1 - padding_horizontal)];
+    const [y_s, y_e] = [props.height * padding_vertical, props.height * (1 - padding_vertical)];
     const y_padding_px = y_padding * (y_e - y_s);
     
     const is_loading = props.time === undefined || props.y === undefined;
@@ -135,10 +136,10 @@ function LinePlot(props) {
         )
     }
 
-    //////////////////////////////////////////////
-    // Create line from data
-    ////////////////////////////////////////////// 
     useEffect(() => {
+        //////////////////////////////////////////////
+        // Create line from data
+        ////////////////////////////////////////////// 
         let svg = select(d3_ref.current);
         if (is_loading || unavailable) {
             svg.select("#line").attr("d", "");
@@ -153,6 +154,18 @@ function LinePlot(props) {
             data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])]);
         }
 
+        svg.select("#line")
+            .attr("d", line()(data))
+            
+        svg.select("#cover")
+            .transition()
+            .duration(1000)
+            .ease(easeCubicInOut)
+            .attr("x", x_e + 5)
+
+        //////////////////////////////////////////////
+        // Cursor hover event
+        ////////////////////////////////////////////// 
         svg.on('mousemove', function(event) {
             let [x, y] = pointer(event);
             if (x_s <= x && x <= x_e && y_s <= y && y <= y_e) {
@@ -191,15 +204,6 @@ function LinePlot(props) {
             svg.select("#cursor")
                 .style('display', 'none');
         });
-        
-        svg.select("#line")
-            .attr("d", line()(data))
-            
-        svg.select("#cover")
-            .transition()
-            .duration(1000)
-            .ease(easeCubicInOut)
-            .attr("x", x_e + 5)
     }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, y_e, y_s]);
 
     let chart_subtitle;
@@ -215,28 +219,27 @@ function LinePlot(props) {
         <svg 
             className="line-plot"
             viewBox={`0 0 ${props.width} ${props.height}`}
-            width={props.width}
-            height={props.height}
+            // width={props.width}
+            // height={props.height}
             ref={d3_ref}
             shapeRendering="geometricPrecision"
             >
 
             {/* Title */}
-            <text x={x_s} y={0} dominantBaseline="hanging" className='line-plot-title'>
-                <tspan> {props.title} </tspan>
-                <tspan x={x_s} dy='18px' style={{fontSize: "2.5em"}}> {chart_subtitle} </tspan>
+            <text x={x_s} y="0">
+                <tspan dominantBaseline="hanging" className='line-plot-title'> {props.title} </tspan>
+                <tspan x={x_s} dy='18' dominantBaseline="hanging" className='line-plot-subtitle'> {chart_subtitle} </tspan>
             </text>
-
 
             {/* Chart data */}
             <path id="line" stroke="steelblue" strokeWidth="2.5" fillOpacity="0"></path>
-            <rect id="cover" x={x_s} y={y_s} width={x_e - x_s} height={y_e - y_s} fill="white"></rect>
+            <rect id="cover" x={x_s} y={y_s + y_padding_px} width={x_e - x_s} height={y_e - y_s} fill="white"></rect>
             <g id="points"></g>
 
             <g id='cursor'>
-                <line x1={(x_s + x_e) / 2} y1={y_e} x2={(x_s + x_e) / 2} y2={y_s + 10} stroke="black" strokeOpacity="0.4"></line>
+                <line x1={(x_s + x_e) / 2} y1={y_e} x2={(x_s + x_e) / 2} y2={y_s + 32} stroke="black" strokeOpacity="0.4"></line>
                 <circle cx='50%' cy="50%" r="3" fill="steelblue"></circle>
-                <text x={(x_s + x_e) / 2} y={y_s} textAnchor="middle" dominantBaseline="hanging"></text>
+                <text x={(x_s + x_e) / 2} y={y_s + 18} textAnchor="middle" dominantBaseline="hanging"></text>
             </g>
 
 
