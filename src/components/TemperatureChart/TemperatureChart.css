@@ -7,9 +7,11 @@
     bottom: 0px;
     transform: translate(15px, 0px);
     display: block;
+    /* border: 1px solid red; */
 }
 
 .temperature-legend-container > canvas {
+    display: block;
     height: 100%;
     width: 15px;
 }

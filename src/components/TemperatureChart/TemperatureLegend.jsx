@@ -1,5 +1,10 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react";
+import { round } from "../util";
 
+////////////////////////////////////
+// Static Constants
+////////////////////////////////////
+const num_ticks = 15;
 
 function TemperatureLegend(props) {
     const canvas_ref = useRef();
@@ -31,12 +36,12 @@ function TemperatureLegend(props) {
         cx.putImageData(image_data, 0, 0);
     }, [color_palette]);
 
-    const num_units = 8;
     const units = [];
-    for (let i = 0; i < num_units; i++) {
-        let percent = i / (num_units - 1);
+    for (let i = 0; i < num_ticks; i++) {
+        let percent = i / (num_ticks - 1);
         let temperature = min_T + (max_T - min_T) * percent;
-        temperature = Math.floor(temperature * 10) / 10;
+        console.log('t', temperature, round(temperature));
+        temperature = round(temperature);
         units.push(
             <div key={`legend-unit${i}`}
                 className="temperature-legend-unit" 

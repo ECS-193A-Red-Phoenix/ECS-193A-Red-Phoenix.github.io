@@ -63,9 +63,9 @@ export function colorScale(colors, discrete) {
  
 // Colors taken from https://github.com/Kitware/ParaView/blob/6777e1303f9d1eb341131354616241dbc5851340/Wrapping/Python/paraview/_colorMaps.py#L1599
 export const ice_to_fire = colorScale(
-    [[0, 0, 0], [0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
+    [[0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
     [155, 228, 239], [225, 233, 209], [243, 213, 115], [231, 176, 0], [218, 130, 0], [198, 84, 0],
-    [172, 35, 0], [130, 0, 0], [76, 0, 0], [4, 0, 0]]
+    [172, 35, 0], [130, 0, 0], [76, 0, 0]], true
 );
 
 export const dark_ocean = colorScale(

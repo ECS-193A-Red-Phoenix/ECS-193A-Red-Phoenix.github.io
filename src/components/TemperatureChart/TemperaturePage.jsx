@@ -17,8 +17,8 @@ import { loadNumpyFile } from "../numpy_parser";
 
 const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 const temperature_color = ice_to_fire; 
-const min_T = 35;
-const max_T = 65;
+const min_T = 40;
+const max_T = 70;
 let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
 let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
 
