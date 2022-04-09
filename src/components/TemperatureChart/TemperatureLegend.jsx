@@ -40,7 +40,6 @@ function TemperatureLegend(props) {
     for (let i = 0; i < num_ticks; i++) {
         let percent = i / (num_ticks - 1);
         let temperature = min_T + (max_T - min_T) * percent;
-        console.log('t', temperature, round(temperature));
         temperature = round(temperature);
         units.push(
             <div key={`legend-unit${i}`}

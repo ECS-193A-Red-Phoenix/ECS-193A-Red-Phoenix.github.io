@@ -39,7 +39,6 @@
 }
 
 .up-down-arrow > img:active {
-    width: 16px;
-    background-color: aliceblue;
+    border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 50%;
 }

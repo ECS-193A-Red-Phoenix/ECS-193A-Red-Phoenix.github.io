@@ -54,16 +54,22 @@ function Calendar(props) {
     const day_options = Object.keys(dates).map(
         (date_string, idx) => 
             <option 
+                value={ date_string }
                 key={`day-option-${idx}`} 
                 className="day-option"> 
                     { date_string }
             </option>
     )
-
+    
     const active_event = props.events[active_event_idx];
-    const hour_options = dates[formatDate(active_event.time)].map(
-        (date_event) =>
+    const active_event_date = formatDate(active_event.time); 
+    const hours = dates[active_event_date];
+    const active_hour_idx = hours.indexOf(active_event);
+
+    const hour_options = hours.map(
+        (date_event, idx) =>
             <option 
+                value={ idx }
                 key={`hour-option-${date_event.idx}`}
                 className="hour-option">
                     { formatHourString(date_event.time) }
@@ -95,14 +101,24 @@ function Calendar(props) {
         // Arguments:
         //  amount: an integer; how many hour events to go forward or backward
         const day_select = day_select_ref.current;
-        const selected_date = day_select.options[day_select.selectedIndex].text;
+        let selected_date = day_select.options[day_select.selectedIndex].text;
         const hour_select = hour_select_ref.current;
         const selected_hour = hour_select.selectedIndex;
 
-        const new_hour_idx = clamp(selected_hour + amount, 0, hour_select.options.length - 1);
-        hour_select.selectedIndex = new_hour_idx;
+        // Go the new hour idx < 0 go back a day, if the new hour idx >= # hour options go forward a day.
+        let new_hour_idx = selected_hour + amount;
+        if (new_hour_idx < 0 && day_select.selectedIndex > 0) {
+            day_select.selectedIndex -= 1;
+            selected_date = day_select.options[day_select.selectedIndex].text;
+            new_hour_idx = dates[selected_date].length - 1;
+        } else if (new_hour_idx >= dates[selected_date].length && day_select.selectedIndex < day_select.options.length - 1) {
+            day_select.selectedIndex += 1;
+            selected_date = day_select.options[day_select.selectedIndex].text;
+            new_hour_idx = 0;
+        }
+        new_hour_idx = clamp(new_hour_idx, 0, dates[selected_date].length - 1);
 
-        const new_event_idx = dates[selected_date][selected_hour].idx;
+        const new_event_idx = dates[selected_date][new_hour_idx].idx;
         props.on_event_selected(new_event_idx);
         set_active_event_idx(new_event_idx);
     }
@@ -117,7 +133,7 @@ function Calendar(props) {
                     { day_options }
                 </select>
                 <span> at </span>
-                <select ref={hour_select_ref} className="calendar-hour-select" onChange={on_hour_changed}>
+                <select ref={hour_select_ref} value={ active_hour_idx } className="calendar-hour-select" onChange={on_hour_changed}>
                     { hour_options }
                 </select>
                 <UpDownArrow on_up={() => change_hour(-1)} on_down={() => change_hour(1)}/>
