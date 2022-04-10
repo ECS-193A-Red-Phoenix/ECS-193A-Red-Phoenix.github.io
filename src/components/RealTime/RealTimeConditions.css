@@ -32,7 +32,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0px 10px;
+    margin: 30px 10px;
 }
 
 .compass-plot {
@@ -54,25 +54,29 @@
 }
 
 .line-plot {
-    font-size: 12px;
     width: 800px;
     height: 500px;
-}
-
-.line-plot>#cursor {
-    display: none;
+    overflow: visible;
 }
 
 .line-plot-title {
     font-size: 12px;
+    margin-left: 3%;
 }
 
 .line-plot-subtitle {
-    font-size: 2.5em;
+    font-size: 2em;
+    margin-bottom: 10px;
+    margin-left: 3%;
 }
 
-.line-plot-label {
+.line-plot-label, .line-plot-cursor {
     font-size: 12px;
+}
+
+
+.line-plot>#cursor {
+    display: none;
 }
 
 .station-map-container {
@@ -152,16 +156,19 @@
         margin: auto;
         padding: 10px;
     }
-
-    .line-plot {
-        font-size: 10px;
-        width: -webkit-fill-available;
-    }
 }
 
-@media only screen and (max-width: 535px) {
+@media only screen and (max-width: 850px) {
+    .line-plot-container {
+        width: 100%;
+    }
+
     .compass-plot, .line-plot {
         width: auto;
         height: auto;
+    }
+
+    .line-plot-label, .line-plot-cursor {
+        font-size: 12px;
     }
 }

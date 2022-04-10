@@ -106,7 +106,7 @@ function RealTimeConditions(props) {
 
       <div className="real-time-conditions-container">
         <div className="time-plot-container">
-          {chart}
+          { chart }
           <div className="map-controls-container">{mapControls}</div>
         </div>
 

@@ -4,22 +4,30 @@ import { round } from '../util';
 import "./RealTimeConditions.css"
 
 //////////////////////////////////////////////
-// Static Constants
+// Static Constants (for Desktop)
 ////////////////////////////////////////////// 
-const padding_horizontal = 0.03;  // chart padding in horizontal direction, a percentage of width in [0, 1.0]
-const padding_vertical = 0.05; // chart padding in vertical direction, a percentage of height in [0, 1.0]
-const num_ticks = 8;           // ticks on the x-axis, 
-const tick_length = 0.01;      // length of ticks on each axis, a percentage in [0, 1.0]
-const y_padding = 0.1;         // extra y padding for title and x-ticks, a percentage in [0, 1.0]
-const label_margin = 5;        // distance between tick labels and axises, in pixels
+let padding_horizontal = 0.03;       // chart padding in horizontal direction, a percentage of width in [0, 1.0]
+let padding_vertical = 0.05;         // chart padding in vertical direction, a percentage of height in [0, 1.0]
+let tick_length = 0.01;              // length of ticks on each axis, a percentage in [0, 1.0]
+let y_padding = 0.05;                // extra y padding for the line, a percentage in [0, 1.0]
+let label_margin = 5;                // distance between tick labels and axises, in pixels
+const default_chart_width = 800;     // chart width for desktop web, px
+const default_chart_height = 500;    // chart height for desktop web, px
+const x_label_bounds = [0.05, 0.95]  // the bounds of the chart where an x label can exist
 
+const HOURS = 60 * 60 * 1000;
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-function format_date(date) {
+function format_date(date, show_minutes) {
     let day = DAYS[date.getDay()];
     let hours = String((date.getHours() % 12) + 1).padStart(2, 0);
     let am_pm = (date.getHours() >= 12) ? "PM" : "AM";
     let minutes = String(date.getMinutes()).padStart(2, 0);
-    return `${day} ${hours}:${minutes} ${am_pm}`;
+
+    if (show_minutes) {
+        return `${day} ${hours}:${minutes} ${am_pm}`;
+    } else {
+        return `${day} ${hours} ${am_pm}`;
+    }
 }
 
 function containsNaN(array) {
@@ -31,11 +39,15 @@ function containsNaN(array) {
 }
 
 function LinePlot(props) {
+    const [chart_width, setChartWidth] = useState(default_chart_width);
+    const [chart_height, setChartHeight] = useState(default_chart_height);
+    const [cursor_value, set_cursor_val] = useState(undefined);
     let d3_ref = useRef();
-    let [cursor_value, set_cursor_val] = useState(undefined);
 
-    const [x_s, x_e] = [props.width * padding_horizontal, props.width * (1 - padding_horizontal)];
-    const [y_s, y_e] = [props.height * padding_vertical, props.height * (1 - padding_vertical)];
+    console.log("w:", chart_width, "h:", chart_height);
+
+    const [x_s, x_e] = [chart_width * padding_horizontal, chart_width * (1 - padding_horizontal)];
+    const [y_s, y_e] = [chart_height * padding_vertical, chart_height * (1 - padding_vertical)];
     const y_padding_px = y_padding * (y_e - y_s);
     
     const is_loading = props.time === undefined || props.y === undefined;
@@ -54,18 +66,6 @@ function LinePlot(props) {
     <text x={x_s - 40} y={(y_s + y_e) / 2} textAnchor="end" dominantBaseline="middle" className="line-plot-label">
         { (unavailable) ? "" : props.units }
     </text>
-
-    // X axis, tiny upwards ticks
-    let ticks = [];
-    for (let i = 0; i <= num_ticks; i++) {
-        let y1 = y_e;
-        let y2 = y1 - (y_e - y_s) * tick_length;
-        let x1 = x_s + (x_e - x_s) * (i / num_ticks);
-        let x2 = x1;
-        ticks.push(
-            <line key={`x-tick-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke='black' strokeLinecap='square'></line>
-        );
-    }
 
     //////////////////////////////////////////////
     // Time and Y Data Processing
@@ -95,8 +95,9 @@ function LinePlot(props) {
             .range([y_min, y_max]);
         let y_min_label = Math.ceil(y_label_scale(y_e));
         let y_max_label = Math.floor(y_label_scale(y_s));
-        let y_label_increment = Math.max(0.5, Math.ceil((y_max_label - y_min_label) / num_ticks));
-        let num_y_ticks = (y_max_label - y_min_label) / y_label_increment;
+        let num_y_ticks = 6;
+        let y_label_increment = Math.max(0.5, Math.ceil((y_max_label - y_min_label) / num_y_ticks));
+        num_y_ticks = (y_max_label - y_min_label) / y_label_increment;
 
         // Remove bottom y label if we have more than 2 ticks
         if (num_y_ticks >= 2) {
@@ -118,22 +119,37 @@ function LinePlot(props) {
         }
 
         // Create X axis labels
-        for (let i = 1; i < num_ticks; i++) {
-            let x1 = x_s + (x_e - x_s) * (i / num_ticks);
-            let y1 = y_e
-            let x_val = (t1 - t0) * (i / num_ticks);
-            x_val = new Date(t0.getTime() + x_val);
+        // each x label is ~ 85px, but no more than 6 x ticks
+        const num_x_ticks = Math.min(6, Math.floor(chart_width / 85));
+
+        // Pick between 12 hour or 24 hour increments, depending on how many ticks we have
+        const increment_choices = [12 * HOURS, 24 * HOURS];
+        const increment = (num_x_ticks > 4) ? increment_choices[0] : increment_choices[1];
+
+        // Round starting and end increments to nearest multiple of 12 hours
+        const x_increment_start = increment * Math.ceil((t0.getTime()) / increment) + 6 * HOURS;
+        const x_increment_end = increment * Math.floor((t1.getTime()) / increment) + 6 * HOURS;
+        const x_label_scale = scaleLinear().domain([t0.getTime(), t1.getTime()]).range([x_s, x_e]);
+
+        // X axis, tiny upwards ticks
+        for (let i = x_increment_start; i <= x_increment_end; i += increment) {
+            let y1 = y_e;
+            let y2 = y1 - (y_e - y_s) * tick_length;
+            let x1 = x_label_scale(i);
+            let x_label_date = new Date(i);
+
+            // if x is not in the bounds of 0.05, 0.95 of the chart, lets skip this tick
+            let x_percent = (x1 - x_s) / (x_e - x_s);
+            if (x_percent < x_label_bounds[0] || x_percent > x_label_bounds[1])
+                continue;
+
             labels.push(
+                <line key={`x-tick-${i}`} x1={x1} y1={y1} x2={x1} y2={y2} stroke='black' strokeLinecap='square'></line>,
                 <text key={`x-label${i}`} x={x1} y={y1 + label_margin} textAnchor="middle" dominantBaseline="hanging" className='line-plot-label'>
-                    { format_date(x_val) }
+                    { format_date(x_label_date) }
                 </text>
             );
         }
-        labels.push(
-            <text key="x-label-end" x={x_e} y={y_e + label_margin} textAnchor="middle" dominantBaseline="hanging" className='line-plot-label'>
-                Now
-            </text>
-        )
     }
 
     useEffect(() => {
@@ -141,6 +157,11 @@ function LinePlot(props) {
         // Create line from data
         ////////////////////////////////////////////// 
         let svg = select(d3_ref.current);
+
+        setChartWidth(d3_ref.current.clientWidth);
+        setChartHeight(d3_ref.current.clientHeight);
+        console.log(is_loading, t0, t1, unavailable);
+
         if (is_loading || unavailable) {
             svg.select("#line").attr("d", "");
             svg.on('mousemove', () => {});
@@ -166,7 +187,7 @@ function LinePlot(props) {
         //////////////////////////////////////////////
         // Cursor hover event
         ////////////////////////////////////////////// 
-        svg.on('mousemove', function(event) {
+        function moveCursor(event) {
             let [x, y] = pointer(event);
             if (x_s <= x && x <= x_e && y_s <= y && y <= y_e) {
                 // Find y-value of cursor
@@ -187,24 +208,63 @@ function LinePlot(props) {
                 svg.select("#cursor > line")
                     .attr("x1", x)
                     .attr("x2", x)
-                svg.select("#cursor > circle")
+                svg.selectAll("#cursor > circle")
                     .attr("cx", x)
                     .attr("cy", y_scale(y_value));
                 svg.select("#cursor > text")
                     .attr("x", x)
-                    .text(format_date(new Date(t0.getTime() + x_value)));
+                    .text(format_date(new Date(t0.getTime() + x_value), true));
             } else {
                 svg.select("#cursor")
                     .style('display', 'none');
                 set_cursor_val(round(props.y[props.y.length - 1]))
             }
-        });
+        }
+
+        function turnOffCursor() {
+            svg.select("#cursor").style('display', 'none');
+        }
+
+        svg.on('mousemove', moveCursor);
+        svg.on('mousedown', moveCursor);
+        svg.on('mouseleave', turnOffCursor);
+        svg.on('mouseup', turnOffCursor);
+
+        //////////////////////////////////////////////
+        // Touch events, using code from MDN endorsed tutorial 
+        // https://www.codicode.com/art/easy_way_to_add_touch_support_to_your_website.aspx
+        ////////////////////////////////////////////// 
+        function touchEventToMouseEvent(e) {
+            const theTouch = e.changedTouches[0];
             
-        svg.on('mouseleave', () => {
-            svg.select("#cursor")
-                .style('display', 'none');
-        });
-    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_e, x_s, y_e, y_s]);
+            let mouseEventType;
+            switch(e.type){
+                case "touchstart": mouseEventType = "mousedown"; break;  
+                case "touchend":   mouseEventType = "mouseup"; break;
+                case "touchmove":  mouseEventType = "mousemove"; break;
+                default: return;
+            }
+
+            const mouseEvent = new MouseEvent(mouseEventType, {
+                "screenX": theTouch.screenX,
+                "screenY": theTouch.screenY,
+                "clientX": theTouch.clientX,
+                "clientY": theTouch.clientY,
+                "ctrlKey": false,
+                "altKey": false,
+                "shiftKey": false,
+                "metaKey": false,
+                "button": 0,
+            });
+            
+            theTouch.target.dispatchEvent(mouseEvent);
+            e.preventDefault();
+        }
+        svg.on('touchstart', touchEventToMouseEvent);
+        svg.on('touchend', touchEventToMouseEvent);
+        svg.on('touchmove', touchEventToMouseEvent);
+        
+    }, [props.time, props.y, is_loading, t0, t1, unavailable, x_s, x_e, y_s, y_e]);
 
     let chart_subtitle;
     if (unavailable) {
@@ -216,40 +276,40 @@ function LinePlot(props) {
     }
     
     return (
-        <svg 
-            className="line-plot"
-            viewBox={`0 0 ${props.width} ${props.height}`}
-            // width={props.width}
-            // height={props.height}
-            ref={d3_ref}
-            shapeRendering="geometricPrecision"
-            >
+        <div className='line-plot-container'>
+            <div className='line-plot-title'>
+                { props.title }
+            </div>
+            <div className='line-plot-subtitle'>
+                { chart_subtitle }
+            </div>
+            <svg 
+                className="line-plot"
+                viewBox={`0 0 ${chart_width} ${chart_height}`}
+                ref={d3_ref}
+                shapeRendering="geometricPrecision"
+                >
 
-            {/* Title */}
-            <text x={x_s} y="0">
-                <tspan dominantBaseline="hanging" className='line-plot-title'> {props.title} </tspan>
-                <tspan x={x_s} dy='18' dominantBaseline="hanging" className='line-plot-subtitle'> {chart_subtitle} </tspan>
-            </text>
+                {/* Chart data */}
+                <path id="line" stroke="steelblue" strokeWidth="2.5" fillOpacity="0"></path>
+                <rect id="cover" x={x_s} y={y_s} width={x_e - x_s} height={y_e - y_s} fill="white"></rect>
+                <g id="points"></g>
 
-            {/* Chart data */}
-            <path id="line" stroke="steelblue" strokeWidth="2.5" fillOpacity="0"></path>
-            <rect id="cover" x={x_s} y={y_s + y_padding_px} width={x_e - x_s} height={y_e - y_s} fill="white"></rect>
-            <g id="points"></g>
-
-            <g id='cursor'>
-                <line x1={(x_s + x_e) / 2} y1={y_e} x2={(x_s + x_e) / 2} y2={y_s + 32} stroke="black" strokeOpacity="0.4"></line>
-                <circle cx='50%' cy="50%" r="3" fill="steelblue"></circle>
-                <text x={(x_s + x_e) / 2} y={y_s + 18} textAnchor="middle" dominantBaseline="hanging"></text>
-            </g>
+                <g id='cursor'>
+                    <line x1={(x_s + x_e) / 2} y1={y_e} x2={(x_s + x_e) / 2} y2={y_s - 10} stroke="black" strokeOpacity="0.4"></line>
+                    <circle cx='50%' cy="50%" r="7" fill="white"></circle>
+                    <circle cx='50%' cy="50%" r="5" fill="steelblue"></circle>
+                    <text x={(x_s + x_e) / 2} y={y_s - 15} className="line-plot-cursor" textAnchor="middle"></text>
+                </g>
 
 
-            {/* Axes and Units */}
-            { (is_loading || unavailable) && loading_text }
-            { axes }
-            { props.units && axes_units }
-            { ticks }
-            { labels }
+                {/* Axes and Units */}
+                { (is_loading || unavailable) && loading_text }
+                { axes }
+                { props.units && axes_units }
+                { labels }
         </svg>
+        </div>
     );
 }
 
