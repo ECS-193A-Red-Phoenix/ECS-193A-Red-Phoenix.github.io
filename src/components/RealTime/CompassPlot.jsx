@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'; 
 import { select, path, easeElasticOut} from 'd3';
+import { round } from '../util';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.15;
@@ -26,21 +27,7 @@ function CompassPlot(props) {
         <text key='west' x={x_s + tick_length + label_margin / 2} y={y_mid} textAnchor='start' dominantBaseline="middle">W</text>
     ];
 
-    //////////////////////////////////////////////////
-    // If Data Available
-    //////////////////////////////////////////////////
-    const data_available = props.time && props.y && props.time.length > 0 && props.y.length > 0;
-    let t0, average_speed, average_direction;
-    if (data_available) {
-        t0 = props.time[0];
-        let data = [];
-        for (let i = 0; i < props.time.length; i++)
-            data.push([props.time[i] - t0, props.y[i][0], props.y[i][1]]);
-        data = data.slice(props.time.length - 12);
-
-        average_speed = Math.round(data.reduce((prev, cur) => prev + cur[1], 0) / data.length);
-        average_direction = data.reduce((prev, cur) => prev + cur[2], 0) / data.length;
-    }
+    const data_available = isFinite(props.speed) && isFinite(props.direction);
 
     //////////////////////////////////////////////////
     // Compass Ticks
@@ -71,7 +58,7 @@ function CompassPlot(props) {
             {
                 data_available && 
                 [
-                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> {average_speed} </tspan>,
+                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> { round(props.speed) } </tspan>,
                     <tspan key="compass-unit" id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
                 ]
             }
@@ -114,7 +101,7 @@ function CompassPlot(props) {
 
 
     ////////////////////////////////////////////////////
-    // Animate arrow when data loaded
+    // Rotate arrow when data loaded
     ////////////////////////////////////////////////////
     useEffect(() => {
         if (!data_available) {
@@ -126,13 +113,24 @@ function CompassPlot(props) {
             .transition()
             .duration(1000)
             .ease(easeElasticOut.period(0.6))
-            .attrTween("transform", function() {
+            .attrTween("transform", function(data, idx, element) {
+                let prev_angle = 0;
+
+                // Parse 'transform: rotate(theta x y)' for theta
+                let rotate_string = element[0].getAttribute('transform');
+                if (rotate_string) {
+                    rotate_string = rotate_string.substring(7, rotate_string.length - 1);
+                    prev_angle = new Number(rotate_string.split(' ')[0]);
+                }
+                prev_angle = 90 - prev_angle;
+
                 return function(t) {
-                    return `rotate(${t * (90 - average_direction)} ${x_mid} ${y_mid})`;
+                    let angle = prev_angle + t * (props.direction - prev_angle);
+                    return `rotate(${90 - angle} ${x_mid} ${y_mid})`;
                 }
             });
 
-    }, [props.time, props.y, data_available, x_mid, y_mid, average_direction]);
+    }, [data_available, x_mid, y_mid, props.direction]);
 
     const loading_text = <text x={x_mid} y={y_mid} textAnchor="middle" dominantBaseline="middle"> Loading </text>
 

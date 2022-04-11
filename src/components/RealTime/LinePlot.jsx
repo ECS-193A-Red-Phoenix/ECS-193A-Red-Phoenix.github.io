@@ -171,7 +171,6 @@ function LinePlot(props) {
 
         setChartWidth(d3_ref.current.clientWidth);
         setChartHeight(d3_ref.current.clientHeight);
-        console.log(is_loading, t0, t1, unavailable);
 
         if (is_loading || unavailable) {
             svg.select("#line").attr("d", "");

@@ -300,6 +300,25 @@ export function apply(array, callback_fn) {
     return array;
 }
 
+export function unzip(arr) {
+    // Unzips an array of tuples into a tuple of arrays
+    // Example:
+    // [['a', 1], ['b', 2], ['c', 3]] => [['a', 'b', 'c'], [1, 2, 3]]
+    // Arguments:
+    //  arr: a 2D array, every row in arr should have the same length
+    if (arr.length === 0) 
+        return [];
+
+    let res = [];
+    for (let i = 0; i < arr[0].length; i++)
+        res.push([]);
+    for (let tuple of arr) {
+        for (let [idx, value] of tuple.entries())
+            res[idx].push(value);
+    }
+    return res;
+}
+
 export function clamp(x, min, max) {
     // Clips x between [min, max] 
     // Arguments:
@@ -374,9 +393,9 @@ export function wind_direction_mean(wd_vector, k, units, nan_var) {
     
     const mean_wd = [];
     for (let i = 0; i < mean_u.length; i++) {
-        let mean_wd_i = Math.atan2(mean_u[i], mean_v[i]);
-        mean_wd_i = mod(mean_wd, 2 * Math.PI);
-        mean_wd.push(mean_wd_i);
+        let wd_i = Math.atan2(mean_u[i], mean_v[i]);
+        wd_i = mod(wd_i, 2 * Math.PI);
+        mean_wd.push(wd_i);
     } 
 
     if (units === 'deg')

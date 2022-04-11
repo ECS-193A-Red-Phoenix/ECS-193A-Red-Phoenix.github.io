@@ -5,6 +5,7 @@ import "./RealTimeConditions.css";
 import StationMap from "./StationMap";
 import LinePlot from "./LinePlot";
 import CompassPlot from "./CompassPlot";
+import { unzip, mean, wind_direction_mean } from "../util";
 
 function RealTimeConditions(props) {
   let [stationIdx, setStationIdx] = useState(0);
@@ -70,16 +71,24 @@ function RealTimeConditions(props) {
       );
       break;
     case "polar":
-      chart = (
-        <CompassPlot
-          radius={500}
-          time={time}
-          y={y_data}
-          title={chart_title}
-          units={current_data_displayed.units}
-        />
-      );
-      break;
+        let average_wind_speed, average_wind_direction;
+        if (y_data !== undefined) {
+            // Only use the last 12 data points, ~ 4 hours
+            let [wind_speed, wind_direction] = unzip(y_data.slice(y_data.length - 12));
+            average_wind_speed = mean(wind_speed);
+            average_wind_direction = wind_direction_mean(wind_direction);
+            // console.log("ws", average_wind_speed, "wd", average_wind_direction, "m", mean(wind_direction));
+        }
+        chart = (
+            <CompassPlot
+                radius={500}
+                speed={average_wind_speed}
+                direction={average_wind_direction}
+                title={chart_title}
+                units={current_data_displayed.units}
+            />
+        );
+        break;
     default:
         console.log(`Unexpected chart type "${chart_type}"`);
   }

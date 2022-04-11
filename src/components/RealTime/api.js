@@ -126,15 +126,13 @@ class NASABuoyStation extends Station {
             let last_idx = res.length - 1;
             res[last_idx]['Water Temperature'] = res[last_idx]['Water Temperature'] * 9 / 5 + 32; // C to F
             res[last_idx]['Wind Speed'] *= 2.23694; // ms to mph
-            res[last_idx]['Wind Direction'] = mod(res[last_idx]['Wind Direction'], 360) // Ensure in [0, 360]
 
-            // Convert wind direction to the direction its going
-            res[last_idx]['Wind Direction'] = 270 - res[last_idx]['Wind Direction']
-            if (res[last_idx]['Wind Direction'] < 0)
-                res[last_idx]['Wind Direction'] += 360; // ensure positive
+            // Convert wind direction to the way its going
+            res[last_idx]['Wind Direction'] = 270 - res[last_idx]['Wind Direction'];
+            res[last_idx]['Wind Direction'] = mod(res[last_idx]['Wind Direction'], 360);
 
             // Combine Wind Speed and Wind Dir into one datum
-            res[last_idx]['Wind'] = [res[res.length - 1]['Wind Speed'], res[last_idx]['Wind Direction']];
+            res[last_idx]['Wind'] = [res[last_idx]['Wind Speed'], res[last_idx]['Wind Direction']];
             delete res[last_idx]['Wind Speed'];
             delete res[last_idx]['Wind Direction'];
         }
