@@ -133,10 +133,13 @@ function Calendar(props) {
                     { day_options }
                 </select>
                 <span> at </span>
-                <select ref={hour_select_ref} value={ active_hour_idx } className="calendar-hour-select" onChange={on_hour_changed}>
-                    { hour_options }
-                </select>
-                <UpDownArrow on_up={() => change_hour(-1)} on_down={() => change_hour(1)}/>
+
+                <div className="calendar-hour-select">
+                    <select ref={hour_select_ref} value={ active_hour_idx } className="calendar-hour-select" onChange={on_hour_changed}>
+                        { hour_options }
+                    </select>
+                    <UpDownArrow on_up={() => change_hour(-1)} on_down={() => change_hour(1)}/>
+                </div>
             </div>
         </div>
     );
