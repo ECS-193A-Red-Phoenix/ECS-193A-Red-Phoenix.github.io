@@ -310,3 +310,81 @@ export function clamp(x, min, max) {
     if (x > max) return max;
     return x;
 }
+
+export function mean(arr, k) {
+    // Computes the mean of an array of Numbers
+    // Arguments:
+    //  arr: the array of numbers to compute the mean for
+    //  k (optional): a positive integer, the window size if a moving mean is desired
+    if (k === undefined)
+        return arr.reduce((total, num) => total + num, 0) / arr.length;
+
+    if (k < 1 || k > arr.length)
+        throw new Error(`mean(): Expected moving window size k to be 1 <= k <= arr.length, got k=${k}`);
+
+    let res = [0];
+    for (let i = 0; i < k; i++)
+        res[0] += arr[i];
+    res[0] /= k;
+        
+    // O(n) DP algorithm for moving mean
+    for (let i = k; i < arr.length; i++)
+        res.push(res[res.length - 1] + (arr[i] - arr[i - k]) / k);
+
+    return res;
+}
+
+const DEG_TO_RAD = Math.PI / 180;
+export function wind_direction_mean(wd_vector, k, units, nan_var) {
+    // Computes the mean of wind direction given some wind direction vector
+    //
+    // Wind direction can't be averaged by linear statistics and thus 
+    // circular mean for the cardinal wind direction must be used
+    //
+    // Arguments:
+    //  wd_vector: a list of wind directions
+    //  k (optional, default=wd_vector.length): an integer, using to compute a moving average
+    //  units (optional, default: 'deg'): either 'deg' or 'rad' 
+    //  nan_var (optional, default: 'omitnan') either 'omitnan' or 'nanmean'
+    //      MODE 'omitnan': will skip over NaNs within wd_vector
+    //      MODE 'nanmean': will return NaN if a NaN is exists in wd_vector
+    //
+    // Returns:
+    //  a Number, if 1 <= k < wd_vector.length
+    //  an Array, otherwise
+
+    k = if_undefined(k, wd_vector.length);
+    units = if_undefined(units, 'deg');
+    nan_var = if_undefined(nan_var, 'omitnan');
+
+    if (nan_var === 'nanmean' && wd_vector.some(isNaN))
+        return Number.NaN;
+    else
+        wd_vector = wd_vector.filter(isFinite);
+
+    if (units === 'deg') 
+        wd_vector.forEach((e, idx) => {
+            wd_vector[idx] *= DEG_TO_RAD;       
+        });
+
+    const u = wd_vector.map(Math.sin);
+    const v = wd_vector.map(Math.cos);
+    const mean_u = mean(u, k);
+    const mean_v = mean(v, k);
+    
+    const mean_wd = [];
+    for (let i = 0; i < mean_u.length; i++) {
+        let mean_wd_i = Math.atan2(mean_u[i], mean_v[i]);
+        mean_wd_i = mod(mean_wd, 2 * Math.PI);
+        mean_wd.push(mean_wd_i);
+    } 
+
+    if (units === 'deg')
+        mean_wd.forEach((_, idx) => {
+            mean_wd[idx] /= DEG_TO_RAD;
+        });
+    
+    if (k === wd_vector.length)
+        return mean_wd[0];
+    return mean_wd;
+}
