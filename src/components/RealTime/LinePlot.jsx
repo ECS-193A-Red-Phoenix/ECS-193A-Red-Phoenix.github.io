@@ -4,18 +4,18 @@ import { round } from '../util';
 import "./RealTimeConditions.css"
 
 //////////////////////////////////////////////
-// Static Constants (for Desktop)
+// Static Constants
 ////////////////////////////////////////////// 
 let padding_horizontal = 0.03;       // chart padding in horizontal direction, a percentage of width in [0, 1.0]
 let padding_vertical = 0.05;         // chart padding in vertical direction, a percentage of height in [0, 1.0]
 let tick_length = 0.01;              // length of ticks on each axis, a percentage in [0, 1.0]
-let y_padding = 0.05;                // extra y padding for the line, a percentage in [0, 1.0]
+let y_padding = 0.1;                 // extra y padding for the line, a percentage in [0, 1.0]
 let label_margin = 5;                // distance between tick labels and axises, in pixels
 const default_chart_width = 800;     // chart width for desktop web, px
-const default_chart_height = 500;    // chart height for desktop web, px
-const x_label_bounds = [0.05, 0.95]  // the bounds of the chart where an x label can exist
+const default_chart_height = 600;    // chart height for desktop web, px
+const x_label_bounds = [0.05, 0.90]  // the bounds of the chart where an x label can exist
+const HOUR = 60 * 60 * 1000;         // how many milliseconds in an hour
 
-const HOURS = 60 * 60 * 1000;
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function format_date(date, show_minutes) {
     let day = DAYS[date.getDay()];
@@ -43,8 +43,6 @@ function LinePlot(props) {
     const [chart_height, setChartHeight] = useState(default_chart_height);
     const [cursor_value, set_cursor_val] = useState(undefined);
     let d3_ref = useRef();
-
-    console.log("w:", chart_width, "h:", chart_height);
 
     const [x_s, x_e] = [chart_width * padding_horizontal, chart_width * (1 - padding_horizontal)];
     const [y_s, y_e] = [chart_height * padding_vertical, chart_height * (1 - padding_vertical)];
@@ -77,8 +75,14 @@ function LinePlot(props) {
             .domain([0, t1 - t0])
             .range([x_s, x_e]);
 
-        y_min = Math.min(...props.y)
-        y_max = Math.max(...props.y)
+        if (props.range !== undefined) {
+            y_min = props.range[0];
+            y_max = props.range[1];
+        } else {
+            y_min = Math.min(...props.y)
+            y_max = Math.max(...props.y)
+        }
+
         y_scale = scaleLinear()
             .domain([y_min, y_max])
             .range([y_e - y_padding_px, y_s + y_padding_px]);
@@ -123,33 +127,40 @@ function LinePlot(props) {
         const num_x_ticks = Math.min(6, Math.floor(chart_width / 85));
 
         // Pick between 12 hour or 24 hour increments, depending on how many ticks we have
-        const increment_choices = [12 * HOURS, 24 * HOURS];
+        const increment_choices = [12 * HOUR, 24 * HOUR];
         const increment = (num_x_ticks > 4) ? increment_choices[0] : increment_choices[1];
 
         // Round starting and end increments to nearest multiple of 12 hours
-        const x_increment_start = increment * Math.ceil((t0.getTime()) / increment) + 6 * HOURS;
-        const x_increment_end = increment * Math.floor((t1.getTime()) / increment) + 6 * HOURS;
+        const x_increment_start = increment * Math.ceil((t0.getTime()) / increment) + 6 * HOUR;
+        const x_increment_end = increment * Math.floor((t1.getTime()) / increment) + 6 * HOUR;
         const x_label_scale = scaleLinear().domain([t0.getTime(), t1.getTime()]).range([x_s, x_e]);
 
         // X axis, tiny upwards ticks
+        const tick_y1 = y_e;
+        const tick_y2 = tick_y1 - (y_e - y_s) * tick_length;
         for (let i = x_increment_start; i <= x_increment_end; i += increment) {
-            let y1 = y_e;
-            let y2 = y1 - (y_e - y_s) * tick_length;
-            let x1 = x_label_scale(i);
+            let tick_x1 = x_label_scale(i);
             let x_label_date = new Date(i);
 
             // if x is not in the bounds of 0.05, 0.95 of the chart, lets skip this tick
-            let x_percent = (x1 - x_s) / (x_e - x_s);
+            let x_percent = (tick_x1 - x_s) / (x_e - x_s);
             if (x_percent < x_label_bounds[0] || x_percent > x_label_bounds[1])
                 continue;
 
             labels.push(
-                <line key={`x-tick-${i}`} x1={x1} y1={y1} x2={x1} y2={y2} stroke='black' strokeLinecap='square'></line>,
-                <text key={`x-label${i}`} x={x1} y={y1 + label_margin} textAnchor="middle" dominantBaseline="hanging" className='line-plot-label'>
+                <line key={`x-tick-${i}`} x1={tick_x1} y1={tick_y1} x2={tick_x1} y2={tick_y2} stroke='black' strokeLinecap='square'></line>,
+                <text key={`x-label-${i}`} x={tick_x1} y={tick_y1 + label_margin} textAnchor="middle" dominantBaseline="hanging" className='line-plot-label'>
                     { format_date(x_label_date) }
                 </text>
             );
         }
+        // Add a 'Now' tick at the very end
+        labels.push(
+            <line key={`x-tick-last`} x1={x_e} y1={y_e} x2={x_e} y2={tick_y2} stroke='black' strokeLinecap='square'></line>,
+            <text key={`x-label-last`} x={x_e} y={y_e + label_margin} textAnchor="middle" dominantBaseline="hanging" className='line-plot-label'>
+                Now
+            </text>
+        );
     }
 
     useEffect(() => {
@@ -169,7 +180,7 @@ function LinePlot(props) {
             return;
         }
 
-        set_cursor_val(round(props.y[props.y.length - 1], 1));
+        set_cursor_val(round(props.y[props.y.length - 1]));
         let data = [];
         for (let i = 0; i < props.time.length; i++) {
             data.push([x_scale(props.time[i] - t0), y_scale(props.y[i])]);
@@ -215,14 +226,13 @@ function LinePlot(props) {
                     .attr("x", x)
                     .text(format_date(new Date(t0.getTime() + x_value), true));
             } else {
-                svg.select("#cursor")
-                    .style('display', 'none');
-                set_cursor_val(round(props.y[props.y.length - 1]))
+                turnOffCursor();
             }
         }
 
         function turnOffCursor() {
             svg.select("#cursor").style('display', 'none');
+            set_cursor_val(round(props.y[props.y.length - 1]));
         }
 
         svg.on('mousemove', moveCursor);
@@ -263,7 +273,7 @@ function LinePlot(props) {
         svg.on('touchstart', touchEventToMouseEvent);
         svg.on('touchend', touchEventToMouseEvent);
         svg.on('touchmove', touchEventToMouseEvent);
-        
+
     }, [props.time, props.y, is_loading, t0, t1, unavailable, x_s, x_e, y_s, y_e]);
 
     let chart_subtitle;

@@ -7,15 +7,16 @@ const NASA_BUOY_URL = "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1
 const DAYS_OF_DATA = 3;  // days of data to retrieve from these api's
 
 // Near shore data to display
+//    name: title of chart       units: units     display_type: chart type,  range: y range of chart, automatic if undefined
 const NEAR_SHORE_DATA = [
-    { name: "Water Temperature", units: "° F"   , display_type: 'line' },
-    { name: "Wave Height"      , units: "Inches", display_type: 'line' }
+    { name: "Water Temperature", units: "° F"   , display_type: 'line'     , range: undefined },
+    { name: "Wave Height"      , units: "Feet"  , display_type: 'line'     , range: [0, 5] }
 ];
 
 // Buoy data to display
 const BUOY_DATA = [
-    { name: "Water Temperature", units: "° F", display_type: 'line'  },
-    { name: "Wind"             , units: "MPH", display_type: 'polar' },
+    { name: "Water Temperature", units: "° F", display_type: 'line'  , range: undefined},
+    { name: "Wind"             , units: "MPH", display_type: 'polar' , range: undefined},
 ];
 
 const NEAR_SHORE_STATION_INFO = [
@@ -48,8 +49,10 @@ async function get_json(url) {
     return await request.json();
 }
 
-// Utility function for getting the current date in UTC
 function today(days) {
+    // Retrieves the current date in UTC as a 'YYYYMMDD' string 
+    // Arguments:
+    //  days (optional, default 0): the number of days from today
     days = days ? days : 0;
     let now = new Date();
     now = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
@@ -102,7 +105,7 @@ class NearShoreStation extends Station {
             });
             // Convert units
             res[res.length - 1]['Water Temperature'] = res[res.length - 1]['Water Temperature'] * 9 / 5 + 32; // C to F
-            res[res.length - 1]['Wave Height'] *= 39.3701; // m to ft
+            res[res.length - 1]['Wave Height'] *= 3.28084; // m to ft
         }
         return res;
     }

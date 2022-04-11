@@ -54,8 +54,6 @@ function RealTimeConditions(props) {
     );
   }
 
-  const chart_width = 800;
-  const chart_height = 500;
   const chart_title = `${current_data_displayed.name} @ ${ALL_STATIONS[stationIdx].info.station_name}`;
   const chart_type = current_data_displayed.display_type;
   let chart;
@@ -63,12 +61,11 @@ function RealTimeConditions(props) {
     case "line":
       chart = (
         <LinePlot
-          width={chart_width}
-          height={chart_height}
           time={time}
           y={y_data}
           title={chart_title}
           units={current_data_displayed.units}
+          range={current_data_displayed.range}
         />
       );
       break;
