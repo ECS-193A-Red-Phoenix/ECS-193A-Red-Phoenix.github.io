@@ -239,6 +239,15 @@ function LinePlot(props) {
         svg.on('mouseleave', turnOffCursor);
         svg.on('mouseup', turnOffCursor);
 
+        // - Sometimes tapping on the svg doesn't register an event because 
+        //   a descendant of the svg registers the event
+        // Thus, we add mouse event to all descending elements in svg
+        let svg_elements = svg.selectAll("*"); 
+        svg_elements.on('mousemove', moveCursor);
+        svg_elements.on('mousedown', moveCursor);
+        svg_elements.on('mouseleave', turnOffCursor);
+        svg_elements.on('mouseup', turnOffCursor);
+
         //////////////////////////////////////////////
         // Touch events, using code from MDN endorsed tutorial 
         // https://www.codicode.com/art/easy_way_to_add_touch_support_to_your_website.aspx
