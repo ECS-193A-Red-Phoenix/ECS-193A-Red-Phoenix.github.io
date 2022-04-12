@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'; 
 import { select, scaleLinear, line, pointer, easeCubicInOut} from 'd3';
-import { round } from '../util';
+import { round, militaryHourTo12Hour } from '../util';
 import "./RealTimeConditions.css"
 
 //////////////////////////////////////////////
@@ -19,7 +19,7 @@ const HOUR = 60 * 60 * 1000;         // how many milliseconds in an hour
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function format_date(date, show_minutes) {
     let day = DAYS[date.getDay()];
-    let hours = String((date.getHours() % 12) + 1).padStart(2, 0);
+    let hours = String(militaryHourTo12Hour(date.getHours())).padStart(2, 0);
     let am_pm = (date.getHours() >= 12) ? "PM" : "AM";
     let minutes = String(date.getMinutes()).padStart(2, 0);
 
