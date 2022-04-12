@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'; 
 import { select, path, easeElasticOut} from 'd3';
-import { round } from '../util';
+import { mod, round } from '../util';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.15;
@@ -11,7 +11,21 @@ const num_bold_ticks = 8;
 const tick_length = 10;
 
 function CompassPlot(props) {
+    ////////////////////////////////////////////////
+    // Expected props
+    //  radius: the size of the svg viewport
+    //  speed: a Number, the wind speed
+    //  direction: a Number, the wind direction, in degrees using the 
+    //    meteorological convention (0 deg => a wind coming from N, 90 deg => a wind coming from E)
+    //  units: a String, the units of props.speed
+    //  title: a String, a title to display in the center
+
     let d3_ref = useRef();
+
+    let { speed, direction } = props;
+    // Convert meteorological wind direction to 'math' direction
+    // See http://colaweb.gmu.edu/dev/clim301/lectures/wind/wind-uv for more info
+    direction = mod(270 - direction, 360);
 
     const [x_s, x_e] = [props.radius * inner_padding, props.radius * (1 - inner_padding)];
     const [y_s, y_e] = [props.radius * inner_padding, props.radius * (1 - inner_padding)];
@@ -27,7 +41,7 @@ function CompassPlot(props) {
         <text key='west' x={x_s + tick_length + label_margin / 2} y={y_mid} textAnchor='start' dominantBaseline="middle">W</text>
     ];
 
-    const data_available = isFinite(props.speed) && isFinite(props.direction);
+    const data_available = isFinite(speed) && isFinite(direction);
 
     //////////////////////////////////////////////////
     // Compass Ticks
@@ -58,7 +72,7 @@ function CompassPlot(props) {
             {
                 data_available && 
                 [
-                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> { round(props.speed) } </tspan>,
+                    <tspan key="compass-number" id="compass-number" x={x_mid} dy="1.2em"> { round(speed) } </tspan>,
                     <tspan key="compass-unit" id="compass-unit" x="50%" dy="1em"> {props.units.toLowerCase()} </tspan>
                 ]
             }
@@ -125,12 +139,12 @@ function CompassPlot(props) {
                 prev_angle = 90 - prev_angle;
 
                 return function(t) {
-                    let angle = prev_angle + t * (props.direction - prev_angle);
+                    let angle = prev_angle + t * (direction - prev_angle);
                     return `rotate(${90 - angle} ${x_mid} ${y_mid})`;
                 }
             });
 
-    }, [data_available, x_mid, y_mid, props.direction]);
+    }, [data_available, x_mid, y_mid, direction]);
 
     const loading_text = <text x={x_mid} y={y_mid} textAnchor="middle" dominantBaseline="middle"> Loading </text>
 

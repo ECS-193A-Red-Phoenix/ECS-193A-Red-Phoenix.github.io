@@ -1,4 +1,4 @@
-import { mod } from "../util";
+import { mod, http_get } from "../util";
 
 /////////////////////////////////////////////////
 // Global constants here
@@ -37,18 +37,6 @@ const NASA_BUOY_INFO = [
     { 'id': 4, 'station_name': 'tb4', "coords": [    39.155, -120.07216], "data": BUOY_DATA }
 ];
 
-// Utility function that makes a CORS GET request to a url
-async function get_json(url) {
-    let request = await fetch(url, {
-        method: "GET",
-        mode: "cors",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    });
-    return await request.json();
-}
-
 function today(days) {
     // Retrieves the current date in UTC as a 'YYYYMMDD' string 
     // Arguments:
@@ -86,10 +74,9 @@ class Station {
     }
 
     async get_data() {
-        const url_obj = new URL(this.url);
-        const params = { "id": this.info.id, "rptdate": today(DAYS_OF_DATA), "rptend": today()};
-        url_obj.search = new URLSearchParams(params).toString();
-        return get_json(url_obj);
+        const params = { "id": this.info.id, "rptdate": today(DAYS_OF_DATA), "rptend": today() };
+        const json = await http_get(this.url, params); 
+        return json;
     }
 }
 
@@ -126,10 +113,6 @@ class NASABuoyStation extends Station {
             let last_idx = res.length - 1;
             res[last_idx]['Water Temperature'] = res[last_idx]['Water Temperature'] * 9 / 5 + 32; // C to F
             res[last_idx]['Wind Speed'] *= 2.23694; // ms to mph
-
-            // Convert wind direction to the way its going
-            res[last_idx]['Wind Direction'] = 270 - res[last_idx]['Wind Direction'];
-            res[last_idx]['Wind Direction'] = mod(res[last_idx]['Wind Direction'], 360);
 
             // Combine Wind Speed and Wind Dir into one datum
             res[last_idx]['Wind'] = [res[last_idx]['Wind Speed'], res[last_idx]['Wind Direction']];

@@ -36,9 +36,12 @@
 }
 
 .compass-plot {
+    font-size: 20px;
+}
+
+.time-plot-container > .compass-plot {
     width: 500px;
     height: 500px;
-    font-size: 20px;
 }
 
 #compass-title {
@@ -164,7 +167,7 @@
         width: 100%;
     }
 
-    .compass-plot, .line-plot {
+    .time-plot-container > .compass-plot, .time-plot-container .line-plot {
         width: auto;
         height: auto;
     }
