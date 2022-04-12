@@ -17,7 +17,6 @@ function CurrentLakeMap(props) {
     // Component Constants
     ////////////////////////////////////
     const canvas_ref = useRef();
-    const v_key = `current-map-${props.activeIdx}`;
 
     const {u, v, color_palette} = props;
     const [n_rows, n_cols] = [u.length, u[0].length];
@@ -86,7 +85,7 @@ function CurrentLakeMap(props) {
         // Animation Loop
         ////////////////////////////////////
         const interval = setInterval(() => {
-            draw_lake_heatmap(canvas, speeds, color_palette, v_key);
+            draw_lake_heatmap(canvas, speeds, color_palette, props.cache_id);
 
             particles.forEach((p) => p.draw(cx));
             particles.forEach((p) => p.move());

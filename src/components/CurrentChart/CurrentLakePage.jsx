@@ -67,6 +67,7 @@ function CurrentLakePage() {
         (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
     );
     
+    let cache_id = `current-map-${activeIdx}`;
     let u, v;
     if (!is_loading) {
         [u, v] = flow_data[activeIdx]['matrices'];
@@ -107,8 +108,8 @@ function CurrentLakePage() {
                     <CurrentLakeMap 
                         u={u} 
                         v={v}
-                        activeIdx={activeIdx}
                         color_palette={color_palette}
+                        cache_id={cache_id}
                         />
                     <div className="current-legend-container">
                         { legend_boxes }

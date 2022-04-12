@@ -9,6 +9,7 @@ import "../styles/LakeConditions.css";
 
 import { celsius_to_f, ice_to_fire, parseMyDate, apply, reversed } from "../util";
 import { loadNumpyFile } from "../numpy_parser";
+import { retrieve_wind_forecasts } from "../WaveHeightChart/nws_api";
 
 
 ////////////////////////////////////
@@ -57,6 +58,7 @@ function TemperaturePage() {
         (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
     );
 
+    let cache_id = `temperature-${activeIdx}`;
     let T;
     if (!is_loading) {
         T = temperature_data[activeIdx]['matrices'];
@@ -87,7 +89,7 @@ function TemperaturePage() {
                 (is_loading) ? 
                     <div> Loading </div> :
                     <div className="lake-visual-container" id="temperature-visual-container">
-                        <TemperatureMap T={T} color_palette={temperature_color_scale} activeIdx={activeIdx}/>
+                        <TemperatureMap T={T} color_palette={temperature_color_scale} cache_id={cache_id}/>
                         <TemperatureLegend min_T={min_T} max_T={max_T} color_palette={temperature_color}/>
                     </div>
             }
