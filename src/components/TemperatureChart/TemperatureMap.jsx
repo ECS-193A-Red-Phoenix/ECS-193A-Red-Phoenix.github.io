@@ -3,7 +3,7 @@ import { draw_lake_heatmap, round } from "../util";
 import { select, pointer } from "d3";
 
 function TemperatureMap(props) {
-    const canvas_ref = useRef();
+    const container_ref = useRef();
     const T = props.T;
 
     ////////////////////////////////////
@@ -16,7 +16,7 @@ function TemperatureMap(props) {
     // Draw Heatmap
     ////////////////////////////////////
     useEffect(() => {
-        const canvas = canvas_ref.current;
+        const canvas = container_ref.current.querySelector("canvas");
         const color_palette = props.color_palette;
 
         // Resize canvas
@@ -34,34 +34,33 @@ function TemperatureMap(props) {
     // Cursor Hover Event
     ////////////////////////////////////
     useEffect(() => {
-        const canvas = canvas_ref.current;
+        const canvas = container_ref.current.querySelector("canvas");
+        const cursor = select(container_ref.current).select(".temperature-cursor");
 
         select(canvas).on("mousemove", function (event) {
             const [x, y] = pointer(event);
             const [i, j] = [Math.floor(x / canvas.width * n_cols), Math.floor(y / canvas.height * n_rows)];
             if (i < 0 || i >= n_cols || j < 0 || j >= n_rows || isNaN(T[j][i])) {
-                select(".temperature-cursor")
-                    .style("display", "none");
+                cursor.style("display", "none");
                 return;
             }
             
             const [px, py] = [x / canvas.width * 100, y / canvas.height * 100];
             const temp = round(T[j][i]);
-            select(".temperature-cursor")
-                .style("display", "block")
+            cursor.style("display", "block")
                 .style("left", `${px}%`)
                 .style("top", `${py}%`)
                 .text(`${temp} °F`);
         });
+
         select(canvas).on("mouseleave", () => {
-            select(".temperature-cursor")
-                .style("display", "none");
+            cursor.style("display", "none");
         });
     }, [n_cols, n_rows, T]);
     
     return (
-        <div className="temperature-chart-container">
-            <canvas ref={canvas_ref}></canvas>
+        <div ref={container_ref} className="temperature-chart-container">
+            <canvas></canvas>
             <div className="temperature-cursor"> Cursor </div>
         </div>
     );
