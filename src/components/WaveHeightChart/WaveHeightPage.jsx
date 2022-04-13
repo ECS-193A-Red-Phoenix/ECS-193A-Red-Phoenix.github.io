@@ -89,12 +89,16 @@ function WaveHeightPage() {
                     const new_wh_data = {...prev_wh_data};
                     new_wh_data[activeIdx] = wh_matrix
                     return new_wh_data
-                })
+                });
             })
             .catch((error) => {
                 console.log(error);
                 console.log(`Failed to retrieve wave heights for ws=${wind_speed}, wd=${wind_direction}`);
-                setWHData(null);
+                setWHData((prev_wh_data) => {
+                    const new_wh_data = {...prev_wh_data};
+                    new_wh_data[activeIdx] = null;
+                    return new_wh_data
+                });
             });
     }, [wind_speed, wind_direction, activeIdx]);
 
