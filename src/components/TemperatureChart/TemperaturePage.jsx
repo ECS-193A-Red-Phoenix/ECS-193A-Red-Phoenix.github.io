@@ -85,20 +85,21 @@ function TemperaturePage() {
                 }
             </div>
 
+            <div className="lake-visual-container" id="temperature-visual-container">
             {
-                (is_loading) ? 
-                    <div> Loading </div> :
-                    <div className="lake-visual-container" id="temperature-visual-container">
-                        <TemperatureMap 
+                (is_loading) ? <div className="loading-visual"> Loading </div> :
+                    [
+                        <TemperatureMap key='temperature-map'
                             T={T} 
                             units={T_units}
                             color_palette={temperature_color_scale} 
-                            cache_id={cache_id}/>
-                        <TemperatureLegend 
+                            cache_id={cache_id}/>,
+                        <TemperatureLegend key='temperature-legend'
                             min={T_min} max={T_max} units={T_units}
                             color_palette={temperature_color}/>
-                    </div>
+                    ]
             }
+            </div>
 
         </div>
     );

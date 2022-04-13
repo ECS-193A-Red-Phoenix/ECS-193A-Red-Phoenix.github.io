@@ -99,23 +99,22 @@ function CurrentLakePage() {
                 }
             </div>
 
-            {
-                is_loading && <div> Loading </div>
-            }
-            {
-                !is_loading &&
-                <div className="lake-visual-container" id="current-visual-container">
-                    <CurrentLakeMap 
-                        u={u} 
-                        v={v}
-                        color_palette={color_palette}
-                        cache_id={cache_id}
-                        />
-                    <div className="current-legend-container">
-                        { legend_boxes }
-                    </div>
-                </div>
-            }
+            <div className="lake-visual-container" id="current-visual-container">
+                {
+                    (is_loading) ? <div className='loading-visual'> Loading </div> :
+                        [
+                            <CurrentLakeMap key='current-lake-map'
+                                u={u} 
+                                v={v}
+                                color_palette={color_palette}
+                                cache_id={cache_id}/>,
+                            <div key='current-lake-legend' 
+                                className="current-legend-container">
+                                { legend_boxes }
+                            </div>
+                        ]
+                }
+            </div>
 
         </div>
     );
