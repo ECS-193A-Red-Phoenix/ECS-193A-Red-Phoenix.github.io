@@ -43,12 +43,14 @@ export function colorScale(colors, discrete) {
             return colors[0];
         if (percent >= 1.0)
             return colors[colors.length - 1];
+        if (discrete) {
+            let color_index = Math.floor(percent * colors.length);
+            return colors[color_index]; 
+        }
+        
         let color_index = Math.floor(percent * (colors.length - 1)); 
         let c1 = colors[color_index];
         let c2 = colors[color_index + 1];
-        if (discrete) {
-            return c1;
-        }
         
         // Linearly interpolate between c1 and c2
         let c1_percent = color_index / (colors.length - 1);
@@ -68,6 +70,10 @@ export const ice_to_fire = colorScale(
     [172, 35, 0], [130, 0, 0], [76, 0, 0]], true
 );
 
+export const lagoon = colorScale([
+    [153, 218, 196], [81, 171, 173],[0, 123, 150],[0, 76, 119],[0, 30, 77]], true
+);
+    
 export const dark_ocean = colorScale(
     ["010108","000240","22226b","37377d","2C6FC7"].map(colorFromHex)
 );
@@ -300,6 +306,28 @@ export function apply(array, callback_fn) {
     return array;
 }
 
+export function zip(...arrays) {
+    // Converts a tuple of arrays into an array of tuples
+    // Example:
+    // zip(["a", "b", "c"], [1, 2, 3]) => [["a", 1], ["b", 2], ["c", 3]]
+    // Arguments
+    //  ...arrays: any number of arrays to zip; if the arrays are not
+    //    equal in length, then all arrays are treated as if they have
+    //    the same length as the smallest length array in arrays
+    if (arrays.length === 0)
+        return [];
+
+    let min_length = Math.min(...arrays.map((arr) => arr.length));
+    let zipped = [];
+    for (let i = 0; i < min_length; i++) {
+        let tuple = [];
+        for (let j = 0; j < arrays.length; j++)
+            tuple.push(arrays[j][i]);
+        zipped.push(tuple);
+    }
+    return zipped;
+}
+
 export function unzip(arr) {
     // Unzips an array of tuples into a tuple of arrays
     // Example:
@@ -406,4 +434,29 @@ export function wind_direction_mean(wd_vector, k, units, nan_var) {
     if (k === wd_vector.length)
         return mean_wd[0];
     return mean_wd;
+}
+
+export async function http_get(url, params, headers, mode) {
+    // Makes a GET request to a url and return a response
+    // 
+    // Arguments:
+    //  url: a String, the web address to make a request to
+    //  params (optional): a dictionary of queries to send with the request
+    //  headers (optional): headers to attach to the request
+    //  mode (optional, default "cors"): "cors", "no-cors", or "same-origin"
+    headers = if_undefined(headers, { "Content-Type": "application/json" });
+    mode = if_undefined(mode, "cors");
+
+    const url_obj = new URL(url);
+    if (params !== undefined)
+        url_obj.search = new URLSearchParams(params).toString();
+
+    let request = await fetch(url_obj, 
+        {
+            method: "GET",
+            mode: mode,
+            headers: headers
+        }
+    );
+    return await request.json();
 }

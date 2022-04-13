@@ -85,7 +85,14 @@
 .lake-visual-container {
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 50px;
     /* border: 1px solid green; */
+}
+
+.lake-visual-container > span {
+    padding: 50px;
 }
 
 /* Lake Forecast Information */

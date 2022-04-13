@@ -134,7 +134,7 @@ function CompassPlot(props) {
                 let rotate_string = element[0].getAttribute('transform');
                 if (rotate_string) {
                     rotate_string = rotate_string.substring(7, rotate_string.length - 1);
-                    prev_angle = new Number(rotate_string.split(' ')[0]);
+                    prev_angle = parseFloat(rotate_string.split(' ')[0]);
                 }
                 prev_angle = 90 - prev_angle;
 

@@ -2,6 +2,7 @@ import CurrentLakePage from "./CurrentChart/CurrentLakePage";
 import LakeWireFrame from "./LakeWireFrame/LakeWireFrame";
 import "./styles/LakeConditions.css";
 import TemperaturePage from "./TemperatureChart/TemperaturePage";
+import WaveHeightPage from "./WaveHeightChart/WaveHeightPage";
 
 function LakeConditions(props) {
   return (
@@ -25,6 +26,7 @@ function LakeConditions(props) {
       <div className="model-figure-container">
         <TemperaturePage />
         <CurrentLakePage />
+        <WaveHeightPage />
         <LakeWireFrame />
       </div>
     </div>

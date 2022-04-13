@@ -3,13 +3,19 @@ import { draw_lake_heatmap, round } from "../util";
 import { select, pointer } from "d3";
 
 function TemperatureMap(props) {
+    ////////////////////////////////////
+    // Expected props
+    //  T: a 2D matrix of scalar values for the heatmap
+    //  units: a String, the units of T
+    //  color_palette: a function that maps a value in T to an [r, g, b] color
+    //  cache_id (optional): a unique identifier for this heatmap (provides a significant performance boost)
     const container_ref = useRef();
-    const T = props.T;
+    const {T, units, color_palette} = props;
 
     ////////////////////////////////////
     // Dimensions
     ////////////////////////////////////
-    const [n_rows, n_cols] = [props.T.length, props.T[0].length];
+    const [n_rows, n_cols] = [T.length, T[0].length];
     const aspect_ratio = n_cols / n_rows;
 
     ////////////////////////////////////
@@ -17,7 +23,6 @@ function TemperatureMap(props) {
     ////////////////////////////////////
     useEffect(() => {
         const canvas = container_ref.current.querySelector("canvas");
-        const color_palette = props.color_palette;
 
         // Resize canvas
         canvas.width = canvas.offsetWidth;
@@ -28,7 +33,7 @@ function TemperatureMap(props) {
         let end_time = Date.now();
 
         console.log(`Took ${end_time - start_time} ms to draw image`);
-    }, [props.T, props.color_palette]);
+    }, [T, color_palette]);
 
     ////////////////////////////////////
     // Cursor Hover Event
@@ -46,11 +51,11 @@ function TemperatureMap(props) {
             }
             
             const [px, py] = [x / canvas.width * 100, y / canvas.height * 100];
-            const temp = round(T[j][i]);
+            const temp = round(T[j][i], 1);
             cursor.style("display", "block")
                 .style("left", `${px}%`)
                 .style("top", `${py}%`)
-                .text(`${temp} °F`);
+                .text(`${temp} ${units}`);
         });
 
         select(canvas).on("mouseleave", () => {
