@@ -26,7 +26,7 @@ const wh_units = "ft";
 
 let wh_color = lagoon;
 let wh_scale = scaleLinear().domain([wh_min, wh_max]).range([0, 1]);
-let wh_color_scale = (temperature) => wh_color(wh_scale(temperature));
+let wh_color_scale = (wh) => wh_color(wh_scale(wh));
 
 const calendar_description = "Select a forecast of Lake Tahoe's wave heights";
 
@@ -77,7 +77,7 @@ function WaveHeightPage() {
     ////////////////////////////////////
     useEffect(() => {
         if (is_loading_wind || wind_unavailable) return;
-
+        console.log("Retrieving ", activeIdx);
         retrieve_wh(wind_speed, wind_direction)
             .then(setWHData)
             .catch((error) => {
@@ -85,7 +85,15 @@ function WaveHeightPage() {
                 console.log(`Failed to retrieve wave heights for ws=${wind_speed}, wd=${wind_direction}`);
                 setWHData(null);
             });
-    }, [wind_speed, wind_direction]);
+    }, [wind_speed, wind_direction, activeIdx]);
+
+    // Event Listener for Calendar changing event
+    function on_event_selected(idx) {
+        if (idx !== activeIdx) {
+            setWHData(undefined);
+            setActiveIdx(idx);
+        }
+    }
 
     return (
         <div className="lake-condition-container">
@@ -103,7 +111,7 @@ function WaveHeightPage() {
                             <Calendar key='calendar' 
                                 events={wind_data} 
                                 active_event_idx={activeIdx}
-                                on_event_selected={(idx) => setActiveIdx(idx)}
+                                on_event_selected={on_event_selected}
                                 description={calendar_description}/>,
                             <CompassPlot key='compass'
                                 radius={450}
@@ -117,14 +125,15 @@ function WaveHeightPage() {
 
             <div className="lake-visual-container">
                 {
-                    (is_loading_wh) ? <span> Retrieving wave heights forecasts </span> :
-                    (wh_unavailable) ? <span> Wave height map is temporarily unavailable </span> :
+                    (is_loading_wh) ? <div className="loading-visual"> Retrieving wave heights forecasts </div> :
+                    (wh_unavailable) ? <div className="loading-visual"> Wave height map is temporarily unavailable </div> :
                         [
                             <TemperatureMap key='wave-height-map'
                                 T={wh_data} 
                                 units={wh_units}
                                 color_palette={wh_color_scale} 
-                                cache_id={cache_id}/>,
+                                cache_id={cache_id}
+                                decimal_places={1}/>,
                             <TemperatureLegend key='wave-height-legend'
                                 min={wh_min} 
                                 max={wh_max} 

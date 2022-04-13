@@ -1,6 +1,8 @@
 TODO List
 
 - Implement auto update for real time charts
+- Make current chart smoothly transition when on update
+- Make charts give feedback when drawing the map
 
 - Fill up contact and about us page
 

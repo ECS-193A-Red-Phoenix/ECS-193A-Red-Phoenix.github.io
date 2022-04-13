@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { draw_lake_heatmap, round } from "../util";
+import { draw_lake_heatmap, if_undefined, round } from "../util";
 import { select, pointer } from "d3";
 
 function TemperatureMap(props) {
@@ -9,8 +9,10 @@ function TemperatureMap(props) {
     //  units: a String, the units of T
     //  color_palette: a function that maps a value in T to an [r, g, b] color
     //  cache_id (optional): a unique identifier for this heatmap (provides a significant performance boost)
+    //  decimal_places (optional, default=0): how many decimal places to round the cursor hover value
     const container_ref = useRef();
     const {T, units, color_palette} = props;
+    const decimal_places = if_undefined(props.decimal_places, 0);
 
     ////////////////////////////////////
     // Dimensions
@@ -51,7 +53,7 @@ function TemperatureMap(props) {
             }
             
             const [px, py] = [x / canvas.width * 100, y / canvas.height * 100];
-            const temp = round(T[j][i], 1);
+            const temp = round(T[j][i], decimal_places);
             cursor.style("display", "block")
                 .style("left", `${px}%`)
                 .style("top", `${py}%`)
