@@ -42,15 +42,18 @@ function formatDate(date) {
 
 function WaveHeightPage() {
     const [wind_data, setWindData] = useState(undefined);
-    const [wh_data, setWHData] = useState(undefined);
+    const [wh_data, setWHData] = useState({});
     const [activeIdx, setActiveIdx] = useState(0);
 
     const is_loading_wind = wind_data === undefined;
     const wind_unavailable = !is_loading_wind && wind_data === null;
-    const is_loading_wh = wh_data === undefined;
-    const wh_unavailable = !is_loading_wh && wh_data === null;
+    const is_loading_wh = wh_data[activeIdx] === undefined;
+    const wh_unavailable = !is_loading_wh && wh_data[activeIdx] === null;
     let cache_id = `waveheight-${activeIdx}`;
     
+    const wh_matrix = (is_loading_wh) ? undefined :
+        (wh_unavailable) ? null : wh_data[activeIdx];
+
     ////////////////////////////////////
     // Retrieve Wind Forecasts
     ////////////////////////////////////
@@ -77,9 +80,17 @@ function WaveHeightPage() {
     ////////////////////////////////////
     useEffect(() => {
         if (is_loading_wind || wind_unavailable) return;
+        if (wh_matrix !== undefined) return;
+
         console.log("Retrieving ", activeIdx);
         retrieve_wh(wind_speed, wind_direction)
-            .then(setWHData)
+            .then((wh_matrix) => {
+                setWHData((prev_wh_data) => {
+                    const new_wh_data = {...prev_wh_data};
+                    new_wh_data[activeIdx] = wh_matrix
+                    return new_wh_data
+                })
+            })
             .catch((error) => {
                 console.log(error);
                 console.log(`Failed to retrieve wave heights for ws=${wind_speed}, wd=${wind_direction}`);
@@ -89,10 +100,7 @@ function WaveHeightPage() {
 
     // Event Listener for Calendar changing event
     function on_event_selected(idx) {
-        if (idx !== activeIdx) {
-            setWHData(undefined);
-            setActiveIdx(idx);
-        }
+        setActiveIdx(idx);
     }
 
     return (
@@ -129,7 +137,7 @@ function WaveHeightPage() {
                     (wh_unavailable) ? <div className="loading-visual"> Wave height map is temporarily unavailable </div> :
                         [
                             <TemperatureMap key='wave-height-map'
-                                T={wh_data} 
+                                T={wh_matrix} 
                                 units={wh_units}
                                 color_palette={wh_color_scale} 
                                 cache_id={cache_id}
