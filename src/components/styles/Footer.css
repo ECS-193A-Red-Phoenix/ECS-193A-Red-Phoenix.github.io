@@ -31,3 +31,13 @@
 .footer-logo-icon {
   height: 35px;
 }
+
+.footer-disclaimer {
+    max-width: 400px;
+    font-style: italic;
+    margin: 13px;
+}
+
+.footer-disclaimer > a {
+    color: white;
+}

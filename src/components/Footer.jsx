@@ -25,6 +25,12 @@ export default function Footer() {
           </li>
         </ul>
       </nav>
+      <p className='footer-disclaimer'>  
+        Every effort is made to ensure that the data provided within this website is accurate and timely, 
+        however, this should not be considered official and should be confirmed with other reliable sources. This 
+        information is provided without warranty for quality or accuracy. For additional information about water 
+        safety, visit <a href="https://laketahoewatertrail.org/safety/"> https://laketahoewatertrail.org/safety/ </a>.
+      </p>
       <p className="copyright">
         &copy; {new Date().getFullYear()} Lake Tahoe Project
       </p>
