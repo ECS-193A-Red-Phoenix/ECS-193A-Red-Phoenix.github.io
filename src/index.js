@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./components/styles/reset.css";
+import reportWebVitals from "./reportWebVitals";
+
+import App from "./App";
 import ContactUs from "./components/ContactUs";
 import LakeConditions from "./components/LakeConditions";
 import RealTimeConditions from "./components/RealTime/RealTimeConditions";
+
+import "./css/reset.css";
+import "./css/index.css";
 
 ReactDOM.render(
   <Router>

@@ -1,6 +1,6 @@
 import CurrentLakePage from "./CurrentChart/CurrentLakePage";
 import LakeWireFrame from "./LakeWireFrame/LakeWireFrame";
-import "./styles/LakeConditions.css";
+import "../css/LakeConditions.css";
 import TemperaturePage from "./TemperatureChart/TemperaturePage";
 import WaveHeightPage from "./WaveHeightChart/WaveHeightPage";
 

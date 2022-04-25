@@ -5,10 +5,10 @@ import TemperatureMap from "./TemperatureMap";
 import TemperatureLegend from "./TemperatureLegend";
 import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
-import "../styles/LakeConditions.css";
+import "../../css/LakeConditions.css";
 
-import { celsius_to_f, ice_to_fire, parseMyDate, apply, reversed } from "../util";
-import { loadNumpyFile } from "../numpy_parser";
+import { celsius_to_f, ice_to_fire, parseMyDate, apply, reversed } from "../../js/util";
+import { loadNumpyFile } from "../../js/numpy_parser";
 
 
 ////////////////////////////////////

@@ -6,15 +6,14 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
 
-import { reversed, parseMyDate, dark_ocean } from "../util";
-import { loadNumpyFile } from '../numpy_parser';
+import { reversed, parseMyDate, dark_ocean } from "../../js/util";
+import { loadNumpyFile } from '../../js/numpy_parser';
 
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
 const legend_speeds = [0.1016, 0.2032, 0.3048, 0.508] // m/s
-const lake_height = 700;
 const FRAME_DURATION = 2;
 
 const speed_scale = scaleLinear().domain([0, 0.5]).range([0, 1]);

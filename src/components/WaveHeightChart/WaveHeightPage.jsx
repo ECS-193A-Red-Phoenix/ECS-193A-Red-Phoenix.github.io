@@ -5,13 +5,13 @@ import Calendar from "../Calendar/Calendar";
 import TemperatureMap from "../TemperatureChart/TemperatureMap";
 import TemperatureLegend from "../TemperatureChart/TemperatureLegend";
 import "../TemperatureChart/TemperatureChart.css";
-import "../styles/LakeConditions.css";
+import "../../css/LakeConditions.css";
 import "./WaveHeightPage.css";
 
-import { lagoon, militaryHourTo12Hour } from "../util";
-import { retrieve_wind_forecasts } from "../WaveHeightChart/nws_api";
+import { lagoon, militaryHourTo12Hour } from "../../js/util";
+import { retrieve_wind_forecasts } from "../../js/nws_api";
 import CompassPlot from "../RealTime/CompassPlot";
-import { retrieve_wh } from "./wh_api";
+import { retrieve_wh } from "../../js/wh_api";
 
 
 ////////////////////////////////////

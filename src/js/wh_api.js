@@ -1,4 +1,4 @@
-import { apply } from "../util";
+import { apply } from "./util";
 
 const base_url = "https://lake-tahoe-conditions.s3.us-west-2.amazonaws.com/";
 const METER_TO_FEET = 3.28084;

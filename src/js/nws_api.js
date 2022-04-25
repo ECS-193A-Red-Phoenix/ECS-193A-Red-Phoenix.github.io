@@ -1,4 +1,4 @@
-import { http_get, if_undefined, mean, wind_direction_mean } from "../util";
+import { http_get, if_undefined, mean, wind_direction_mean } from "./util";
 
 const base_url = "https://api.weather.gov/";
 const tahoe_office = "REV"

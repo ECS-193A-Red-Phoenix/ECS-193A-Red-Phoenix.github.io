@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
-import { Particle, VectorField } from "../particle";
-import { round } from "../util";
+import { Particle, VectorField } from "../../js/particle";
+import { round } from "../../js/util";
 
 //////////////////////////////////////////////
 // Static constants

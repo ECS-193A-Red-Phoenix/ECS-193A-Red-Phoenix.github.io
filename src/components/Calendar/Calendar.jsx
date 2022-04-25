@@ -1,6 +1,6 @@
 import "./Calendar.css";
 import { useState, useRef } from "react";
-import { clamp, militaryHourTo12Hour } from "../util";
+import { clamp, militaryHourTo12Hour } from "../../js/util";
 import UpDownArrow from "./UpDownArrow";
 
 ////////////////////////////////////

@@ -158,7 +158,7 @@ export function bilinear(x, y, grid, default_value) {
 
 // Cache point in lake tahoe for performance boost
 const point_lake_cache = {};
-const shoreline_path = require('./shoreline.json');
+const shoreline_path = require('../static/shoreline.json');
 export function point_in_lake_tahoe(point) {
     // returns true if the point exists within the boundaries of lake tahoe
     // Arguments

@@ -1,6 +1,6 @@
-import { select, selectAll } from "d3";
 import { useEffect } from "react";
-import { ALL_STATIONS } from "./api";
+import { select, selectAll } from "d3";
+import { ALL_STATIONS } from "../../js/aws_api";
 
 // Bounds of the map
 const bounds = [

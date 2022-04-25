@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/AboutUsStyle.css";
+import "../css/AboutUsStyle.css";
 
 export default function ContactUs() {
   return (

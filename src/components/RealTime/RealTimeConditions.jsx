@@ -1,11 +1,13 @@
-import { ALL_STATIONS } from "./api";
 import React, { useState, useEffect } from "react";
 import MapControlButton from "./MapControlButton";
-import "./RealTimeConditions.css";
 import StationMap from "./StationMap";
 import LinePlot from "./LinePlot";
 import CompassPlot from "./CompassPlot";
-import { unzip, mean, wind_direction_mean } from "../util";
+
+import "./RealTimeConditions.css";
+
+import { ALL_STATIONS } from "../../js/aws_api";
+import { unzip, mean, wind_direction_mean } from "../../js/util";
 
 function RealTimeConditions(props) {
   let [stationIdx, setStationIdx] = useState(0);

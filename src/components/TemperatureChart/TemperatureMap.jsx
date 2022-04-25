@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { draw_lake_heatmap, if_undefined, round } from "../util";
+import { draw_lake_heatmap, if_undefined, round } from "../../js/util";
 import { select, pointer } from "d3";
 
 function TemperatureMap(props) {

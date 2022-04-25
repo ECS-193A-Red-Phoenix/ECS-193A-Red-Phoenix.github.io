@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'; 
 import { select, path, easeElasticOut} from 'd3';
-import { mod, round } from '../util';
+import { mod, round } from '../../js/util';
 import "./RealTimeConditions.css"
 
 const inner_padding = 0.15;

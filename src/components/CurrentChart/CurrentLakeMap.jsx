@@ -1,7 +1,7 @@
 import { select, pointer } from "d3";
-import { useRef, useEffect, useMemo } from "react";
-import { Particle, VectorField } from "../particle";
-import { draw_lake_heatmap, round } from "../util";
+import { useRef, useEffect } from "react";
+import { Particle, VectorField } from "../../js/particle";
+import { draw_lake_heatmap, round } from "../../js/util";
 import "./CurrentChart.css";
 
 
