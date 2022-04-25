@@ -6,6 +6,7 @@ import TemperatureMap from "../TemperatureChart/TemperatureMap";
 import TemperatureLegend from "../TemperatureChart/TemperatureLegend";
 import "../TemperatureChart/TemperatureChart.css";
 import "../styles/LakeConditions.css";
+import "./WaveHeightPage.css";
 
 import { lagoon, militaryHourTo12Hour } from "../util";
 import { retrieve_wind_forecasts } from "../WaveHeightChart/nws_api";
@@ -129,12 +130,14 @@ function WaveHeightPage() {
                                 active_event_idx={activeIdx}
                                 on_event_selected={on_event_selected}
                                 description={calendar_description}/>,
-                            <CompassPlot key='compass'
-                                radius={450}
-                                speed={wind_speed * MS_TO_MPH}
-                                direction={wind_direction}
-                                units={wind_units}
-                                title={compass_title}/>
+                            <div className="wh-compass" key='compass'>
+                                <CompassPlot
+                                    radius={450}
+                                    speed={wind_speed * MS_TO_MPH}
+                                    direction={wind_direction}
+                                    units={wind_units}
+                                    title={compass_title}/>
+                            </div>
                         ]
                 }
             </div>
