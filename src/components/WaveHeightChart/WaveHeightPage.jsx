@@ -112,7 +112,11 @@ function WaveHeightPage() {
             <div className="lake-condition-left-column">
                 <div className="lake-condition-title"> Wave Height </div>
                 <div className="lake-condition-description">
-                    Lake tahoe wave height description
+                    One of the most important factors that affect wave heights is 
+                    wind. In general, stronger winds mean taller waves.
+
+                    Using forecasted wind data, we use mathematical models to predict 
+                    wave heights across Lake Tahoe.
                 </div>
 
                 {/* If done loading display calendar and compass */}
