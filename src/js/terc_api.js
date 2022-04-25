@@ -1,4 +1,4 @@
-import { mod, http_get } from "./util";
+import { http_get } from "./util";
 
 /////////////////////////////////////////////////
 // Global constants here

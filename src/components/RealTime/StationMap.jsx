@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { select, selectAll } from "d3";
-import { ALL_STATIONS } from "../../js/aws_api";
+import { ALL_STATIONS } from "../../js/terc_api";
 
 // Bounds of the map
 const bounds = [

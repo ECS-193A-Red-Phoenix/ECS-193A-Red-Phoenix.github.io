@@ -6,7 +6,7 @@ import CompassPlot from "./CompassPlot";
 
 import "./RealTimeConditions.css";
 
-import { ALL_STATIONS } from "../../js/aws_api";
+import { ALL_STATIONS } from "../../js/terc_api";
 import { unzip, mean, wind_direction_mean } from "../../js/util";
 
 function RealTimeConditions(props) {
