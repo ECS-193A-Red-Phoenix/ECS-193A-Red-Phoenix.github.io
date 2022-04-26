@@ -8,7 +8,7 @@ function LakeConditions(props) {
   return (
     <div className="content-wrapper">
       <div className="image-container">
-        <img src="lake-two.jpg"></img>
+        <img src="static/img/lake-two.jpg"></img>
         <div className="page-description-container">
           <div className="page-description-title"> Lake Conditions </div>
           <div className="page-description"> 

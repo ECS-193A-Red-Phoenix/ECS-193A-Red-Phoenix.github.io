@@ -124,7 +124,7 @@ function StationMap(props) {
     
     return (
         <div className="station-map-container">
-            <img alt="Lake Tahoe Map" src="map.PNG"/>
+            <img alt="Lake Tahoe Map" src="static/img/map.PNG"/>
             <svg height="100%" width="100%" 
                 shapeRendering="geometricPrecision">
                 <g id="outer"></g>
