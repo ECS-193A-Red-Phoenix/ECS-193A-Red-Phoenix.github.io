@@ -285,7 +285,7 @@ export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
             val = T[t_j][t_i];
         }
         // Smooth with bilinear interpolation
-        // val = bilinear(x, y, T, val);
+        val = bilinear(x, y, T, val);
 
         let [r, g, b] = color_palette(val);
         image_data.data[pixel_index + 0] = r;

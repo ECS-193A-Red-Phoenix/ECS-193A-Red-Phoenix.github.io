@@ -25,7 +25,7 @@ let temperature_color_scale = (temperature) => temperature_color(temperature_sca
 const calendar_description = "Select a forecast of Lake Tahoe's surface temperature";
 
 function TemperaturePage() {
-    const [temperature_files, setTempData] = useState(undefined);
+    const [temperature_files, setTempFiles] = useState(undefined);
     const [activeIdx, setActiveIdx] = useState(0);
     const is_loading_files = temperature_files === undefined;
     const is_unavailable = !is_loading_files && temperature_files === null;
@@ -39,10 +39,13 @@ function TemperaturePage() {
     ////////////////////////////////////
     useEffect(() => {
         S3.get_temperature_files()
-            .then(setTempData)
+            .then((files) => {
+                files.sort((f1, f2) => f2.time - f1.time);
+                setTempFiles(files);
+            })
             .catch((err) => {
                 console.log(err);
-                setTempData(null);
+                setTempFiles(null);
             });
     }, []);
 
@@ -53,7 +56,7 @@ function TemperaturePage() {
         // download() mutates temperature_files[activeIdx]
         temperature_files[activeIdx].download()
             .then(() => {
-                setTempData([...temperature_files]);
+                setTempFiles([...temperature_files]);
             });
     }, [is_loading_files, is_unavailable, activeIdx])
     

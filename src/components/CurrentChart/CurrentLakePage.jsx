@@ -42,11 +42,14 @@ function CurrentLakePage() {
         && flow_files[activeIdx].matrix === null;
 
     ////////////////////////////////////
-    // Load temperature binary files
+    // Load flow binary files
     ////////////////////////////////////
     useEffect(() => {
         S3.get_flow_files()
-            .then(setFlowFiles)
+            .then((files) => {
+                files.sort((f1, f2) => f2.time - f1.time);
+                setFlowFiles(files);
+            })
             .catch((err) => {
                 console.log(err);
                 setFlowFiles(null);

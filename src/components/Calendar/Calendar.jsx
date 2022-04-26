@@ -14,8 +14,9 @@ function formatDate(date) {
     const day_of_week = days[date.getDay()];
     const month = months[date.getMonth()];
     const day_of_month = date.getDate();
+    const year = date.getFullYear();
 
-    return `${day_of_week}, ${month} ${day_of_month}`;
+    return `${day_of_week}, ${month} ${day_of_month}, ${year}`;
 }
 
 function formatHourString(date) {
@@ -48,14 +49,14 @@ function Calendar(props) {
         return <div className="calendar calendar-error"> {error_message} </div>;
     ////////////////////////////////////
 
-    // Ensure events are sorted by time
-    props.events.sort((o1, o2) => o1['time'] - o2['time']);
-    props.events.forEach((e, idx) => e.idx = idx);
+    // copy the events to avoid mutating props.events
+    const events = props.events.map((obj) => ({ 'time': obj.time }));
+    events.forEach((e, idx) => e.idx = idx);
 
     // Create a hashmap that maps date_string -> events on that day
     // Example: 'Sunday, January 23' -> [event1, event2]
     const dates = {};
-    for (let event of props.events) {
+    for (let event of events) {
         const date_string = formatDate(event.time);
         if (date_string in dates)
             dates[date_string].push(event);
@@ -73,7 +74,7 @@ function Calendar(props) {
             </option>
     )
     
-    const active_event = props.events[active_event_idx];
+    const active_event = events[active_event_idx];
     const active_event_date = formatDate(active_event.time); 
     const hours = dates[active_event_date];
     const active_hour_idx = hours.indexOf(active_event);

@@ -134,13 +134,22 @@ function LakeWireFrame() {
             <div className="lake-wire-frame-description-container"> 
                 <div className="lake-wire-frame-title"> Lake Tahoe Bathymetry </div>
                 <div className="lake-wire-frame-description">
-                    The maximum-recorded depth of Tahoe is 1,645 ft. or 501 meters.  In North America, two other lakes are deeper than Tahoe; one is Crater Lake in Oregon at 1,945 feet or 593 meters in depth.  In Canada, Great Slave Lake is 2,015 ft. or 614 meters in depth.
-                    <br></br>
-                    <br></br>
-                    The deepest, largest and oldest of all lakes is Lake Baikal in Siberia, at 5,400 ft. or 1,637 meters in depth.  Lake Baikal at 25 million years old is the largest fresh water lake, containing over 20% of all surface fresh water on Earth.
-                    <br></br>
-                    <br></br>
-                    Although Tahoe is not the largest, deepest or oldest, it is one of the clearest and most beautiful lakes in the world, and is regarded as the Jewel of the Sierra.
+                Lake levels and depth vary only slightly today. The deepest recorded depth of Lake Tahoe is 1,645 feet. 
+                To visualize this depth, imagine the bottom of Tahoe reaching down 100 feet lower than Carson City, Nevada, 
+                sitting in the basin far below Tahoe to the east.
+
+                <br/><br/>
+
+                What we see as "normal" Lake Tahoe depth is only our perspective. Over its history, the lake level has been 
+                much lower or much higher than today. We can see clear evidence of lower lake levels in the past lasting 
+                hundreds of years. Many locations around the lake have submerged mature tree stumps twenty feet below 
+                current lake levels. By examining and dating the tree rings of these underwater stumps, we can see that 
+                shoreline forests have repeatedly been drowned by ups and downs in the historic lake levels of Tahoe.
+                    
+                <br/><br/>
+
+                <a href="https://www.fs.usda.gov/main/ltbmu/about-forest/about-area"> Source: USDA Forest Service </a>
+
                 </div> 
             </div>
 
