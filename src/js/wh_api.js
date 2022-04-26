@@ -23,7 +23,6 @@ export async function retrieve_wh(wind_speed, wind_direction) {
     //  wind_direction: wind direction in degrees, following meteorological convention
     const key = `${wind_speed},${wind_direction}`;
     if (key in wh_cache) {
-        console.log("Using cached value for", key);
         return wh_cache[key];
     }
 

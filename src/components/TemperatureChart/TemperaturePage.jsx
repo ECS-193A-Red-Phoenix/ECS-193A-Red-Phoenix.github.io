@@ -39,7 +39,6 @@ function TemperaturePage() {
     ////////////////////////////////////
     useEffect(() => {
         S3.get_temperature_files()
-            // .then((r) => {console.log(r); return r;})
             .then(setTempData)
             .catch((err) => {
                 console.log(err);

@@ -62,7 +62,6 @@ function Calendar(props) {
         else
             dates[date_string] = [event];
     }
-    // console.log(dates, props.events[0]);
 
     const day_options = Object.keys(dates).map(
         (date_string, idx) => 

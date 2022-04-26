@@ -9,7 +9,6 @@ export class S3 {
         // Arguments:
         //  path: a String, the path to the file
         const url = `${base_url}${path}`;
-        console.log(url);
         return fetch(url, 
             {
                 method: "GET",
@@ -89,7 +88,6 @@ class TemperatureFile extends NPYFile {
         await super.download();
         this.matrix = reversed(this.matrix);
         apply(this.matrix, celsius_to_f);
-        console.log("applying t");
         return this.matrix;
     }
 }

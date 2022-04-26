@@ -79,7 +79,6 @@ function RealTimeConditions(props) {
             let [wind_speed, wind_direction] = unzip(y_data.slice(y_data.length - 12));
             average_wind_speed = mean(wind_speed);
             average_wind_direction = wind_direction_mean(wind_direction);
-            // console.log("ws", average_wind_speed, "wd", average_wind_direction, "m", mean(wind_direction));
         }
         chart = (
             <CompassPlot

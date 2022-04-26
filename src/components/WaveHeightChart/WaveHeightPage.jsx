@@ -83,7 +83,6 @@ function WaveHeightPage() {
         if (is_loading_wind || wind_unavailable) return;
         if (wh_matrix !== undefined) return;
 
-        console.log("Retrieving ", activeIdx);
         retrieve_wh(wind_speed, wind_direction)
             .then((wh_matrix) => {
                 setWHData((prev_wh_data) => {
