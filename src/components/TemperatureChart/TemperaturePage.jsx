@@ -39,8 +39,8 @@ function TemperaturePage() {
     ////////////////////////////////////
     useEffect(() => {
         S3.get_temperature_files()
+            // .then((r) => {console.log(r); return r;})
             .then(setTempData)
-            .then(console.log)
             .catch((err) => {
                 console.log(err);
                 setTempData(null);
@@ -50,10 +50,11 @@ function TemperaturePage() {
     useEffect(() => {
         if (is_loading_files || is_unavailable)
             return;
+        
+        // download() mutates temperature_files[activeIdx]
         temperature_files[activeIdx].download()
             .then(() => {
-                console.log("done");
-                setTempData((oldTData) => [...oldTData]);
+                setTempData([...temperature_files]);
             });
     }, [is_loading_files, is_unavailable, activeIdx])
     

@@ -31,12 +31,12 @@ export class S3 {
 
     static async get_temperature_files() {
         let t_files = await S3.get_files("temperature");
-        return t_files.map((file_name) => TemperatureFile.from_dated_file("temperature", file_name));
+        return t_files.map((file_name) => NPYFile.from_dated_file("temperature", file_name));
     }
     
     static async get_flow_files() {
         let uv_files = await S3.get_files("flow");
-        return uv_files.map((file_name) => FlowFile.from_dated_file("flow", file_name));
+        return uv_files.map((file_name) => NPYFile.from_dated_file("flow", file_name));
     }
 }
 
@@ -58,10 +58,17 @@ class NPYFile {
         let hour = parseInt(file_name.substring(11, 13));
         let file_date = new Date(year, month - 1, day, hour);
 
-        return new NPYFile(file_dir + "/" + file_name, file_date);
+        if (file_dir === "temperature")
+            return new TemperatureFile(file_dir + "/" + file_name, file_date);
+        else if (file_dir === "flow")
+            return new FlowFile(file_dir + "/" + file_name, file_date);
+        throw new Error(`NPYFile.from_dated_file(): Unexpected file dir ${file_dir}`);
     }
 
     async download() {
+        // Only download if matrix is undefined or null
+        if (this.matrix !== undefined && this.matrix !== null)
+            return;
         try {
             let response = await S3.get(this.file_path);
             response = await response.blob();
@@ -77,15 +84,20 @@ class NPYFile {
 
 class TemperatureFile extends NPYFile {
     async download() {
+        if (this.matrix !== undefined && this.matrix !== null)
+            return;
         await super.download();
         this.matrix = reversed(this.matrix);
         apply(this.matrix, celsius_to_f);
+        console.log("applying t");
         return this.matrix;
     }
 }
 
 class FlowFile extends NPYFile {
     async download() {
+        if (this.matrix !== undefined && this.matrix !== null)
+            return;
         await super.download();
         let [u, v] = this.matrix;
         u = reversed(u);

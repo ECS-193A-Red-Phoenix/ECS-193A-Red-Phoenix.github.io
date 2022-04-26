@@ -6,15 +6,14 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
 
-import { reversed, parseMyDate, dark_ocean } from "../../js/util";
-import { loadNumpyFile } from '../../js/numpy_parser';
+import { reversed, dark_ocean } from "../../js/util";
+import { S3 } from '../../js/s3_api';
 
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
 const legend_speeds = [0.1016, 0.2032, 0.3048, 0.508] // m/s
-const FRAME_DURATION = 2;
 
 const speed_scale = scaleLinear().domain([0, 0.5]).range([0, 1]);
 const color_palette = (speed) => dark_ocean(speed_scale(speed));
@@ -30,48 +29,45 @@ for (let i = 0; i < legend_speeds.length; i++)
         />
     );
 
-const flow_files = ['2022-02-14 18.npy', '2022-02-14 20.npy', '2022-02-14 22.npy', '2022-02-15 00.npy', '2022-02-15 02.npy', '2022-02-15 04.npy', '2022-02-15 06.npy', '2022-02-15 08.npy', '2022-02-15 10.npy', '2022-02-15 12.npy', '2022-02-15 14.npy', '2022-02-15 16.npy', '2022-02-15 18.npy', '2022-02-15 20.npy', '2022-02-15 22.npy', '2022-02-16 00.npy', '2022-02-16 02.npy', '2022-02-16 04.npy', '2022-02-16 06.npy', '2022-02-16 08.npy', '2022-02-16 10.npy', '2022-02-16 12.npy', '2022-02-16 14.npy', '2022-02-16 16.npy'];
-const FLOW_DIR = "static/flow/";
-
 const calendar_description = "Select a forecast of Lake Tahoe's surface water currents";
 
 function CurrentLakePage() {
+    const [flow_files, setFlowFiles] = useState(undefined);
     const [activeIdx, setActiveIdx] = useState(0);
-
-    const [flow_data, setFlowData] = useState([]);
-    const is_loading = flow_data.length === 0;
+    const is_loading_files = flow_files === undefined;
+    const is_unavailable = !is_loading_files && flow_files === null;
+    const is_downloading = !is_loading_files && !is_unavailable 
+        && flow_files[activeIdx].matrix === undefined;
+    const download_failed = !is_loading_files && !is_unavailable 
+        && flow_files[activeIdx].matrix === null;
 
     ////////////////////////////////////
-    // Load Flow binary files
+    // Load temperature binary files
     ////////////////////////////////////
     useEffect(() => {
-        const file_promises = [];
-        for (let file of flow_files) {
-            const file_path = FLOW_DIR + file;
-            const date = parseMyDate(file.substring(0, 13));
-            
-            file_promises.push(new Promise((resolve) => {
-                loadNumpyFile(file_path).then(
-                    (uv_matrix) => resolve({ 'time': date, 'matrices': uv_matrix })
-                );
-            }));
-        }
-
-        Promise.all(file_promises).then((result) => {
-            setFlowData(result);
-        });
+        S3.get_flow_files()
+            .then(setFlowFiles)
+            .catch((err) => {
+                console.log(err);
+                setFlowFiles(null);
+            });
     }, []);
 
-    const flow_events = flow_data.map(
-        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
-    );
+    useEffect(() => {
+        if (is_loading_files || is_unavailable)
+            return;
+
+        // download() mutates flow_files[activeIdx]
+        flow_files[activeIdx].download()
+            .then(() => {
+                setFlowFiles((oldFlowData) => [...oldFlowData]);
+            });
+    }, [is_loading_files, is_unavailable, activeIdx])
     
     let cache_id = `current-map-${activeIdx}`;
     let u, v;
-    if (!is_loading) {
-        [u, v] = flow_data[activeIdx]['matrices'];
-        u = reversed(u);
-        v = reversed(v);
+    if (!is_loading_files && !is_unavailable && !is_downloading && !download_failed) {
+        [u, v] = flow_files[activeIdx].matrix;
     }
 
     return (
@@ -89,18 +85,19 @@ function CurrentLakePage() {
                     </div>
 
                 </div>
-                {
-                    !is_loading &&
-                    <Calendar events={flow_events} 
-                        active_event_idx={activeIdx}
-                        on_event_selected={(idx) => setActiveIdx(idx)}
-                        description={calendar_description}/>
-                }
+                
+                <Calendar events={flow_files} 
+                    active_event_idx={activeIdx}
+                    on_event_selected={(idx) => setActiveIdx(idx)}
+                    description={calendar_description}/>
             </div>
 
             <div className="lake-visual-container" id="current-visual-container">
                 {
-                    (is_loading) ? <div className='loading-visual'> Loading </div> :
+                    (is_loading_files) ? <div className="loading-visual"> Loading </div> :
+                    (is_unavailable) ? <div className="loading-visual"> Water flow is temporarily unavailable </div> :
+                    (is_downloading) ? <div className="loading-visual"> Downloading flow data </div> :
+                    (download_failed) ? <div className="loading-visual"> Failed to download flow data </div> :
                         [
                             <CurrentLakeMap key='current-lake-map'
                                 u={u} 
