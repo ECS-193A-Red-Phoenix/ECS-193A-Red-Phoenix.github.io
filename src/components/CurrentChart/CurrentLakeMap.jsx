@@ -8,7 +8,6 @@ import "./CurrentChart.css";
 //////////////////////////////////
 // Static Lake Map constants
 //////////////////////////////////
-const inner_padding = 0;
 const num_particles = 3500;
 const MS_TO_FTM = 196.85;
 

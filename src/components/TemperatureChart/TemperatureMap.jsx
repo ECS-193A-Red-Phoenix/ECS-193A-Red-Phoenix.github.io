@@ -30,9 +30,9 @@ function TemperatureMap(props) {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.width / aspect_ratio;
 
-        let start_time = Date.now();
+        // let start_time = Date.now();
         draw_lake_heatmap(canvas, T, color_palette, props.cache_id);
-        let end_time = Date.now();
+        // let end_time = Date.now();
 
         // console.log(`Took ${end_time - start_time} ms to draw image`);
     }, [T, color_palette]);

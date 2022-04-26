@@ -6,7 +6,7 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
 
-import { reversed, dark_ocean } from "../../js/util";
+import { dark_ocean } from "../../js/util";
 import { S3 } from '../../js/s3_api';
 
 
@@ -60,7 +60,7 @@ function CurrentLakePage() {
         // download() mutates flow_files[activeIdx]
         flow_files[activeIdx].download()
             .then(() => {
-                setFlowFiles((oldFlowData) => [...oldFlowData]);
+                setFlowFiles((oldFlowFiles) => [...oldFlowFiles]);
             });
     }, [is_loading_files, is_unavailable, activeIdx])
     

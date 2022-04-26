@@ -7,7 +7,7 @@ import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
 import "../../css/LakeConditions.css";
 
-import { ice_to_fire, reversed } from "../../js/util";
+import { ice_to_fire } from "../../js/util";
 import { S3 } from "../../js/s3_api";
 
 

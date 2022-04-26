@@ -1,5 +1,5 @@
 import { loadNPY } from "./numpy_parser";
-import { today, apply, celsius_to_f, reversed } from "./util";
+import { apply, celsius_to_f, reversed } from "./util";
 
 const base_url = "https://lake-tahoe-conditions.s3.us-west-2.amazonaws.com/";
 

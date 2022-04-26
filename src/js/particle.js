@@ -1,4 +1,3 @@
-import { scaleLinear } from "d3";
 import { bilinear, if_undefined } from "./util";
 
 class VectorField {
