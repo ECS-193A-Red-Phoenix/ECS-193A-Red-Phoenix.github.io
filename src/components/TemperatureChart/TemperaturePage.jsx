@@ -7,15 +7,14 @@ import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
 import "../../css/LakeConditions.css";
 
-import { celsius_to_f, ice_to_fire, parseMyDate, apply, reversed } from "../../js/util";
-import { loadNumpyFile } from "../../js/numpy_parser";
+import { ice_to_fire, reversed } from "../../js/util";
+import { S3 } from "../../js/s3_api";
 
 
 ////////////////////////////////////
 // Static Constants
 ////////////////////////////////////
 
-const FRAME_DURATION = 2; // duration in hours for 1 temperature map
 const temperature_color = ice_to_fire; 
 const T_min = 40;
 const T_max = 70;
@@ -23,46 +22,45 @@ const T_units = "° F";
 let temperature_scale = scaleLinear().domain([T_min, T_max]).range([0, 1]);
 let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
 
-const temperature_files = ['2022-02-20 08.npy', '2022-02-20 10.npy', '2022-02-20 12.npy', '2022-02-20 14.npy', '2022-02-20 16.npy', '2022-02-20 18.npy', '2022-02-20 20.npy', '2022-02-20 22.npy', '2022-02-21 00.npy', '2022-02-21 02.npy', '2022-02-21 04.npy', '2022-02-21 06.npy', '2022-02-21 08.npy', '2022-02-21 10.npy', '2022-02-21 12.npy', '2022-02-21 14.npy', '2022-02-21 16.npy', '2022-02-21 18.npy', '2022-02-21 20.npy', '2022-02-21 22.npy', '2022-02-22 00.npy', '2022-02-22 02.npy', '2022-02-22 04.npy', '2022-02-22 06.npy', '2022-02-22 08.npy', '2022-02-22 10.npy', '2022-02-22 12.npy', '2022-02-22 14.npy', '2022-02-22 16.npy', '2022-02-22 18.npy', '2022-02-22 20.npy', '2022-02-22 22.npy', '2022-02-23 00.npy'];
-const TEMPERATURE_DIR = "static/temperature/";
-
 const calendar_description = "Select a forecast of Lake Tahoe's surface temperature";
 
 function TemperaturePage() {
-    const [temperature_data, setTempData] = useState([]);
-    const is_loading = temperature_data.length === 0;
+    const [temperature_files, setTempData] = useState(undefined);
+    const [activeIdx, setActiveIdx] = useState(0);
+    const is_loading_files = temperature_files === undefined;
+    const is_unavailable = !is_loading_files && temperature_files === null;
+    const is_downloading = !is_loading_files && !is_unavailable 
+        && temperature_files[activeIdx].matrix === undefined;
+    const failed_download = !is_loading_files && !is_unavailable 
+        && temperature_files[activeIdx].matrix === null;
 
     ////////////////////////////////////
     // Load temperature binary files
     ////////////////////////////////////
     useEffect(() => {
-        const file_promises = [];
-        for (let file of temperature_files) {
-            const file_path = TEMPERATURE_DIR + file;
-            const date = parseMyDate(file.substring(0, 13));
-            
-            file_promises.push(new Promise((resolve) => {
-                loadNumpyFile(file_path).then(
-                    (T_matrix) => resolve({ 'time': date, 'matrices': apply(T_matrix, celsius_to_f) }) 
-                );
-            }));
-        }
-
-        Promise.all(file_promises).then((result) => {
-            setTempData(result);
-        });
+        S3.get_temperature_files()
+            .then(setTempData)
+            .then(console.log)
+            .catch((err) => {
+                console.log(err);
+                setTempData(null);
+            });
     }, []);
 
-    const [activeIdx, setActiveIdx] = useState(0);
-    const temperature_events = temperature_data.map(
-        (obj) => { return { time: obj['time'], duration: FRAME_DURATION }; }
-    );
-
+    useEffect(() => {
+        if (is_loading_files || is_unavailable)
+            return;
+        temperature_files[activeIdx].download()
+            .then(() => {
+                console.log("done");
+                setTempData((oldTData) => [...oldTData]);
+            });
+    }, [is_loading_files, is_unavailable, activeIdx])
+    
     let cache_id = `temperature-${activeIdx}`;
     let T;
-    if (!is_loading) {
-        T = temperature_data[activeIdx]['matrices'];
-        T = reversed(T);
+    if (!is_loading_files && !is_unavailable && !is_downloading) {
+        T = temperature_files[activeIdx].matrix;
     } 
 
     return (
@@ -76,18 +74,19 @@ function TemperaturePage() {
                     should be prepared for dangerously cold conditions.
                 </div>
 
-                {
-                    !is_loading &&
-                        <Calendar events={temperature_events} 
-                            active_event_idx={activeIdx}
-                            on_event_selected={(idx) => setActiveIdx(idx)}
-                            description={calendar_description}/>
-                }
+                <Calendar 
+                    events={temperature_files} 
+                    active_event_idx={activeIdx}
+                    on_event_selected={(idx) => setActiveIdx(idx)}
+                    description={calendar_description}/>
             </div>
 
             <div className="lake-visual-container" id="temperature-visual-container">
             {
-                (is_loading) ? <div className="loading-visual"> Loading </div> :
+                (is_loading_files) ? <div className="loading-visual"> Loading </div> :
+                (is_unavailable) ? <div className="loading-visual"> Temperature map is temporarily unavailable </div> :
+                (is_downloading) ? <div className="loading-visual"> Downloading temperature data </div> :
+                (failed_download) ? <div className="loading-visual"> Failed to download temperature data </div> :
                     [
                         <TemperatureMap key='temperature-map'
                             T={T} 

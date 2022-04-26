@@ -23,6 +23,18 @@ export function round(x, decimals) {
     return Math.round(x * 10**decimals) / 10**decimals;
 }
 
+export function today(days) {
+    // Returns 'x' days before todays date
+    // Arguments:
+    //  days (optional, default: 0): an integer 
+    days = if_undefined(days, 0);
+
+    const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+    let now = new Date();
+    now = new Date(now.getTime() - days * ONE_DAY_IN_MS);
+    return now;
+}
+
 export function colorFromHex(hex_code) {
     let res = [];
     let start_index = (hex_code[0] === '#') ? 1 : 0;

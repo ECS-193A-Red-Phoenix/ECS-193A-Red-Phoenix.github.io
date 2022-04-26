@@ -30,12 +30,24 @@ function Calendar(props) {
 
     ////////////////////////////////////
     // Expected props:
-    //  props.events: a list of events [{'time': Date object, 'duration': hours}]
+    //  props.events: a list of Objects that have a time attribute [{'time': Date object}, ...]
     //  props.on_event_selected: a callback function when a new event is selected
-    if (props.events.length === 0) {
-        return <div className="calendar"> No forecasts are available </div>
-    }
     
+    ////////////////////////////////////
+    // Error Handling
+    ////////////////////////////////////
+    let error_message;
+    if (props.events === undefined) 
+        error_message = "Loading available forecasts";
+    else if (props.events === null) 
+        error_message = "An unexpected error occurred while retrieving forecasts";
+    else if (props.events.length === 0)
+        error_message = "No forecasts are available";
+    
+    if (error_message !== undefined)
+        return <div className="calendar calendar-error"> {error_message} </div>;
+    ////////////////////////////////////
+
     // Ensure events are sorted by time
     props.events.sort((o1, o2) => o1['time'] - o2['time']);
     props.events.forEach((e, idx) => e.idx = idx);
@@ -50,6 +62,7 @@ function Calendar(props) {
         else
             dates[date_string] = [event];
     }
+    // console.log(dates, props.events[0]);
 
     const day_options = Object.keys(dates).map(
         (date_string, idx) => 

@@ -1,4 +1,4 @@
-import { http_get } from "./util";
+import { http_get, if_undefined, today } from "./util";
 
 /////////////////////////////////////////////////
 // Global constants here
@@ -37,13 +37,12 @@ const NASA_BUOY_INFO = [
     { 'id': 4, 'station_name': 'tb4', "coords": [    39.155, -120.07216], "data": BUOY_DATA }
 ];
 
-function today(days) {
+function today_string(days) {
     // Retrieves the current date in UTC as a 'YYYYMMDD' string 
     // Arguments:
     //  days (optional, default 0): the number of days from today
-    days = days ? days : 0;
-    let now = new Date();
-    now = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    days = if_undefined(days, 0);
+    let now = today(days);
     const year = String(now.getUTCFullYear());
     const month = String(now.getUTCMonth() + 1).padStart(2, "0");
     const day = String(now.getUTCDate()).padStart(2, "0");
@@ -74,7 +73,7 @@ class Station {
     }
 
     async get_data() {
-        const params = { "id": this.info.id, "rptdate": today(DAYS_OF_DATA), "rptend": today() };
+        const params = { "id": this.info.id, "rptdate": today_string(DAYS_OF_DATA), "rptend": today_string() };
         const json = await http_get(this.url, params); 
         return json;
     }
