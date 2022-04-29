@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import App from "./App";
 import ContactUs from "./components/ContactUs";
@@ -11,10 +10,9 @@ import RealTimeConditions from "./components/RealTime/RealTimeConditions";
 import "./css/reset.css";
 import "./css/index.css";
 
-console.log("Loading app");
 
 ReactDOM.render(
-  <Router>
+  <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
         <Route index element={ <LakeConditions/> }/>
@@ -22,7 +20,7 @@ ReactDOM.render(
         <Route path="real-time" element={ <RealTimeConditions/> }/> 
       </Route>
     </Routes>
-  </Router>,
+  </BrowserRouter>,
 
   document.getElementById("root")
 );
