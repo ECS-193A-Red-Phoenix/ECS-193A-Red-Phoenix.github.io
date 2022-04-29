@@ -25,7 +25,7 @@ export async function retrieve_wind_forecasts() {
 
     // Extract properties
     if (!("properties" in geo_json))
-        throw new Error("Properties not in NWS response");
+        throw new Error("Properties not in NWS response", geo_json);
     geo_json = geo_json['properties'];
 
     // Extract wind data

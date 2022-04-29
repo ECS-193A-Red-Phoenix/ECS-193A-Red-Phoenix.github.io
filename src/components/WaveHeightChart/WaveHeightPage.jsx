@@ -60,7 +60,9 @@ function WaveHeightPage() {
     ////////////////////////////////////
     useEffect(() => {
         retrieve_wind_forecasts()
-            .then(setWindData)
+            .then((res) => {
+                setWindData(res);
+            })
             .catch((error) => {
                 console.log(error);
                 console.log("Failed to retrieve wind forecasts from NWS");
@@ -69,7 +71,7 @@ function WaveHeightPage() {
     }, []);
 
     let wind_speed, wind_direction, compass_title;
-    if (!is_loading_wind) {
+    if (!is_loading_wind && !wind_unavailable) {
         [wind_speed, wind_direction] = wind_data[activeIdx].values;
 
         let active_date = wind_data[activeIdx].time;
