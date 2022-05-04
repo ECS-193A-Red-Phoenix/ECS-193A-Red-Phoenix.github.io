@@ -34,12 +34,13 @@ const calendar_description = "Select a forecast of Lake Tahoe's surface water cu
 function CurrentLakePage() {
     const [flow_files, setFlowFiles] = useState(undefined);
     const [activeIdx, setActiveIdx] = useState(0);
+
     const is_loading_files = flow_files === undefined;
-    const is_unavailable = !is_loading_files && flow_files === null;
-    const is_downloading = !is_loading_files && !is_unavailable 
-        && flow_files[activeIdx].matrix === undefined;
-    const download_failed = !is_loading_files && !is_unavailable 
-        && flow_files[activeIdx].matrix === null;
+    const files_unavailable = !is_loading_files && flow_files === null;
+    const files_exist = !is_loading_files && !files_unavailable && flow_files.length > 0;
+    
+    const is_downloading = files_exist && flow_files[activeIdx].matrix === undefined;
+    const download_failed = files_exist && flow_files[activeIdx].matrix === null;
 
     ////////////////////////////////////
     // Load flow binary files
@@ -57,7 +58,7 @@ function CurrentLakePage() {
     }, []);
 
     useEffect(() => {
-        if (is_loading_files || is_unavailable)
+        if (is_loading_files || files_unavailable || !files_exist)
             return;
 
         // download() mutates flow_files[activeIdx]
@@ -65,11 +66,12 @@ function CurrentLakePage() {
             .then(() => {
                 setFlowFiles((oldFlowFiles) => [...oldFlowFiles]);
             });
-    }, [is_loading_files, is_unavailable, activeIdx])
+    }, [is_loading_files, files_unavailable, activeIdx])
     
     let cache_id = `current-map-${activeIdx}`;
     let u, v;
-    if (!is_loading_files && !is_unavailable && !is_downloading && !download_failed) {
+    if (!is_loading_files && !files_unavailable && files_exist &&
+        !is_downloading && !download_failed) {
         [u, v] = flow_files[activeIdx].matrix;
     }
 
@@ -98,7 +100,8 @@ function CurrentLakePage() {
             <div className="lake-visual-container" id="current-visual-container">
                 {
                     (is_loading_files) ? <div className="loading-visual"> Loading </div> :
-                    (is_unavailable) ? <div className="loading-visual"> Water flow is temporarily unavailable </div> :
+                    (files_unavailable) ? <div className="loading-visual"> Water flow is temporarily unavailable </div> :
+                    (!files_exist) ? <div className="loading-visual"> Zero water flow visualizations are available </div> :
                     (is_downloading) ? <div className="loading-visual"> Downloading flow data </div> :
                     (download_failed) ? <div className="loading-visual"> Failed to download flow data </div> :
                         [

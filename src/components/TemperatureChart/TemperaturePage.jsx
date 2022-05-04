@@ -27,12 +27,13 @@ const calendar_description = "Select a forecast of Lake Tahoe's surface temperat
 function TemperaturePage() {
     const [temperature_files, setTempFiles] = useState(undefined);
     const [activeIdx, setActiveIdx] = useState(0);
+
     const is_loading_files = temperature_files === undefined;
-    const is_unavailable = !is_loading_files && temperature_files === null;
-    const is_downloading = !is_loading_files && !is_unavailable 
-        && temperature_files[activeIdx].matrix === undefined;
-    const failed_download = !is_loading_files && !is_unavailable 
-        && temperature_files[activeIdx].matrix === null;
+    const files_unavailable = !is_loading_files && temperature_files === null;
+    const files_exist = !is_loading_files && !files_unavailable && temperature_files.length > 0;
+
+    const is_downloading = files_exist && temperature_files[activeIdx].matrix === undefined;
+    const failed_download = files_exist && temperature_files[activeIdx].matrix === null;
 
     ////////////////////////////////////
     // Load temperature binary files
@@ -50,7 +51,7 @@ function TemperaturePage() {
     }, []);
 
     useEffect(() => {
-        if (is_loading_files || is_unavailable)
+        if (is_loading_files || files_unavailable || !files_exist)
             return;
         
         // download() mutates temperature_files[activeIdx]
@@ -58,11 +59,12 @@ function TemperaturePage() {
             .then(() => {
                 setTempFiles([...temperature_files]);
             });
-    }, [is_loading_files, is_unavailable, activeIdx])
+    }, [is_loading_files, files_unavailable, activeIdx])
     
     let cache_id = `temperature-${activeIdx}`;
     let T;
-    if (!is_loading_files && !is_unavailable && !is_downloading) {
+    if (!is_loading_files && !files_unavailable && files_exist &&
+        !is_downloading && !failed_download) {
         T = temperature_files[activeIdx].matrix;
     } 
 
@@ -87,7 +89,8 @@ function TemperaturePage() {
             <div className="lake-visual-container" id="temperature-visual-container">
             {
                 (is_loading_files) ? <div className="loading-visual"> Loading </div> :
-                (is_unavailable) ? <div className="loading-visual"> Temperature map is temporarily unavailable </div> :
+                (files_unavailable) ? <div className="loading-visual"> Temperature map is temporarily unavailable </div> :
+                (!files_exist) ? <div className="loading-visual"> Zero temperature visualizations are available </div> :
                 (is_downloading) ? <div className="loading-visual"> Downloading temperature data </div> :
                 (failed_download) ? <div className="loading-visual"> Failed to download temperature data </div> :
                     [
