@@ -85,9 +85,14 @@ class TemperatureFile extends NPYFile {
     async download() {
         if (this.matrix !== undefined && this.matrix !== null)
             return;
-        await super.download();
-        this.matrix = reversed(this.matrix);
-        apply(this.matrix, celsius_to_f);
+        try {
+            await super.download();
+            this.matrix = reversed(this.matrix);
+            apply(this.matrix, celsius_to_f);
+        } catch (error) {
+            console.log(error);
+            this.matrix = null;
+        }
         return this.matrix;
     }
 }
@@ -96,11 +101,16 @@ class FlowFile extends NPYFile {
     async download() {
         if (this.matrix !== undefined && this.matrix !== null)
             return;
-        await super.download();
-        let [u, v] = this.matrix;
-        u = reversed(u);
-        v = reversed(v);
-        this.matrix = [u, v];
+        try {
+            await super.download();
+            let [u, v] = this.matrix;
+            u = reversed(u);
+            v = reversed(v);
+            this.matrix = [u, v];
+        } catch (error) {
+            console.log(error);
+            this.matrix = null;
+        }
         return this.matrix;
     }
 }
