@@ -75,6 +75,26 @@ export function colorScale(colors, discrete) {
     }
 }
  
+export function colorGradient(c1, c2, num_colors) {
+    // Breaks apart two colors into a gradient of colors between the two
+    // Arguments:
+    //  c1: the first color in the gradient
+    //  c2: the last color in the gradient
+    //  num_colors (optional, default=2): the number of colors in the result (minimum is 2)
+    num_colors = if_undefined(num_colors, 2); 
+    num_colors = Math.max(num_colors, 2);
+
+    let gradient = [];
+    for (let i = 0; i < num_colors; i++) {
+        let percent = (i / (num_colors - 1));
+        let new_color = [];
+        for (let j = 0; j < c1.length; j++)
+            new_color.push(c1[j] + (c2[j] - c1[j]) * percent);
+        gradient.push(new_color);
+    }
+    return gradient;
+}
+
 // Colors taken from https://github.com/Kitware/ParaView/blob/6777e1303f9d1eb341131354616241dbc5851340/Wrapping/Python/paraview/_colorMaps.py#L1599
 export const ice_to_fire = colorScale(
     [[0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
@@ -82,8 +102,8 @@ export const ice_to_fire = colorScale(
     [172, 35, 0], [130, 0, 0], [76, 0, 0]], true
 );
 
-export const lagoon = colorScale([
-    [153, 218, 196], [81, 171, 173],[0, 123, 150],[0, 76, 119],[0, 30, 77]], true
+export const lagoon = colorScale(
+    colorGradient([153, 218, 196], [0, 30, 77], 15), true
 );
     
 export const dark_ocean = colorScale(
