@@ -45,7 +45,7 @@ function CurrentLegendBox(props) {
             vector_field.drawWetCells(cx, 0, 0, props.color_palette);
             
             particles.forEach((p) => p.draw(cx, 0, 0));
-            particles.forEach((p) => p.move());
+            particles.forEach((p) => p.move(vector_field));
         }, 50);
         return () => clearInterval(interval);
     }, [particles, vector_field, width, height]);

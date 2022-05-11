@@ -1,5 +1,5 @@
 import { select, pointer } from "d3";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Particle, VectorField } from "../../js/particle";
 import { draw_lake_heatmap, round } from "../../js/util";
 import "./CurrentChart.css";
@@ -11,16 +11,18 @@ import "./CurrentChart.css";
 const num_particles = 3500;
 const MS_TO_FTM = 196.85;
 
-function CurrentLakeMap(props) {
-    ////////////////////////////////////
-    // Component Constants
-    ////////////////////////////////////
-    const canvas_ref = useRef();
+const speeds_cache = {};
+function compute_speeds(u, v, cache_id) {
+    // Computes the magnitude of each cell in the vector field
+    // Uses a cache for a significant speed up, so its only computed once for a given field
+    // Arguments:
+    //  u: u-component of the vector field
+    //  v: v-component of the vector field
+    //  cache_id (optional): a key to cache the results of the computation
+    if (cache_id in speeds_cache)
+        return speeds_cache[cache_id];
 
-    const {u, v, color_palette} = props;
     const [n_rows, n_cols] = [u.length, u[0].length];
-    const aspect_ratio = n_cols / n_rows;
-
     const speeds = [];
     for (let j = 0; j < n_rows; j++) {
         const row = [];
@@ -34,6 +36,25 @@ function CurrentLakeMap(props) {
         }
         speeds.push(row);
     }
+
+    if (cache_id !== undefined)
+        speeds_cache[cache_id] = speeds;
+    return speeds;
+}
+
+
+function CurrentLakeMap(props) {
+    ////////////////////////////////////
+    // Component Constants
+    ////////////////////////////////////
+    const [particles, setParticles] = useState(undefined);
+    const canvas_ref = useRef();
+
+    const {u, v, color_palette, cache_id} = props;
+    const [n_rows, n_cols] = [u.length, u[0].length];
+    const aspect_ratio = n_cols / n_rows;
+
+    const speeds = compute_speeds(u, v, cache_id);
 
     useEffect(() => {
         const canvas = canvas_ref.current;
@@ -76,21 +97,28 @@ function CurrentLakeMap(props) {
         const square_size = (chart_width) / n_cols;
 
         const vector_field = new VectorField(u, v, square_size);
-        const particles = [];
-        for (let k = 0; k < num_particles; k++)
-            particles.push( Particle.newRandom(vector_field) );
+        if (particles === undefined) {
+            const new_particles = [];
+            for (let k = 0; k < num_particles; k++)
+                new_particles.push( Particle.newRandom(vector_field) );
+            setParticles(new_particles);
+        }
 
         ////////////////////////////////////
         // Animation Loop
         ////////////////////////////////////
-        const interval = setInterval(() => {
-            draw_lake_heatmap(canvas, speeds, color_palette, props.cache_id);
-
+        draw_lake_heatmap(canvas, speeds, color_palette, cache_id);
+        if (particles != undefined) {
             particles.forEach((p) => p.draw(cx));
-            particles.forEach((p) => p.move());
+            particles.forEach((p) => p.move(vector_field));
+        }
+        const interval = setInterval(() => {
+            draw_lake_heatmap(canvas, speeds, color_palette, cache_id);
+            particles.forEach((p) => p.draw(cx));
+            particles.forEach((p) => p.move(vector_field));
         }, 50);
         return () => clearInterval(interval);
-      }, [u, v, color_palette, speeds]);
+      }, [u, v, color_palette, particles]);
 
     return (
         <div className="current-chart-canvas-container">

@@ -67,31 +67,30 @@ class VectorField {
 }
 
 class Particle {
-    constructor(x, y, age, field) {
+    constructor(x, y, age) {
         this.xy_history = [[x, y]];
         this.age = age;
-        this.field = field;
     }
 
     static newRandom(field) {
-        const p = new Particle(0, 0, 0, field);
-        p.resetRandom();
+        const p = new Particle(0, 0, 0);
+        p.resetRandom(field);
         return p;
     }
 
-    resetRandom() {
-        this.xy_history = [this.field.randomPoint()];
+    resetRandom(field) {
+        this.xy_history = [field.randomPoint()];
         this.age = Math.floor(Math.random() * (this.max_age - 10));
     }
 
-    needsReset() {
+    needsReset(field) {
         let [i, j] = this.xy_history[this.xy_history.length - 1];
-        return this.age > this.max_age || this.field.outOfBounds(i, j);
+        return this.age > this.max_age || field.outOfBounds(i, j);
     }
 
-    getFlow() {
+    getFlow(field) {
         let [x, y] = this.xy_history[this.xy_history.length - 1];
-        return this.field.getFlow(x, y);
+        return field.getFlow(x, y);
     }
     
     draw(context, x_s, y_s) {
@@ -122,10 +121,10 @@ class Particle {
         context.stroke();
     }
     
-    move() {
-        if (this.needsReset())
-            this.resetRandom();
-        let [u, v] = this.getFlow();
+    move(field) {
+        if (this.needsReset(field))
+            this.resetRandom(field);
+        let [u, v] = this.getFlow(field);
         let [i, j] = this.xy_history[this.xy_history.length - 1];
         this.xy_history.push([i + u * this.speed_scale, j + v * this.speed_scale]);
         this.age += 1;
@@ -133,6 +132,6 @@ class Particle {
 }
 Particle.prototype.max_age = 50;
 Particle.prototype.max_history = 8;
-Particle.prototype.speed_scale = 4;
+Particle.prototype.speed_scale = 10;
 
 export { Particle, VectorField };
