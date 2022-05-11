@@ -21,11 +21,22 @@ export async function retrieve_wind_forecasts() {
     const url = `${base_url}gridpoints/${tahoe_office}/${tahoe_gx},${tahoe_gy}`;
     const headers = { "Accept": "application/geo+json" }
     
-    let geo_json = await http_get(url, undefined, headers);
-
-    // Extract properties
-    if (!("properties" in geo_json))
-        throw new Error("Properties not in NWS response", geo_json);
+    const max_attempts = 5;
+    let geo_json;
+    for (let request_attempt = 1; request_attempt <= max_attempts; request_attempt++) {
+        geo_json = await http_get(url, undefined, headers);
+    
+        // Extract properties
+        if (!("properties" in geo_json)) {
+            console.log(`Attempt ${request_attempt}: Failed to retrieve NWS data, retrying`)
+            if (request_attempt === max_attempts) {
+                throw new Error("Max number of requests exceeded. Properties not in NWS response", geo_json);
+            }
+        }
+        else {
+            break;
+        }
+    }
     geo_json = geo_json['properties'];
 
     // Extract wind data
