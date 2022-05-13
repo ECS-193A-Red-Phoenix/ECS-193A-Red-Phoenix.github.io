@@ -108,7 +108,7 @@ function CurrentLakeMap(props) {
         // Animation Loop
         ////////////////////////////////////
         draw_lake_heatmap(canvas, speeds, color_palette, cache_id);
-        if (particles != undefined) {
+        if (particles !== undefined) {
             particles.forEach((p) => p.draw(cx));
             particles.forEach((p) => p.move(vector_field));
         }

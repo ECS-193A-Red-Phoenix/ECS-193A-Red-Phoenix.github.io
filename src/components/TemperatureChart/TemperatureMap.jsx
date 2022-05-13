@@ -9,10 +9,10 @@ function TemperatureMap(props) {
     //  units: a String, the units of T
     //  color_palette: a function that maps a value in T to an [r, g, b] color
     //  cache_id (optional): a unique identifier for this heatmap (provides a significant performance boost)
-    //  decimal_places (optional, default=0): how many decimal places to round the cursor hover value
+    //  decimal_places (optional, default=1): how many decimal places to round the cursor hover value
     const container_ref = useRef();
     const {T, units, color_palette} = props;
-    const decimal_places = if_undefined(props.decimal_places, 0);
+    const decimal_places = if_undefined(props.decimal_places, 1);
 
     ////////////////////////////////////
     // Dimensions
