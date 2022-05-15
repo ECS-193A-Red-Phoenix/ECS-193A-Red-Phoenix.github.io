@@ -7,7 +7,7 @@ import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
 import "../../css/LakeConditions.css";
 
-import { ice_to_fire } from "../../js/util";
+import { ice_to_fire, clamp } from "../../js/util";
 import { S3 } from "../../js/s3_api";
 
 
@@ -54,11 +54,17 @@ function TemperaturePage() {
         if (is_loading_files || files_unavailable || !files_exist)
             return;
         
-        // download() mutates temperature_files[activeIdx]
-        temperature_files[activeIdx].download()
-            .then(() => {
-                setTempFiles([...temperature_files]);
-            });
+        // Download 10 at a time
+        for (let i = 0; i < 10; i++) {
+            let index = clamp(activeIdx - 5 + i, 0, temperature_files.length - 1);
+            if (temperature_files[index].is_downloaded()) continue;
+
+            // download() mutates temperature_files[activeIdx]
+            temperature_files[index].download()
+                .then(() => {
+                    setTempFiles([...temperature_files]);
+                });
+        }
     }, [is_loading_files, files_unavailable, activeIdx])
     
     let cache_id = `temperature-${activeIdx}`;

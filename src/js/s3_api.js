@@ -64,10 +64,13 @@ class NPYFile {
         throw new Error(`NPYFile.from_dated_file(): Unexpected file dir ${file_dir}`);
     }
 
+    is_downloaded() {
+        return this.matrix !== undefined && this.matrix !== null;
+    }
+
     async download() {
         // Only download if matrix is undefined or null
-        if (this.matrix !== undefined && this.matrix !== null)
-            return;
+        if (this.is_downloaded()) return;
         try {
             let response = await S3.get(this.file_path);
             response = await response.blob();
@@ -83,8 +86,7 @@ class NPYFile {
 
 class TemperatureFile extends NPYFile {
     async download() {
-        if (this.matrix !== undefined && this.matrix !== null)
-            return;
+        if (this.is_downloaded()) return;
         try {
             await super.download();
             this.matrix = reversed(this.matrix);
@@ -99,8 +101,7 @@ class TemperatureFile extends NPYFile {
 
 class FlowFile extends NPYFile {
     async download() {
-        if (this.matrix !== undefined && this.matrix !== null)
-            return;
+        if (this.is_downloaded()) return;
         try {
             await super.download();
             let [u, v] = this.matrix;

@@ -6,7 +6,7 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
 
-import { dark_ocean } from "../../js/util";
+import { dark_ocean, clamp } from "../../js/util";
 import { S3 } from '../../js/s3_api';
 
 
@@ -61,11 +61,17 @@ function CurrentLakePage() {
         if (is_loading_files || files_unavailable || !files_exist)
             return;
 
-        // download() mutates flow_files[activeIdx]
-        flow_files[activeIdx].download()
-            .then(() => {
-                setFlowFiles((oldFlowFiles) => [...oldFlowFiles]);
-            });
+        // Download 10 at a time
+        for (let i = 0; i < 10; i++) {
+            let index = clamp(activeIdx - 5 + i, 0, flow_files.length - 1);
+            if (flow_files[index].is_downloaded()) continue;
+
+            // download() mutates flow_files[activeIdx]
+            flow_files[activeIdx].download()
+                .then(() => {
+                    setFlowFiles((oldFlowFiles) => [...oldFlowFiles]);
+                });
+        }
     }, [is_loading_files, files_unavailable, activeIdx])
     
     let cache_id = `current-map-${activeIdx}`;
