@@ -27,6 +27,7 @@
 .calendar-hour-select {
     display: flex;
     flex-wrap: nowrap;
+    align-items: center;
 }
 
 .calendar select {
