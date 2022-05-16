@@ -6,7 +6,7 @@ import CurrentLegendBox from "./CurrentLegendBox";
 import Calendar from '../Calendar/Calendar';
 import "./CurrentChart.css";
 
-import { dark_ocean, clamp } from "../../js/util";
+import { dark_ocean, clamp, today } from "../../js/util";
 import { S3 } from '../../js/s3_api';
 
 
@@ -46,7 +46,8 @@ function CurrentLakePage() {
     // Load flow binary files
     ////////////////////////////////////
     useEffect(() => {
-        S3.get_flow_files()
+        const after_date = today(3);
+        S3.get_files("flow", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
                 setFlowFiles(files);

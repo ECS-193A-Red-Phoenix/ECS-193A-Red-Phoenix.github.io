@@ -7,7 +7,7 @@ import Calendar from "../Calendar/Calendar";
 import "./TemperatureChart.css";
 import "../../css/LakeConditions.css";
 
-import { ice_to_fire, clamp } from "../../js/util";
+import { ice_to_fire, clamp, today } from "../../js/util";
 import { S3 } from "../../js/s3_api";
 
 
@@ -39,7 +39,8 @@ function TemperaturePage() {
     // Load temperature binary files
     ////////////////////////////////////
     useEffect(() => {
-        S3.get_temperature_files()
+        const after_date = today(3);
+        S3.get_files("temperature", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
                 setTempFiles(files);

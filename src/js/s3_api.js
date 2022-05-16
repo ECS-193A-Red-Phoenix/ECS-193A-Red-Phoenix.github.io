@@ -17,7 +17,7 @@ export class S3 {
         )
     }
 
-    static async get_files(directory) {
+    static async get_files_available(directory) {
         // Retrieves contents.json from S3 and returns files available in the specified folder
         // Arguments:
         //  directory: a String, the name of the folder
@@ -28,14 +28,16 @@ export class S3 {
         return contents[directory];
     }
 
-    static async get_temperature_files() {
-        let t_files = await S3.get_files("temperature");
-        return t_files.map((file_name) => NPYFile.from_dated_file("temperature", file_name));
-    }
-    
-    static async get_flow_files() {
-        let uv_files = await S3.get_files("flow");
-        return uv_files.map((file_name) => NPYFile.from_dated_file("flow", file_name));
+    static async get_files(file_type, date) {
+        // Retrieves .npy files of a certain type
+        // Arguments:
+        //  file_type: a String, either "temperature", or "flow"
+        //  date (optional): returns all files dated after this date
+        let files = await S3.get_files_available(file_type);
+        files = files.map((file_name) => NPYFile.from_dated_file(file_type, file_name));
+        if (date !== undefined)
+            files = files.filter((f) => f.time > date);
+        return files
     }
 }
 
