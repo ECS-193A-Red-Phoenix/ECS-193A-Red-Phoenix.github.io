@@ -67,7 +67,7 @@ function CurrentLakePage() {
             if (flow_files[index].is_downloaded()) continue;
 
             // download() mutates flow_files[activeIdx]
-            flow_files[activeIdx].download()
+            flow_files[index].download()
                 .then(() => {
                     setFlowFiles((oldFlowFiles) => [...oldFlowFiles]);
                 });
