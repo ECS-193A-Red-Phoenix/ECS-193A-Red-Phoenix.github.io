@@ -32,7 +32,7 @@ export default function ContactUs() {
           <div>
             <h2> Acknowledgements </h2>
 
-            Thank you to ___ for funding this project.
+            Special thanks to our sponsors the Tahoe Fund for supporting this project
 
           </div>
       </div>
