@@ -3,3 +3,11 @@
     height: 350px;
     align-self: center;
 }
+
+@media only screen and (max-width: 445px) {
+    .wh-compass {
+        margin: 0px 20px;
+        width: 100%;
+        height: auto;
+    }
+}

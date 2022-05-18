@@ -93,7 +93,7 @@ function TemperaturePage() {
                     description={calendar_description}/>
             </div>
 
-            <div className="lake-visual-container" id="temperature-visual-container">
+            <div className="lake-visual-container heatmap-container">
             {
                 (is_loading_files) ? <div className="loading-visual"> Loading </div> :
                 (files_unavailable) ? <div className="loading-visual"> Temperature map is temporarily unavailable </div> :

@@ -5,6 +5,7 @@ import Calendar from "../Calendar/Calendar";
 import TemperatureMap from "../TemperatureChart/TemperatureMap";
 import TemperatureLegend from "../TemperatureChart/TemperatureLegend";
 import "../TemperatureChart/TemperatureChart.css";
+import "../RealTime/RealTimeConditions.css";
 import "../../css/LakeConditions.css";
 import "./WaveHeightPage.css";
 
@@ -143,7 +144,7 @@ function WaveHeightPage() {
                 }
             </div>
 
-            <div className="lake-visual-container">
+            <div className="lake-visual-container heatmap-container">
                 {
                     (is_loading_wh) ? <div className="loading-visual"> Retrieving wave heights forecasts </div> :
                     (wh_unavailable) ? <div className="loading-visual"> Wave height map is temporarily unavailable </div> :

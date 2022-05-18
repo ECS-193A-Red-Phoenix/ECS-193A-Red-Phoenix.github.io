@@ -167,7 +167,7 @@
         width: 100%;
     }
 
-    .time-plot-container > .compass-plot, .time-plot-container .line-plot {
+    .compass-plot, .time-plot-container .line-plot {
         width: auto;
         height: auto;
     }

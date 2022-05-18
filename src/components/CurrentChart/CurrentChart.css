@@ -61,13 +61,14 @@
     display: block;
 }
 
-@media only screen and  (max-width: 807px) {
+@media only screen and  (max-width: 860px) {
     #current-visual-container {
         flex-direction: column;
     }
     .current-legend-container {
         position: static;
         align-self: center;
+        margin-top: 20px;
     }
 }
 
