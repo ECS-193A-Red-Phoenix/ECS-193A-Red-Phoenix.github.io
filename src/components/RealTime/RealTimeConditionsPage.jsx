@@ -10,7 +10,7 @@ function RealTimeConditionsPage(props) {
         <div className="page-description-container">
           <div className="page-description-title"> Real-time Conditions </div>
           <div className="page-description">
-            Explore Lake Tahoe real-time conditions from the UC Davis TERC lake data stations. Data are updated every hour .
+            Explore Lake Tahoe real-time conditions from the UC Davis TERC lake data stations. Data are updated every hour.
           </div>
           <div className="page-last-updated">
             {" "}

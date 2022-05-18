@@ -25,7 +25,7 @@ export default function ContactUs() {
 
           <div>
             <h2> Data Acknowledgement </h2>
-            Data Acknowledgement: The TERC Nearshore Network was initially developed by former TERC graduate student Dr. Derek Roberts. Ph.D. candidate Sergio Valbuena currently manages and controls the Nearshore Network instruments and the shore-based meteorological stations that provide the data for the real-time conditions section. Data from the midlake buoys (TB1, TB2, TB3 and TB4) are provided courtesy of Simon Hook of the NASA Jet Propulsion Laboratory.
+            The TERC Nearshore Network was initially developed by former TERC graduate student Dr. Derek Roberts. Ph.D. candidate Sergio Valbuena currently manages and controls the Nearshore Network instruments and the shore-based meteorological stations that provide the data for the real-time conditions section. Data from the midlake buoys (TB1, TB2, TB3 and TB4) are provided courtesy of Simon Hook of the NASA Jet Propulsion Laboratory.
           </div>
           
           <div>

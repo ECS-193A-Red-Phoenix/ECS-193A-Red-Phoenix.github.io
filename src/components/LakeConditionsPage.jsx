@@ -11,7 +11,7 @@ function LakeConditionsPage(props) {
       <div className="image-container">
         <img src="static/img/lake-two.jpg"></img>
         <div className="page-description-container">
-          <div className="page-description-title"> Lake Conditions </div>
+          <div className="page-description-title"> Modeled Conditions </div>
           <div className="page-description"> 
             Using weather forecasts and a complex 3D mathematical model, Lake Tahoe's surface temperature and water currents can be modeled. Here we are displaying the conditions over the past 7 days, and forecasts of the conditions for the next 3 days. Estimates are provided hourly, as conditions can change quickly.
             <br/> <br/>
