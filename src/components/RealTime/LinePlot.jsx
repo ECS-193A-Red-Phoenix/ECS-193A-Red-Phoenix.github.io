@@ -244,9 +244,6 @@ function LinePlot(props) {
         // Thus, we add mouse event to all descending elements in svg
         let svg_elements = svg.selectAll("*"); 
         svg_elements.on('mousemove', moveCursor);
-        svg_elements.on('mousedown', moveCursor);
-        svg_elements.on('mouseleave', turnOffCursor);
-        svg_elements.on('mouseup', turnOffCursor);
 
         //////////////////////////////////////////////
         // Touch events, using code from MDN endorsed tutorial 
