@@ -21,7 +21,7 @@ export default function Navbar() {
 
           <Link to="/real-time">
             <li className={is_active("/real-time")}>
-              <span> Real Time </span>
+              <span> Real-time </span>
             </li>
           </Link>
           

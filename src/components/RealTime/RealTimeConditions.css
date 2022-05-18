@@ -141,6 +141,10 @@
     margin-top: 20px;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .image-container {
     display: flex;
 }

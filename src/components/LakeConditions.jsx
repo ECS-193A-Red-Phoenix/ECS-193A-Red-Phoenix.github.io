@@ -10,7 +10,7 @@ function LakeConditions(props) {
         <TemperaturePage />
         <CurrentLakePage />
         <WaveHeightPage />
-        <LakeWireFrame />
+        {/* <LakeWireFrame /> */}
     </div>
     );
 }

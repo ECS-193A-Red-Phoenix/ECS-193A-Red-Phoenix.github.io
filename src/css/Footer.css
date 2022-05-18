@@ -38,6 +38,10 @@
     margin: 13px;
 }
 
+.footer-disclaimer > span {
+    font-weight: bold;
+}
+
 .footer-disclaimer > a {
     color: white;
 }

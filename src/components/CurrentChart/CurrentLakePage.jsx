@@ -29,7 +29,7 @@ for (let i = 0; i < legend_speeds.length; i++)
         />
     );
 
-const calendar_description = "Select a forecast of Lake Tahoe's surface water currents";
+const calendar_description = "Select the date and time you want surface currents";
 
 function CurrentLakePage() {
     const [flow_files, setFlowFiles] = useState(undefined);
@@ -88,12 +88,7 @@ function CurrentLakePage() {
                 <div className="lake-condition-description-container">
                     <div className="lake-condition-title"> Water Currents </div>
                     <div className="lake-condition-description">
-                        Water currents are the movement of water in and around Lake Tahoe. Water currents in Lake Tahoe 
-                        are primarily caused by wind, Earth's rotation, and gravity. As wind flows over the flat surface of Lake
-                        Tahoe, particles of air drag water along the surface, creating currents of water. Moreover, the force
-                        of gravity combined with Earth's rotation creates tidal forces that propel the movement of water.
-                        Lastly, the flow of water in and out of Lake Tahoe's rivers create additional hydraulic forces that
-                        move water forward.
+                    Water currents in Lake Tahoe are the result of winds, the Earth's rotation, and the shape of the lake basin. As wind blows over the surface of the lake, flow patterns develop. These can take the form of circular currents (or gyres) or of narrow jets of water (or rip currents). After severe wind events, strong rip currents, often flowing north to south, can be present near the shoreline and up to several miles from shore. These currents can last for several days, posing potentially  hazardous conditions for recreational activities such as paddleboarding.
                     </div>
 
                 </div>

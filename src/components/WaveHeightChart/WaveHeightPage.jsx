@@ -30,7 +30,7 @@ let wh_color = lagoon;
 let wh_scale = scaleLinear().domain([wh_min, wh_max]).range([0, 1]);
 let wh_color_scale = (wh) => wh_color(wh_scale(wh));
 
-const calendar_description = "Select a forecast of Lake Tahoe's wave heights";
+const calendar_description = "Select the date and time you want wave heights";
 
 function formatDate(date) {
     let month = date.getMonth() + 1;
@@ -115,11 +115,7 @@ function WaveHeightPage() {
             <div className="lake-condition-left-column">
                 <div className="lake-condition-title"> Wave Height </div>
                 <div className="lake-condition-description">
-                    One of the most important factors that affect wave heights is 
-                    wind. In general, stronger winds mean taller waves.
-
-                    Using forecasted wind data, we use mathematical models to predict 
-                    wave heights across Lake Tahoe.
+                    Wind speed and direction, fetch (the distance over the lake that the wind blows), and water depth are the most important factors affecting wave height. We use forecasted wind data and the STWAVE model to predict wave heights across Lake Tahoe. In general, the waves are higher on the downwind side of the lake, and closest to shore (where the water is shallower).
                 </div>
 
                 {/* If done loading display calendar and compass */}
