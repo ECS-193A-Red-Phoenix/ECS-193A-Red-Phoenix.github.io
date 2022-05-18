@@ -86,9 +86,9 @@ function CurrentLakePage() {
         <div className="lake-condition-container">
             <div className="lake-condition-left-column">
                 <div className="lake-condition-description-container">
-                    <div className="lake-condition-title"> Water Flow </div>
+                    <div className="lake-condition-title"> Water Currents </div>
                     <div className="lake-condition-description">
-                        Water flow is the movement of water in and around Lake Tahoe. Water currents in Lake Tahoe 
+                        Water currents are the movement of water in and around Lake Tahoe. Water currents in Lake Tahoe 
                         are primarily caused by wind, Earth's rotation, and gravity. As wind flows over the flat surface of Lake
                         Tahoe, particles of air drag water along the surface, creating currents of water. Moreover, the force
                         of gravity combined with Earth's rotation creates tidal forces that propel the movement of water.
@@ -107,8 +107,8 @@ function CurrentLakePage() {
             <div className="lake-visual-container" id="current-visual-container">
                 {
                     (is_loading_files) ? <div className="loading-visual"> Loading </div> :
-                    (files_unavailable) ? <div className="loading-visual"> Water flow is temporarily unavailable </div> :
-                    (!files_exist) ? <div className="loading-visual"> Zero water flow visualizations are available </div> :
+                    (files_unavailable) ? <div className="loading-visual"> Water currents are temporarily unavailable </div> :
+                    (!files_exist) ? <div className="loading-visual"> Zero water current visualizations are available </div> :
                     (is_downloading) ? <div className="loading-visual"> Downloading flow data </div> :
                     (download_failed) ? <div className="loading-visual"> Failed to download flow data </div> :
                         [
