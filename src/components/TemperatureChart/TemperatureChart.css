@@ -16,9 +16,10 @@
     width: 100%;
 }
 
+/* Move temperature chart left to make room for legend on mobile */
 @media only screen and (max-width: 1350px) {
     .heatmap-container {
-        margin-left: 0px;
+        margin-left: -50px;
     }
 }
 

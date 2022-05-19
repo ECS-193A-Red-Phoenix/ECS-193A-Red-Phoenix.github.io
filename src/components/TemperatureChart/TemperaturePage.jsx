@@ -4,8 +4,8 @@ import { scaleLinear } from "d3";
 import TemperatureMap from "./TemperatureMap";
 import TemperatureLegend from "./TemperatureLegend";
 import Calendar from "../Calendar/Calendar";
-import "./TemperatureChart.css";
 import "../../css/LakeConditions.css";
+import "./TemperatureChart.css";
 
 import { ice_to_fire, clamp, today } from "../../js/util";
 import { S3 } from "../../js/s3_api";
@@ -90,7 +90,7 @@ function TemperaturePage() {
                     description={calendar_description}/>
             </div>
 
-            <div className="lake-visual-container heatmap-container">
+            <div className="heatmap-container lake-visual-container">
             {
                 (is_loading_files) ? <div className="loading-visual"> Loading </div> :
                 (files_unavailable) ? <div className="loading-visual"> Temperature map is temporarily unavailable </div> :

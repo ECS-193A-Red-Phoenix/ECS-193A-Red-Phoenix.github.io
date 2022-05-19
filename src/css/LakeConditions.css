@@ -25,6 +25,7 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
 }
 
 .model-figure-container > * {
@@ -53,19 +54,6 @@
     display: flex;
     flex-direction: column;
     /* border: 1px solid blue; */
-}
-
-@media only screen and  (max-width: 1350px) {
-    .lake-condition-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .lake-condition-left-column {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 40px;
-    }
 }
 
 /* Lake Condition Block */
@@ -137,4 +125,27 @@
 
 .content-wrapper {
   position: relative;
+}
+
+.tabs-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media only screen and  (max-width: 1350px) {
+    .lake-condition-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .lake-condition-left-column {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 40px;
+    }
+
+    .lake-visual-container {
+        margin: 0px;
+    }
 }

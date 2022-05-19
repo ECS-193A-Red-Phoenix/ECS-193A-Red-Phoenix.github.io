@@ -25,13 +25,7 @@ ReactDOM.render(
         <Route path="real-time" element={ <RealTimeConditionsPage/> }/> 
       </Route>
       <Route path="/isolated">
-        <Route path="conditions" element={
-            <div className="model-figure-container">
-                <TemperaturePage />
-                <CurrentLakePage />
-                <WaveHeightPage />
-            </div>
-        }/>
+        <Route path="conditions" element={<LakeConditions/>}/>
         <Route path="real-time" element={<RealTimeConditions/>}/>
         <Route path="temperature" element={<TemperaturePage/>}/>
         <Route path="flow" element={<CurrentLakePage/>}/>
