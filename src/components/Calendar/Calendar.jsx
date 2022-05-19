@@ -51,7 +51,9 @@ function Calendar(props) {
 
     // copy the events to avoid mutating props.events
     const events = props.events.map((obj) => ({ 'time': obj.time }));
-    events.forEach((e, idx) => e.idx = idx);
+    events.forEach((e, idx) => e.idx = idx);       // copy original event order
+    events.sort((e1, e2) => e2.time - e1.time);
+    events.forEach((e, idx) => e.sorted_idx = idx);
 
     // Create a hashmap that maps date_string -> events on that day
     // Example: 'Sunday, January 23' -> [event1, event2]
@@ -93,9 +95,9 @@ function Calendar(props) {
     function on_day_changed() {
         const selector = day_select_ref.current;
         const selected_date = selector.options[selector.selectedIndex].text;
-        const selected_event_idx = dates[selected_date][0].idx;
-        props.on_event_selected(selected_event_idx);
-        set_active_event_idx(selected_event_idx);
+        const selected_event = dates[selected_date][0];
+        props.on_event_selected(selected_event.idx);
+        set_active_event_idx(selected_event.sorted_idx);
     }
 
     // Event callback function when hour selector is changed
@@ -104,9 +106,9 @@ function Calendar(props) {
         const selected_date = day_select.options[day_select.selectedIndex].text;
         const hour_select = hour_select_ref.current;
         const selected_hour = hour_select.selectedIndex;
-        const selected_event_idx = dates[selected_date][selected_hour].idx;
-        props.on_event_selected(selected_event_idx);
-        set_active_event_idx(selected_event_idx);
+        const selected_event = dates[selected_date][selected_hour];
+        props.on_event_selected(selected_event.idx);
+        set_active_event_idx(selected_event.sorted_idx); 
     }
 
     // Event callback function for when up down arrow is pressed
@@ -122,18 +124,20 @@ function Calendar(props) {
         let new_hour_idx = selected_hour + amount;
         if (new_hour_idx < 0 && day_select.selectedIndex > 0) {
             day_select.selectedIndex -= 1;
-            selected_date = day_select.options[day_select.selectedIndex].text;
             new_hour_idx = dates[selected_date].length - 1;
         } else if (new_hour_idx >= dates[selected_date].length && day_select.selectedIndex < day_select.options.length - 1) {
             day_select.selectedIndex += 1;
-            selected_date = day_select.options[day_select.selectedIndex].text;
             new_hour_idx = 0;
         }
+        selected_date = day_select.options[day_select.selectedIndex].text;
         new_hour_idx = clamp(new_hour_idx, 0, dates[selected_date].length - 1);
 
-        const new_event_idx = dates[selected_date][new_hour_idx].idx;
-        props.on_event_selected(new_event_idx);
-        set_active_event_idx(new_event_idx);
+        // Find index of event from the original order of props.events
+        const new_event = dates[selected_date][new_hour_idx];
+        props.on_event_selected(new_event.idx);
+        
+        // Find index of event in the sorted order of events
+        set_active_event_idx(new_event.sorted_idx);
     }
 
     return (
