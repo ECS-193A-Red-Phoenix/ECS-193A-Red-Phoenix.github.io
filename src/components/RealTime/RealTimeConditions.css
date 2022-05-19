@@ -120,18 +120,20 @@
 
 .image-container {
     width: 100%;
-    min-height: 450px;
+    /* min-height: 600px; */
     position: relative;
 }
 
-.image-container>img {
+.image-container > img {
     display: block;
     width: 100%;
     object-fit: cover;
+    height: 600px;
 }
 
 .page-description-container {
     position: absolute;
+    width: 800px;
     left: 50%;
     top: 50%;
     font-weight: bold;
@@ -144,7 +146,6 @@
     align-items: center;
     background-color: rgba(2, 40, 81, 0.5);
     padding: 30px;
-    max-height: 100%;
 }
 
 .page-description-title {
@@ -155,12 +156,41 @@
     margin-top: 20px;
 }
 
-.bold {
-    font-weight: bold;
+@media only screen and (max-width: 900px) {
+    .page-description-container {
+        width: 95%;
+        left: 0%;
+        top: 50%;
+        transform: translate(2.5%, -50%);
+    }
 }
 
-.image-container {
-    display: flex;
+@media only screen and (max-width: 600px) {
+    #lake-conditions-img {
+        height: 700px;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    #lake-conditions-img {
+        height: 900px;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    #lake-conditions-img {
+        height: 1000px;
+    }
+}
+
+@media only screen and (max-width: 330px) {
+    #lake-conditions-img {
+        height: 1100px;
+    }
+}
+
+.bold {
+    font-weight: bold;
 }
 
 .content-wrapper {

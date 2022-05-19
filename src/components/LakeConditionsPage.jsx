@@ -9,7 +9,7 @@ function LakeConditionsPage(props) {
   return (
     <div className="content-wrapper">
       <div className="image-container">
-        <img src="static/img/lake-two.jpg"></img>
+        <img id="lake-conditions-img" src="static/img/lake-two.jpg"></img>
         <div className="page-description-container">
           <div className="page-description-title"> Modeled Conditions </div>
           <div className="page-description"> 

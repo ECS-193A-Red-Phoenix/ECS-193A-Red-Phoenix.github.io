@@ -46,26 +46,6 @@
   list-style: none;
 }
 
-.page-description-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 5px black;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(2, 40, 81, 0.5);
-  padding: 30px;
-}
-
-.page-description-title {
-  font-size: 50px;
-}
-
 .about-us-container {
     display: flex;
     flex-direction: column;
