@@ -32,7 +32,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 30px 10px;
+    padding: 30px;
 }
 
 .compass-plot {
@@ -86,6 +86,20 @@
 .station-map-container {
     max-width: 400px;
     position: relative;
+    align-self: flex-start;
+    margin: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+}
+
+.station-map-title {
+    font-size: 22px;
+}
+
+.station-map-desc {
+    margin-bottom: 10px;
+    font-size: 12px;
 }
 
 .station-map-container>img {
@@ -153,9 +167,13 @@
     position: relative;
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 1300px) {
     .real-time-conditions-container {
-        display: block;
+        flex-direction: column-reverse;
+    }
+
+    .time-plot-container {
+        width: 100%;
     }
 
     .station-map-container {

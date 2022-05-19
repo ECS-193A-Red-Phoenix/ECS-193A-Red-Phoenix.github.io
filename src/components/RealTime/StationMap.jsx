@@ -124,6 +124,8 @@ function StationMap(props) {
     
     return (
         <div className="station-map-container">
+            <div className="station-map-title"> Tahoe Station Map </div>
+            <div className="station-map-desc"> Select a TERC station below </div>
             <img alt="Lake Tahoe Map" src="/static/img/map.PNG"/>
             <svg height="100%" width="100%" 
                 shapeRendering="geometricPrecision">
