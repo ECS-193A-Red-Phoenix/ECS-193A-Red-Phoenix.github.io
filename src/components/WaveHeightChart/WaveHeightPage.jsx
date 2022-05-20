@@ -9,7 +9,7 @@ import "../RealTime/RealTimeConditions.css";
 import "../../css/LakeConditions.css";
 import "./WaveHeightPage.css";
 
-import { lagoon, militaryHourTo12Hour } from "../../js/util";
+import { lagoon, militaryHourTo12Hour, clamp } from "../../js/util";
 import { retrieve_wind_forecasts } from "../../js/nws_api";
 import CompassPlot from "../RealTime/CompassPlot";
 import { retrieve_wh } from "../../js/wh_api";
@@ -86,23 +86,31 @@ function WaveHeightPage() {
         if (is_loading_wind || wind_unavailable) return;
         if (wh_matrix !== undefined) return;
 
-        retrieve_wh(wind_speed, wind_direction)
-            .then((wh_matrix) => {
-                setWHData((prev_wh_data) => {
-                    const new_wh_data = {...prev_wh_data};
-                    new_wh_data[activeIdx] = wh_matrix
-                    return new_wh_data
+        // Load 10 at a time
+        for (let i = 0; i < 10; i++) {
+            let index = clamp(activeIdx - 5 + i, 0, wind_data.length - 1);
+            if (wh_data[index] !== undefined && wh_data[index] !== null) continue;
+            
+            [wind_speed, wind_direction] = wind_data[index].values;
+            
+            retrieve_wh(wind_speed, wind_direction)
+                .then((wh_matrix) => {
+                    setWHData((prev_wh_data) => {
+                        const new_wh_data = {...prev_wh_data};
+                        new_wh_data[index] = wh_matrix
+                        return new_wh_data;
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(`Failed to retrieve wave heights for ws=${wind_speed}, wd=${wind_direction}`);
+                    setWHData((prev_wh_data) => {
+                        const new_wh_data = {...prev_wh_data};
+                        new_wh_data[index] = null;
+                        return new_wh_data;
+                    });
                 });
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(`Failed to retrieve wave heights for ws=${wind_speed}, wd=${wind_direction}`);
-                setWHData((prev_wh_data) => {
-                    const new_wh_data = {...prev_wh_data};
-                    new_wh_data[activeIdx] = null;
-                    return new_wh_data
-                });
-            });
+        }
     }, [wind_speed, wind_direction, activeIdx]);
 
     // Event Listener for Calendar changing event
