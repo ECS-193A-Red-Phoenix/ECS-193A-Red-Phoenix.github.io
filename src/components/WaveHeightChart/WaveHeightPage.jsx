@@ -62,6 +62,7 @@ function WaveHeightPage() {
     useEffect(() => {
         retrieve_wind_forecasts()
             .then((res) => {
+                res.sort((f1, f2) => f2.time - f1.time);
                 setWindData(res);
             })
             .catch((error) => {
@@ -91,7 +92,7 @@ function WaveHeightPage() {
             let index = clamp(activeIdx - 5 + i, 0, wind_data.length - 1);
             if (wh_data[index] !== undefined && wh_data[index] !== null) continue;
             
-            [wind_speed, wind_direction] = wind_data[index].values;
+            let [wind_speed, wind_direction] = wind_data[index].values;
             
             retrieve_wh(wind_speed, wind_direction)
                 .then((wh_matrix) => {
