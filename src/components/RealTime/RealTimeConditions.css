@@ -16,7 +16,8 @@
     border-radius: 10px;
     box-shadow: 3px 3px 10px #dedede;
     padding: 10px;
-    margin: 10px;
+    margin: auto 10px;
+    text-align: center;
 }
 
 .map-control-button:hover {
@@ -204,6 +205,17 @@
 
     .time-plot-container {
         width: 100%;
+        flex-direction: column-reverse;
+    }
+    
+    .time-plot-container > .compass-plot {
+        max-width: 400px;
+        width: auto;
+        height: auto;
+    }
+
+    .map-controls-container {
+        margin-bottom: 30px;
     }
 
     .station-map-container {
@@ -219,7 +231,7 @@
         width: 100%;
     }
 
-    .compass-plot, .time-plot-container .line-plot {
+    .time-plot-container .line-plot {
         width: auto;
         height: auto;
     }

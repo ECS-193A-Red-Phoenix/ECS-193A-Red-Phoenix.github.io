@@ -174,8 +174,14 @@ function LinePlot(props) {
 
         if (is_loading || unavailable) {
             svg.select("#line").attr("d", "");
-            svg.on('mousemove', () => {});
-            svg.on('mouseleave', () => {});
+            let nop = () => {};
+            svg.on('mousemove', nop);
+            svg.on('mousedown', nop);
+            svg.on('mouseleave', nop);
+            svg.on('mouseup', nop);
+            svg.on('touchstart', nop);
+            svg.on('touchend', nop);
+            svg.on('touchmove', nop);
             return;
         }
 
