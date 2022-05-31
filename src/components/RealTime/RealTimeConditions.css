@@ -204,6 +204,7 @@
     }
 
     .time-plot-container {
+        margin-top: 50px;
         width: 100%;
         flex-direction: column-reverse;
     }
