@@ -123,7 +123,10 @@ function Calendar(props) {
         // Go the new hour idx < 0 go back a day, if the new hour idx >= # hour options go forward a day.
         let new_hour_idx = selected_hour + amount;
         if (new_hour_idx < 0 && day_select.selectedIndex > 0) {
+            // Get previous day
             day_select.selectedIndex -= 1;
+            selected_date = day_select.options[day_select.selectedIndex].text;
+            // Get the last event on the previous day
             new_hour_idx = dates[selected_date].length - 1;
         } else if (new_hour_idx >= dates[selected_date].length && day_select.selectedIndex < day_select.options.length - 1) {
             day_select.selectedIndex += 1;
