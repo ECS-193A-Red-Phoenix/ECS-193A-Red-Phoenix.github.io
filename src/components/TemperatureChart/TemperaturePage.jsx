@@ -39,16 +39,19 @@ function TemperaturePage() {
     // Load temperature binary files
     ////////////////////////////////////
     useEffect(() => {
+        let is_mounted = true;
         const after_date = today(3);
         S3.get_files("temperature", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
-                setTempFiles(files);
+                if (is_mounted)
+                    setTempFiles(files);
             })
             .catch((err) => {
                 console.log(err);
                 setTempFiles(null);
             });
+        return () => { is_mounted = false; };
     }, []);
 
     useEffect(() => {

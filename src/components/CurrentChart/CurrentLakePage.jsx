@@ -46,16 +46,19 @@ function CurrentLakePage() {
     // Load flow binary files
     ////////////////////////////////////
     useEffect(() => {
+        const is_mounted = true;
         const after_date = today(3);
         S3.get_files("flow", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
-                setFlowFiles(files);
+                if (is_mounted)
+                    setFlowFiles(files);
             })
             .catch((err) => {
                 console.log(err);
                 setFlowFiles(null);
             });
+        return () => { is_mounted = false; };
     }, []);
 
     useEffect(() => {
