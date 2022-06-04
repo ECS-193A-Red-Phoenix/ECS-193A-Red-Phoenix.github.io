@@ -53,11 +53,11 @@ class NPYFile {
         // Arguments:
         //  file_dir: the directory of the file in S3, with no '/' at the end
         //  file_name: the name of the file, formatted as "YYYY-MM-DD HH.npy"
-        let year = parseInt(file_name.substring(0, 4));
-        let month = parseInt(file_name.substring(5, 7)); // 01 - 12
-        let day = parseInt(file_name.substring(8, 10));
-        let hour = parseInt(file_name.substring(11, 13));
-        let file_date = new Date(year, month - 1, day, hour);
+        let year = file_name.substring(0, 4);
+        let month = file_name.substring(5, 7); // 01 - 12
+        let day = file_name.substring(8, 10);
+        let hour = file_name.substring(11, 13);
+        let file_date = new Date(`${year}-${month}-${day}T${hour}:00Z`);
 
         if (file_dir === "temperature")
             return new TemperatureFile(file_dir + "/" + file_name, file_date);
