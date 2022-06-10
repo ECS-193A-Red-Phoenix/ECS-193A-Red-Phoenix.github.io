@@ -4,12 +4,17 @@ import { ALL_STATIONS } from "../../js/terc_api";
 
 // Bounds of the map
 const bounds = [
-    [38.88973786614013, -120.22406605972319],  // southWest
-    [39.29014918866168, -119.84887189740661] // northEast
+    [39.339168, -119.84087189740661], // northEast
+    [38.883758, -120.2306605972319]   // southWest
 ];
-const [lat1, lon1] = bounds[0];
-const [lat2, lon2] = bounds[1];
 const tag_height = 5; // Percentage
+
+function getMapXY(coords) {
+    let [y_0, x_0] = coords;
+    let [y_s, x_s] = bounds[0];
+    let [y_e, x_e] = bounds[1];
+    return [100 - (x_0 - x_s) / (x_e - x_s) * 100, (y_0 - y_s) / (y_e - y_s) * 100];
+}
 
 function StationMap(props) {
     let { stationIdx, onClick } = props;
@@ -23,12 +28,12 @@ function StationMap(props) {
         .data(stations_with_index)
         .join("circle")
         .attr("cy", (d) => {
-            let [lat, lon] = d.info.coords;
-            return `${100 - (lat - lat1) / (lat2 - lat1) * 100}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${y}%`;
         })
         .attr("cx", (d) => {
-            let [lat, lon] = d.info.coords;
-            return `${(lon - lon1) / (lon2 - lon1) * 100}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${x}%`;
         })
         .attr("r", 16)
         .attr("stroke", "white")
@@ -40,12 +45,12 @@ function StationMap(props) {
         .data(stations_with_index)
         .join("circle")
         .attr("cy", (d) => {
-            let [lat, lon] = d.info.coords;
-            return `${100 - (lat - lat1) / (lat2 - lat1) * 100}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${y}%`;
         })
         .attr("cx", (d) => {
-            let [lat, lon] = d.info.coords;
-            return `${(lon - lon1) / (lon2 - lon1) * 100}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${x}%`;
         })
         .attr("r", 14)
         .attr("fill", "white")
@@ -78,14 +83,12 @@ function StationMap(props) {
         station_tags
         .append("text")
         .attr("y", (d) => {
-            let [lat, lon] = d.info.coords;
-            let center_y = 100 - (lat - lat1) / (lat2 - lat1) * 100;
-            return `${center_y - 1.5 * tag_height}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${y - 1.5 * tag_height}%`;
         })
         .attr("x", (d) => {
-            let [lat, lon] = d.info.coords;
-            let center_x = (lon - lon1) / (lon2 - lon1) * 100;
-            return `${center_x}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${x}%`;
         })
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
@@ -94,14 +97,12 @@ function StationMap(props) {
         station_tags
         .insert("rect", "text")
         .attr("y", (d) => {
-            let [lat, lon] = d.info.coords;
-            let center_y = 100 - (lat - lat1) / (lat2 - lat1) * 100;
-            return `${center_y - 2 * tag_height}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${y - 2 * tag_height}%`;
         })
         .attr("x", function (d) {
-            let [lat, lon] = d.info.coords;
-            let center_x = (lon - lon1) / (lon2 - lon1) * 100;
-            return `${center_x}%`;
+            let [x, y] = getMapXY(d.info.coords);
+            return `${x}%`;
         })
         .attr("width", function() {
             return this.parentElement.childNodes[1].getComputedTextLength() + 10;
