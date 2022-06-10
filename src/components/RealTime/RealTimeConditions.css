@@ -92,6 +92,7 @@
     display: flex;
     flex-direction: column;
     justify-items: center;
+    padding: 10px;
 }
 
 .station-map-title {
@@ -223,7 +224,6 @@
         max-width: 400px;
         position: relative;
         margin: auto;
-        padding: 10px;
     }
 }
 
