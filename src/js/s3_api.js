@@ -57,7 +57,7 @@ class NPYFile {
         let month = file_name.substring(5, 7); // 01 - 12
         let day = file_name.substring(8, 10);
         let hour = file_name.substring(11, 13);
-        let file_date = new Date(`${year}-${month}-${day}T${hour}:00Z`);
+        let file_date = new Date(`${year}-${month}-${day}T${hour}:00-07:00`);
 
         if (file_dir === "temperature")
             return new TemperatureFile(file_dir + "/" + file_name, file_date);
