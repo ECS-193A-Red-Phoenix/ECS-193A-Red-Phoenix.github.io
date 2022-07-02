@@ -244,6 +244,7 @@
 
 .tc-plot-container {
     position: relative;
+    margin-top: 25px;
     margin-bottom: 100px;
 }
 
