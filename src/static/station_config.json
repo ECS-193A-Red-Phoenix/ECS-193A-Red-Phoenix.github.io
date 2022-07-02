@@ -1,0 +1,162 @@
+{
+    "NEAR_SHORE": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/ns-station-range",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "units": "° F",
+                "display_type": "line"
+            },
+            {
+                "name": "Wave Height",
+                "units": "Feet",
+                "display_type": "line",
+                "range": [
+                    0,
+                    5
+                ]
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 2,
+                "name": "Dollar Point",
+                "coords": [
+                    39.1847,
+                    -120.093
+                ]
+            },
+            {
+                "id": 3,
+                "name": "Glenbrook",
+                "coords": [
+                    39.0883,
+                    -119.941
+                ]
+            },
+            {
+                "id": 4,
+                "name": "Homewood",
+                "coords": [
+                    39.0903,
+                    -120.161
+                ]
+            },
+            {
+                "id": 6,
+                "name": "Rubicon",
+                "coords": [
+                    39.0064,
+                    -120.109
+                ]
+            },
+            {
+                "id": 7,
+                "name": "Sand Harbor",
+                "coords": [
+                    39.2006,
+                    -119.931
+                ]
+            },
+            {
+                "id": 8,
+                "name": "Tahoe Vista",
+                "coords": [
+                    39.2364,
+                    -120.065
+                ]
+            },
+            {
+                "id": 9,
+                "name": "Tahoe City",
+                "coords": [
+                    39.1711,
+                    -120.138
+                ]
+            },
+            {
+                "id": 10,
+                "name": "Camp Richardson",
+                "coords": [
+                    38.9394,
+                    -120.039
+                ]
+            },
+            {
+                "id": 11,
+                "name": "Timber Cove",
+                "coords": [
+                    38.95,
+                    -119.968
+                ]
+            }
+        ]
+    },
+    "NASA_BUOYS": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/nasa-tb",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "units": "° F",
+                "display_type": "line"
+            },
+            {
+                "name": "Wind",
+                "units": "MPH",
+                "display_type": "polar"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 1,
+                "name": "tb1",
+                "coords": [
+                    39.155,
+                    -120.004
+                ]
+            },
+            {
+                "id": 2,
+                "name": "tb2",
+                "coords": [
+                    39.1097,
+                    -120.008
+                ]
+            },
+            {
+                "id": 3,
+                "name": "tb3",
+                "coords": [
+                    39.1108,
+                    -120.073
+                ]
+            },
+            {
+                "id": 4,
+                "name": "tb4",
+                "coords": [
+                    39.1553,
+                    -120.071
+                ]
+            }
+        ]
+    },
+    "TEMPERATURE_CHAIN": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/tc-homewood",
+        "DATA_TYPES": [
+            {
+                "name": "CTD Profile",
+                "display_type": "heatmap"
+            }
+        ],
+        "STATIONS": [
+            {
+                "name": "HWTC",
+                "coords": [
+                    39.08353,
+                    -120.1509167
+                ]
+            }
+        ]
+    }
+}

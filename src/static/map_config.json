@@ -1,0 +1,145 @@
+{
+    "BOUNDS": [
+        [
+            39.339168,
+            -119.84087189740661
+        ],
+        [
+            38.883758,
+            -120.2306605972319
+        ]
+    ],
+    "MARKERS": [
+        {
+            "name": "Dollar Point",
+            "coords": [
+                39.1847,
+                -120.093
+            ],
+            "stations": [
+                "Dollar Point"
+            ]
+        },
+        {
+            "name": "Glenbrook",
+            "coords": [
+                39.0883,
+                -119.941
+            ],
+            "stations": [
+                "Glenbrook"
+            ]
+        },
+        {
+            "name": "Homewood",
+            "coords": [
+                39.0903,
+                -120.161
+            ],
+            "stations": [
+                "Homewood",
+                "HWTC"
+            ]
+        },
+        {
+            "name": "Rubicon",
+            "coords": [
+                39.0064,
+                -120.109
+            ],
+            "stations": [
+                "Rubicon"
+            ]
+        },
+        {
+            "name": "Sand Harbor",
+            "coords": [
+                39.2006,
+                -119.931
+            ],
+            "stations": [
+                "Sand Harbor"
+            ]
+        },
+        {
+            "name": "Tahoe Vista",
+            "coords": [
+                39.2364,
+                -120.065
+            ],
+            "stations": [
+                "Tahoe Vista"
+            ]
+        },
+        {
+            "name": "Tahoe City",
+            "coords": [
+                39.1711,
+                -120.138
+            ],
+            "stations": [
+                "Tahoe City"
+            ]
+        },
+        {
+            "name": "Camp Richardson",
+            "coords": [
+                38.9394,
+                -120.039
+            ],
+            "stations": [
+                "Camp Richardson"
+            ]
+        },
+        {
+            "name": "Timber Cove",
+            "coords": [
+                38.95,
+                -119.968
+            ],
+            "stations": [
+                "Timber Cove"
+            ]
+        },
+        {
+            "name": "tb1",
+            "coords": [
+                39.155,
+                -120.004
+            ],
+            "stations": [
+                "tb1"
+            ]
+        },
+        {
+            "name": "tb2",
+            "coords": [
+                39.1097,
+                -120.008
+            ],
+            "stations": [
+                "tb2"
+            ]
+        },
+        {
+            "name": "tb3",
+            "coords": [
+                39.1108,
+                -120.073
+            ],
+            "stations": [
+                "tb3"
+            ]
+        },
+        {
+            "name": "tb4",
+            "coords": [
+                39.1553,
+                -120.071
+            ],
+            "stations": [
+                "tb4"
+            ]
+        }
+    ]
+}

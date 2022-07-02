@@ -73,17 +73,11 @@
         width: 306px;
         height: 522px;
     }
-    .temperature-legend-container > canvas {
-        height: 522px;
-    }
 }
 
 @media only screen and (max-width: 409px) {
     .temperature-chart-container {
         width: 255px;
-        height: 435px;
-    }
-    .temperature-legend-container > canvas {
         height: 435px;
     }
 }
@@ -93,17 +87,11 @@
         width: 204px;
         height: 348px;
     }
-    .temperature-legend-container > canvas {
-        height: 348px;
-    }
 }
 
 @media only screen and (max-width: 325px) {
     .temperature-chart-container {
         width: 153px;
-        height: 261px;
-    }
-    .temperature-legend-container > canvas {
         height: 261px;
     }
 }

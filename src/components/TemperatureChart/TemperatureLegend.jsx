@@ -10,7 +10,7 @@ function TemperatureLegend(props) {
     // Expected props
     // min: the minimum value of the legend
     // max: the maximum value of the legend
-    // units: the units of the legend
+    // units: a String, the units of the legend
     // color_palette: a function that maps a percent [0, 1.0] to a [r, g, b] color
     // num_ticks (optional, default=16): the number of ticks to display on the legend
     // decimal_places (optional, default=0): the number of decimal places to round the units to

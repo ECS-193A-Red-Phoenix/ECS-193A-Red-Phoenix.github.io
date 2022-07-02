@@ -1,6 +1,6 @@
 import "./RealTimeConditions.css"
 
-function MapControlButton(props) {
+function ChartTabButton(props) {
     let className = "map-control-button";
     if (props.active)
         className += " map-control-button-active";
@@ -12,4 +12,4 @@ function MapControlButton(props) {
     );
 }
 
-export default MapControlButton;
+export default ChartTabButton;

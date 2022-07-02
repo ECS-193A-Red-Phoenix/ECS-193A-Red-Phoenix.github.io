@@ -7,7 +7,7 @@ import Calendar from "../Calendar/Calendar";
 import "../../css/LakeConditions.css";
 import "./TemperatureChart.css";
 
-import { ice_to_fire, clamp, today } from "../../js/util";
+import { ice_to_fire_discrete, clamp, today } from "../../js/util";
 import { S3 } from "../../js/s3_api";
 
 
@@ -15,7 +15,7 @@ import { S3 } from "../../js/s3_api";
 // Static Constants
 ////////////////////////////////////
 
-const temperature_color = ice_to_fire; 
+const temperature_color = ice_to_fire_discrete; 
 const T_min = 40;
 const T_max = 70;
 const T_units = "° F";

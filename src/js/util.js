@@ -1,6 +1,8 @@
 //////////////////////////////////
-// Utility
+// Utility functions
 //////////////////////////////////
+
+import { useState } from 'react';
 
 export function if_undefined(x, my_default) {
     return (x === undefined) ? my_default : x;
@@ -96,10 +98,16 @@ export function colorGradient(c1, c2, num_colors) {
 }
 
 // Colors taken from https://github.com/Kitware/ParaView/blob/6777e1303f9d1eb341131354616241dbc5851340/Wrapping/Python/paraview/_colorMaps.py#L1599
-export const ice_to_fire = colorScale(
+export const ice_to_fire_discrete = colorScale(
     [[0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
     [155, 228, 239], [225, 233, 209], [243, 213, 115], [231, 176, 0], [218, 130, 0], [198, 84, 0],
     [172, 35, 0], [130, 0, 0], [76, 0, 0]], true
+);
+
+export const ice_to_fire = colorScale(
+    [[0, 30, 77], [0, 55, 134], [14, 88, 168], [32, 126, 184], [48, 164, 202], [83, 200, 223],
+    [155, 228, 239], [225, 233, 209], [243, 213, 115], [231, 176, 0], [218, 130, 0], [198, 84, 0],
+    [172, 35, 0], [130, 0, 0], [76, 0, 0]], false
 );
 
 export const lagoon = colorScale(
@@ -242,20 +250,39 @@ export function draw_lake_tahoe(cx, x, y, width, height) {
     cx.fill();
 }
 
+const rectangular_grid_cache = {};
+export function rectangular_grid(width, height) {
+    const cache_key = `${width}-${height}`;
+    if (cache_key in rectangular_grid_cache)
+        return rectangular_grid_cache[cache_key];
+
+    let res = [];
+    for (let j = 0; j < height; j++)
+        for (let i = 0; i < width; i++)
+            res.push([i, j]);
+    
+    rectangular_grid_cache[cache_key] = res;
+    return res;
+}
+
 const heatmap_cache = {};
-export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
-    // draws a heatmap of lake tahoe using the given context
+export function draw_heatmap(canvas, heatmap_data, color_palette, key, pixels_to_draw) {
+    // Draws a heatmap
     // Arguments:
     //  canvas: a canvas HTML element
     //  heatmap_data: a 2D matrix with scalar Number values, NaN's are okay
     //  color_palette: a function that maps heatmap scalar values to an integer rgb color array
     //  key (optional): a string hash for the heatmap data, used in caching image creation for performance boost
+    //  pixels_to_draw (optional): a list of [i, j] tuples where 0 < i < canvas.width and 0 < j < canvas.height 
+    //    that specify which pixels should be drawn on the canvas. Used to create custom heatmap shapes. By default,
+    //    a rectangular grid [(i, j) for i in range(canvas.width) for j in range(canvas.height)] is used.
 
     const cx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
     const offsetX = 0;
     const offsetY = 0;
+    pixels_to_draw = pixels_to_draw ?? rectangular_grid(width, height);
 
     const [n_rows, n_cols] = [heatmap_data.length, heatmap_data[0].length];
     const T = heatmap_data;
@@ -270,8 +297,7 @@ export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
     // For more details
     const image_data = cx.createImageData(width, height);
-    const points_in_lake = points_in_lake_tahoe(width, height);
-    for (let [i, j] of points_in_lake) {
+    for (let [i, j] of pixels_to_draw) {
         let x = i / width * n_cols;
         let y = j / height * n_rows;
         let t_j = Math.floor(y);
@@ -316,6 +342,17 @@ export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
     cx.putImageData(image_data, offsetX, offsetY);
     if (key !== undefined)
         heatmap_cache[key] = image_data;
+}
+
+export function draw_lake_heatmap(canvas, heatmap_data, color_palette, key) {
+    // draws a heatmap of lake tahoe
+    // Arguments:
+    //  canvas: a canvas HTML element
+    //  heatmap_data: a 2D matrix with scalar Number values, NaN's are okay
+    //  color_palette: a function that maps heatmap scalar values to an integer rgb color array
+    //  key (optional): a string hash for the heatmap data, used in caching image creation for performance boost
+    const shape = points_in_lake_tahoe(canvas.width, canvas.height);
+    draw_heatmap(canvas, heatmap_data, color_palette, key, shape);
 }
 
 export function militaryHourTo12Hour(hour) {
@@ -491,4 +528,59 @@ export async function http_get(url, params, headers, mode) {
         }
     );
     return await request.json();
+}
+
+export function interpolate(x_interpolate, X, Y) {
+    // Same functionality as numpy.interp
+    // One-dimensional linear interpolation for monotonically increasing sample points.
+    // Arguments:
+    //  x_interpolate: an Array of x values at which to evaluate the interpolated point, must be increasing
+    //  X: the x-coordinates of the data points, must be increasing
+    //  Y: the y-coordinates of the data points, same length as X.
+    if (x_interpolate.length === 0)
+        throw new Error(`Expected at least 1 value to interpolate, got ${x_interpolate}`)
+    if (X.length === 0 || Y.length === 0)
+        throw new Error(`Expected at least 1 data point, got X: ${X}, Y: ${Y}`) 
+    if (X.length !== Y.length)
+        throw new Error(`Expected X.length === Y.length, got X: ${X}, Y: ${Y}`)
+
+    const x_0 = X[0];
+    const x_n = X[X.length - 1];
+    const y_0 = Y[0];
+    const y_n = Y[Y.length - 1];
+
+    let i = 0;
+    return x_interpolate.map((x) => {
+        // Ensure x is within bounds
+        if (x < x_0) return y_0;
+        if (x > x_n) return y_n;
+    
+        while (X[i] <= x) { i += 1 };
+    
+        // Interpolate between two points in time
+        const x1 = X[i - 1];
+        const x2 = X[i];
+        const y1 = Y[i - 1];
+        const y2 = Y[i];
+    
+        if (x2 === x1)
+            throw new Error("Expected X to monotonically increasing");
+    
+        const slope = (y2 - y1) / (x2 - x1);
+        return y1 + slope * (x - x1);
+    });
+}
+
+export function range(start, stop, step) {
+    step = (step === undefined) ? 1 : step;
+    let res = [];
+    for (let i = start; i < stop; i += step)
+        res.push(i);
+    return res;
+}
+
+// https://stackoverflow.com/a/53837442/9175592
+export function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => value + 1); // update state to force render
 }

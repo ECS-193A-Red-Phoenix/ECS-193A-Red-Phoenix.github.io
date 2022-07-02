@@ -1,15 +1,9 @@
 import { useEffect } from "react";
 import { select, selectAll } from "d3";
-import { ALL_STATIONS } from "../../js/terc_api";
 
-// Bounds of the map
-const bounds = [
-    [39.339168, -119.84087189740661], // northEast
-    [38.883758, -120.2306605972319]   // southWest
-];
 const tag_height = 5; // Percentage
 
-function getMapXY(coords) {
+function getMapXY(bounds, coords) {
     let [y_0, x_0] = coords;
     let [y_s, x_s] = bounds[0];
     let [y_e, x_e] = bounds[1];
@@ -17,22 +11,29 @@ function getMapXY(coords) {
 }
 
 function StationMap(props) {
-    let { stationIdx, onClick } = props;
+    //////////////////////////////////////////////////
+    // Expected Props:
+    // bounds: an Array [ [lat1, lon1], [lat2, lon2] ] of the bounds of the map
+    // locations: an Array of [{ name: String, coords: [lat, lon] }] objects
+    // active_map_marker_idx: the index of which map marker is active
+    // onClick: a function that takes an index as a parameter. Called when a map marker is clicked
+
+    let { bounds, locations, active_map_marker_idx, onClick } = props;
 
     useEffect(() => {
-        const stations_with_index = ALL_STATIONS.map((d, i) => ({ ...d, index: i}));
+        const locations_with_index = locations.map((d, i) => ({ ...d, index: i}));
 
         // Outer circle
         select(".station-map-container > svg > g#outer")
         .selectAll("circle")
-        .data(stations_with_index)
+        .data(locations_with_index)
         .join("circle")
         .attr("cy", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${y}%`;
         })
         .attr("cx", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${x}%`;
         })
         .attr("r", 16)
@@ -42,20 +43,20 @@ function StationMap(props) {
         // Inner Circle
         select(".station-map-container > svg > g#inner")
         .selectAll("circle")
-        .data(stations_with_index)
+        .data(locations_with_index)
         .join("circle")
         .attr("cy", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${y}%`;
         })
         .attr("cx", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${x}%`;
         })
         .attr("r", 14)
         .attr("fill", "white")
         .attr("fill-opacity", (d, i) => {
-            return (i === stationIdx) ? 1 : 0
+            return (i === active_map_marker_idx) ? 1 : 0
         })
         .style("cursor", "pointer")
         .on("click", function (e, d) {
@@ -66,42 +67,42 @@ function StationMap(props) {
             .style("display", "block");
         })
         .on("mouseleave", (e, d) => {
-            if (d.index === stationIdx)
+            if (d.index === active_map_marker_idx)
                 return
             select(`g#station-tag${d.index}`)
             .style("display", "none");
         });
         
-        // Station tags
-        let station_tags = select("g#station-tags")
+        // Marker tags
+        let marker_tags = select("g#station-tags")
         .selectAll("g")
-        .data(stations_with_index)
+        .data(locations_with_index)
         .enter()
         .append("g")
         .attr("id", (d) => `station-tag${d.index}`);
 
-        station_tags
+        marker_tags
         .append("text")
         .attr("y", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${y - 1.5 * tag_height}%`;
         })
         .attr("x", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${x}%`;
         })
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .text((d) => d.info.station_name)
+        .text((d) => d.name)
 
-        station_tags
+        marker_tags
         .insert("rect", "text")
         .attr("y", (d) => {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${y - 2 * tag_height}%`;
         })
         .attr("x", function (d) {
-            let [x, y] = getMapXY(d.info.coords);
+            let [x, y] = getMapXY(bounds, d.coords);
             return `${x}%`;
         })
         .attr("width", function() {
@@ -118,10 +119,10 @@ function StationMap(props) {
 
         // Turn off inactive station tags
         selectAll("g#station-tags > g")
-        .data(stations_with_index)
+        .data(locations_with_index)
         .join()
-        .style("display", (d) => (d.index === stationIdx) ? "block" : "none")
-    }, [stationIdx, onClick]);
+        .style("display", (d) => (d.index === active_map_marker_idx) ? "block" : "none")
+    }, [active_map_marker_idx, onClick]);
     
     return (
         <div className="station-map-container">
