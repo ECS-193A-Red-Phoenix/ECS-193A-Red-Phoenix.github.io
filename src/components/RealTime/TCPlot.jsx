@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { scaleLinear, pointer, select } from "d3";
 
-import { militaryHourTo12Hour, range, draw_heatmap, ice_to_fire, interpolate, round, unzip } from "../../js/util";
+import { militaryHourTo12Hour, range, draw_heatmap, ice_to_fire_discrete, interpolate, round, unzip } from "../../js/util";
 import "./RealTimeConditions.css";
 import TemperatureLegend from "../TemperatureChart/TemperatureLegend";
 import Axis from "./Axis";
@@ -86,7 +86,7 @@ function TCPlot(props) {
         max_T = max_T ?? Math.ceil (Math.max(...ctd_profiles.flat().map((t) => t[1])));
         min_T = min_T ?? Math.floor(Math.min(...ctd_profiles.flat().map((t) => t[1])));
         let temperature_scale = scaleLinear().domain([min_T, max_T]).range([0, 1]);
-        temperature_color_scale = (temperature) => ice_to_fire(temperature_scale(temperature));
+        temperature_color_scale = (temperature) => ice_to_fire_discrete(temperature_scale(temperature));
 
         elements.push(
             <TemperatureLegend
@@ -94,7 +94,7 @@ function TCPlot(props) {
                 min={min_T}
                 max={max_T}
                 units={units_T}
-                color_palette={ice_to_fire}
+                color_palette={ice_to_fire_discrete}
                 num_ticks={6}
                 />
         );

@@ -14,7 +14,8 @@ function StationMap(props) {
     //////////////////////////////////////////////////
     // Expected Props:
     // bounds: an Array [ [lat1, lon1], [lat2, lon2] ] of the bounds of the map
-    // locations: an Array of [{ name: String, coords: [lat, lon] }] objects
+    // locations: an Array of [{ name: String, coords: [lat, lon], shape: String }] objects
+    //   shape can be "circle" or "square"
     // active_map_marker_idx: the index of which map marker is active
     // onClick: a function that takes an index as a parameter. Called when a map marker is clicked
 
@@ -23,40 +24,88 @@ function StationMap(props) {
     useEffect(() => {
         const locations_with_index = locations.map((d, i) => ({ ...d, index: i}));
 
-        // Outer circle
-        select(".station-map-container > svg > g#outer")
-        .selectAll("circle")
-        .data(locations_with_index)
-        .join("circle")
-        .attr("cy", (d) => {
-            let [x, y] = getMapXY(bounds, d.coords);
-            return `${y}%`;
-        })
-        .attr("cx", (d) => {
-            let [x, y] = getMapXY(bounds, d.coords);
+        const circle_locations = locations_with_index.filter((d) => d.shape === "circle");
+        const square_locations = locations_with_index.filter((d) => d.shape === "square");
+        
+        const outer_circle_radius = 10;
+        const inner_circle_radius = 8;
+        const outer_square_len = 18;
+        const inner_square_len = 14;
+        
+        function getLocationX(location) {
+            let x = getMapXY(bounds, location.coords)[0];
             return `${x}%`;
+        }
+
+        function getLocationY(location) {
+            let y = getMapXY(bounds, location.coords)[1];
+            return `${y}%`;
+        }
+        
+        // Outer Square
+        select(".station-map-container > svg > g#outer-square")
+        .selectAll("rect")
+        .data(square_locations)
+        .join("rect")
+        .attr("x", getLocationX)
+        .attr("y", getLocationY)
+        .attr("width", outer_square_len)
+        .attr("height", outer_square_len)
+        .attr("transform", `translate(${-outer_square_len / 2}, ${-outer_square_len / 2})`)
+        .attr("stroke", "white")
+        .attr("fill-opacity", 0)
+
+        // Inner Square
+        select(".station-map-container > svg > g#inner-square")
+        .selectAll("rect")
+        .data(square_locations)
+        .join("rect")
+        .attr("x", getLocationX)
+        .attr("y", getLocationY)
+        .attr("width", inner_square_len)
+        .attr("height", inner_square_len)
+        .attr("transform", `translate(${-inner_square_len / 2}, ${-inner_square_len / 2})`)
+        .attr("fill", "white")
+        .attr("fill-opacity", (d) => {
+            return (d.index === active_map_marker_idx) ? 1 : 0
         })
-        .attr("r", 16)
+        .style("cursor", "pointer")
+        .on("click", function (e, d) {
+            onClick(d.index);
+        })
+        .on("mouseover", (e, d) => {
+            select(`g#station-tag${d.index}`)
+            .style("display", "block");
+        })
+        .on("mouseleave", (e, d) => {
+            if (d.index === active_map_marker_idx)
+                return
+            select(`g#station-tag${d.index}`)
+            .style("display", "none");
+        });
+
+        // Outer circle
+        select(".station-map-container > svg > g#outer-circle")
+        .selectAll("circle")
+        .data(circle_locations)
+        .join("circle")
+        .attr("cx", getLocationX)
+        .attr("cy", getLocationY)
+        .attr("r", outer_circle_radius)
         .attr("stroke", "white")
         .attr("fill-opacity", 0)
 
         // Inner Circle
-        select(".station-map-container > svg > g#inner")
+        select(".station-map-container > svg > g#inner-circle")
         .selectAll("circle")
-        .data(locations_with_index)
+        .data(circle_locations)
         .join("circle")
-        .attr("cy", (d) => {
-            let [x, y] = getMapXY(bounds, d.coords);
-            return `${y}%`;
-        })
-        .attr("cx", (d) => {
-            let [x, y] = getMapXY(bounds, d.coords);
-            return `${x}%`;
-        })
-        .attr("r", 14)
+        .attr("cx", getLocationX)
+        .attr("cy", getLocationY)
+        .attr("r", inner_circle_radius)
         .attr("fill", "white")
-        .attr("fill-opacity", (d, i) => {
-            return (i === active_map_marker_idx) ? 1 : 0
+        .attr("fill-opacity", (d) => {
+            return (d.index === active_map_marker_idx) ? 1 : 0
         })
         .style("cursor", "pointer")
         .on("click", function (e, d) {
@@ -131,8 +180,13 @@ function StationMap(props) {
             <img alt="Lake Tahoe Map" src="/static/img/map.PNG"/>
             <svg height="100%" width="100%" 
                 shapeRendering="geometricPrecision">
-                <g id="outer"></g>
-                <g id="inner"></g>
+                
+                <g id="outer-circle"></g>
+                <g id="inner-circle"></g>
+
+                <g id="outer-square"></g>
+                <g id="inner-square"></g>
+                
                 <g id="station-tags"></g>
             </svg>
         </div>

@@ -1,36 +1,29 @@
-import { celsius_to_f, http_get, if_undefined, today, zip } from "./util";
+import { celsius_to_f, http_get, interpolate, today, zip } from "./util";
 import STATION_CONFIG from "../static/station_config.json";
 
-/////////////////////////////////////////////////
-// Global constants here
-const DAYS_OF_DATA = 3;  // days of data to retrieve from TERC API's
-
-function today_string(days) {
-    // Retrieves the current date in UTC as a "YYYYMMDD" string 
-    // Arguments:
-    //  days (optional, default 0): the number of days from today
-    days = if_undefined(days, 0);
-    let now = today(days);
-    const year = String(now.getUTCFullYear());
-    const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(now.getUTCDate()).padStart(2, "0");
-    return `${year}${month}${day}`;
-}
-
-function parseMyDate(date_string) {
+function parseTmStamp(date_string) {
     // Parses a date string in the format "YYYY-MM-DD HH:MM:SS"
+    // Arguments:
+    //  date_string: a String, in the format "YYYY-MM-DD HH:MM:SS"
+
+    // date_string is pretty close to an ISO 8601 timestamp
+    // timestamp specification see below
+    // https://262.ecma-international.org/5.1/#sec-15.9.1.15
+    // Convert date_string to ISO 8601 timestamp
     date_string = date_string.trim();
     date_string = date_string.replace(" ", "T");
     date_string += "Z";
 
-    // For new Date(string) specification see below
-    // https://262.ecma-international.org/5.1/#sec-15.9.1.15
     return new Date(date_string);
 }
 
 class Station {
-    constructor(name, url, data_types) {
+    // days of data to retrieve from TERC API's
+    static DAYS_OF_DATA = 3;  
+
+    constructor(name, location_name, url, data_types) {
         this.name = name;
+        this.location_name = location_name;
         this.url = url;
         this.data_types = data_types;
         this.data = undefined;
@@ -41,7 +34,21 @@ class Station {
         // Arguments:
         // extra_params (optional): params to add onto the get request
         extra_params = extra_params ?? {};
-        const params = { "rptdate": today_string(DAYS_OF_DATA), "rptend": today_string() };
+
+        const format_date = (date) => {
+            // Formats date to a "YYYYMMDD" string 
+            const year = String(date.getUTCFullYear());
+            const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+            const day = String(date.getUTCDate()).padStart(2, "0");
+            return `${year}${month}${day}`;
+        }
+
+        const start_date = today(Station.DAYS_OF_DATA);
+        const end_date = today();
+        const params = { 
+            "rptdate": format_date(start_date), 
+            "rptend": format_date(end_date) 
+        };
         Object.assign(params, extra_params);
         
         const json = await http_get(this.url, params); 
@@ -65,8 +72,8 @@ class NearShoreStation extends Station {
     static URL = STATION_CONFIG.NEAR_SHORE.URL;
     static DATA_TYPES = STATION_CONFIG.NEAR_SHORE.DATA_TYPES;
     
-    constructor(name, id) {
-        super(name, NearShoreStation.URL, NearShoreStation.DATA_TYPES);
+    constructor(name, location_name, id) {
+        super(name, location_name, NearShoreStation.URL, NearShoreStation.DATA_TYPES);
         this.id = id;
     }
 
@@ -75,7 +82,7 @@ class NearShoreStation extends Station {
         const res = [];
         for (let datum of data) {
             res.push({
-                "TimeStamp":         parseMyDate(datum["TmStamp"]),
+                "TimeStamp":         parseTmStamp(datum["TmStamp"]),
                 "Water Temperature": Number.parseFloat(datum["LS_Temp_Avg"]),
                 "Wave Height":       Number.parseFloat(datum["WaveHeight"])
             });
@@ -92,8 +99,8 @@ class NASABuoyStation extends Station {
     static URL = STATION_CONFIG.NASA_BUOYS.URL;
     static DATA_TYPES = STATION_CONFIG.NASA_BUOYS.DATA_TYPES;
 
-    constructor(name, id) {
-        super(name, NASABuoyStation.URL, NASABuoyStation.DATA_TYPES);
+    constructor(name, location_name, id) {
+        super(name, location_name, NASABuoyStation.URL, NASABuoyStation.DATA_TYPES);
         this.id = id;
     }
 
@@ -102,7 +109,7 @@ class NASABuoyStation extends Station {
         const res = [];
         for (let datum of data) {
             res.push({
-                "TimeStamp":         parseMyDate(datum["TmStamp"]),
+                "TimeStamp":         parseTmStamp(datum["TmStamp"]),
                 "Water Temperature": Number.parseFloat(datum["RBR_0p5_m"]),
                 "Wind Direction":    Number.parseFloat(datum["WindDir_1"]),
                 "Wind Speed":        Number.parseFloat(datum["WindSpeed_1"])
@@ -122,9 +129,23 @@ class NASABuoyStation extends Station {
     }
 }
 
-class TCStation extends Station {
+/////////////////////////////////////////////////////////
+// Initialize Nearshore and NASA stations
+/////////////////////////////////////////////////////////
+
+const NEAR_SHORE_STATIONS = STATION_CONFIG.NEAR_SHORE.STATIONS
+.map(({name, location_name, id}) => new NearShoreStation(name, location_name, id));
+
+const NASA_BUOY_STATIONS = STATION_CONFIG.NASA_BUOYS.STATIONS
+.map(({name, location_name, id}) => new NASABuoyStation(name, location_name, id));
+
+/////////////////////////////////////////////////////////
+
+class HWTCStation extends Station {
     static URL = STATION_CONFIG.TEMPERATURE_CHAIN.URL;
     static DATA_TYPES = STATION_CONFIG.TEMPERATURE_CHAIN.DATA_TYPES;
+    static HOMEWOOD = NEAR_SHORE_STATIONS.find((station) => station.name === "Homewood");
+    static HOMEWOOD_DEPTH = 0.5; // meters
 
     // Actual measurements of the temperature chain
     static dimensions = {
@@ -157,26 +178,28 @@ class TCStation extends Station {
         // Arguments:
         //  tc_depth: the depth of the temperature chain
         //  tc_sensor_id: an Integer in [1, 16], the ID of the temperature sensor
-        return tc_depth - TCStation.dimensions.P1 - TCStation.dimensions[`L${tc_sensor_id}`];
+        return tc_depth - HWTCStation.dimensions.P1 - HWTCStation.dimensions[`L${tc_sensor_id}`];
     }    
 
-    constructor(name) {
-        super(name, TCStation.URL, TCStation.DATA_TYPES);
+    constructor(name, location_name) {
+        super(name, location_name, HWTCStation.URL, HWTCStation.DATA_TYPES);
     }
 
     async get_display_data() {
-        const data = await this.get_data();
+        const hwtc_data = await this.get_data();
         const res = [];
-        for (let datum of data) {
-            let date = parseMyDate(datum["TmStamp"]);
+
+        // Process HWTC Data
+        for (let datum of hwtc_data) {
+            let date = parseTmStamp(datum["TmStamp"]);
 
             // Extract depths
             let tc_depth = parseFloat(datum["Depth_m4C_Avg"]);
-            let depths = TCStation.tc_sensor_ids
-                .map((id) => TCStation.get_depth(tc_depth, id));
+            let depths = HWTCStation.tc_sensor_ids
+                .map((id) => HWTCStation.get_depth(tc_depth, id));
 
             // Extract temperature
-            let temperatures = TCStation.tc_sensor_ids
+            let temperatures = HWTCStation.tc_sensor_ids
                 .map((id) => {
                     const tc_name = `LS_T${id}_Avg`;
                     let T = parseFloat(datum[tc_name]);
@@ -186,27 +209,40 @@ class TCStation extends Station {
 
             res.push({
                 "TimeStamp": date,
-                "CTD Profile": zip(depths, temperatures)
+                "Thermistor Chain": zip(depths, temperatures)
             });
         }
+
+        // Add on Homewood data to result
+        const hw_data = await HWTCStation.HOMEWOOD.get_display_data();
+        const hwtc_times = res.map((x) => x["TimeStamp"].getTime());
+        const hw_time = hw_data.map((x) => x["TimeStamp"].getTime());
+        const hw_temp = hw_data.map((x) => x["Water Temperature"]);
+        const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
+        res.forEach((datum, idx) => {
+            // Add a [depth, temperature] tuple to the beginning of the datum
+            let hw_td = [ 
+                HWTCStation.HOMEWOOD_DEPTH,
+                hwtc_surface[idx]
+            ];
+            datum["Thermistor Chain"].unshift(hw_td);
+        });
+
         this.data = res;
         return res;
     }
 }
 
 /////////////////////////////////////////////////////////
-// Initialize stations
+// Initialize HWTC Station
 /////////////////////////////////////////////////////////
 
-const NEAR_SHORE_STATIONS = STATION_CONFIG.NEAR_SHORE.STATIONS
-    .map(({name, id}) => new NearShoreStation(name, id));
+const HWTC_STATIONS = STATION_CONFIG.TEMPERATURE_CHAIN.STATIONS
+.map(({name, location_name}) => new HWTCStation(name, location_name));
 
-const NASA_BUOY_STATIONS = STATION_CONFIG.NASA_BUOYS.STATIONS
-    .map(({name, id}) => new NASABuoyStation(name, id));
+/////////////////////////////////////////////////////////
 
-const TC_STATIONS = STATION_CONFIG.TEMPERATURE_CHAIN.STATIONS
-    .map(({name}) => new TCStation(name));
-
-const STATIONS = [...NEAR_SHORE_STATIONS, ...NASA_BUOY_STATIONS, ...TC_STATIONS];
+// Exports
+const STATIONS = [...NEAR_SHORE_STATIONS, ...NASA_BUOY_STATIONS, ...HWTC_STATIONS];
 
 export { STATIONS };

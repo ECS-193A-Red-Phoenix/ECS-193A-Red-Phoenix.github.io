@@ -26,7 +26,7 @@ const MAP_STATIONS = MAP_CONFIG.MARKERS
 
 function RealTimeConditions(props) {
     let [ map_state, setMapState ] = useState({
-        active_map_marker_idx: 0,
+        active_map_marker_idx: 1,
         active_station_idx: 0,
         active_data_idx: 0
     })
@@ -46,12 +46,13 @@ function RealTimeConditions(props) {
     // console.log(`Map Marker Idx: ${active_map_marker_idx}, Station Idx: ${active_station_idx}, Data Type Idx: ${active_data_idx}`)
         
     function onMapMarkerChanged(idx) {
-        // Ensure active_station_idx is within bounds of available stations at marker
-        let num_stations = MAP_STATIONS[idx].length;
+        // Ensure new active_station_idx is within bounds of available stations at marker
+        let map_marker_stations = MAP_STATIONS[idx];
+        let num_stations = map_marker_stations.length;
         let clamped_station_idx = clamp(active_station_idx, 0, num_stations - 1); 
 
         // Ensure active_data_idx is within bounds of available data types
-        let num_data_types = active_data_types[clamped_station_idx].length;
+        let num_data_types = map_marker_stations[clamped_station_idx].data_types.length; 
         let clamped_dt_idx = clamp(active_data_idx, 0, num_data_types - 1);
 
         setMapState({
@@ -106,7 +107,7 @@ function RealTimeConditions(props) {
 
     // Create chart
     // This switch statement is ugly how do i fix it
-    const chart_title = `${active_data_type.name} @ ${active_station.name}`;
+    const chart_title = `${active_data_type.name} @ ${active_station.location_name}`;
     const chart_type = active_data_type.display_type;
     let chart;
     switch (chart_type) {
@@ -146,8 +147,10 @@ function RealTimeConditions(props) {
                     time={time}
                     ctd_profiles={y_data}
                     cache_id={"tc_plot"}
-                    min_depth={20}
-                    max_depth={120}
+                    min_depth={0}
+                    // Max depth dynamically determined
+                    min_T={40}
+                    max_T={70}
                     />
             );
             break;

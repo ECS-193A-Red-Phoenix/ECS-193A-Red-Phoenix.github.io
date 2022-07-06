@@ -531,7 +531,7 @@ export async function http_get(url, params, headers, mode) {
 }
 
 export function interpolate(x_interpolate, X, Y) {
-    // Same functionality as numpy.interp
+    // Same functionality as Python's numpy.interp
     // One-dimensional linear interpolation for monotonically increasing sample points.
     // Arguments:
     //  x_interpolate: an Array of x values at which to evaluate the interpolated point, must be increasing
