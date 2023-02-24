@@ -221,6 +221,7 @@ class HWTCStation extends Station {
         const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
         let last_idx_hwtc = res.length - 1;
         if ( isNaN(hwtc_surface[last_idx_hwtc]) ) {
+            alert("Homewood is NaN value")
         }
         else {  
             res.forEach((datum, idx) => {
