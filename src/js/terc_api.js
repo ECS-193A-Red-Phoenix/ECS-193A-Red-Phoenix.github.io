@@ -219,7 +219,8 @@ class HWTCStation extends Station {
         const hw_time = hw_data.map((x) => x["TimeStamp"].getTime());
         const hw_temp = hw_data.map((x) => x["Water Temperature"]);
         const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
-        if ( isNaN(hwtc_surface) ) {
+        let last_idx_hwtc = res.length - 1;
+        if ( isNaN(hwtc_surface[last_idx_hwtc]) ) {
         }
         else {  
             res.forEach((datum, idx) => {
