@@ -144,8 +144,8 @@ const NASA_BUOY_STATIONS = STATION_CONFIG.NASA_BUOYS.STATIONS
 class HWTCStation extends Station {
     static URL = STATION_CONFIG.TEMPERATURE_CHAIN.URL;
     static DATA_TYPES = STATION_CONFIG.TEMPERATURE_CHAIN.DATA_TYPES;
-    static HOMEWOOD = NEAR_SHORE_STATIONS.find((station) => station.name === "Homewood");
-    static HOMEWOOD_DEPTH = 0.5; // meters
+    // static HOMEWOOD = NEAR_SHORE_STATIONS.find((station) => station.name === "Homewood");
+    // static HOMEWOOD_DEPTH = 0.5; // meters
 
     // Actual measurements of the temperature chain
     static dimensions = {
@@ -214,25 +214,25 @@ class HWTCStation extends Station {
         }
 
         // Add on Homewood data to result
-        const hw_data = await HWTCStation.HOMEWOOD.get_display_data();
-        const hwtc_times = res.map((x) => x["TimeStamp"].getTime());
-        const hw_time = hw_data.map((x) => x["TimeStamp"].getTime());
-        const hw_temp = hw_data.map((x) => x["Water Temperature"]);
-        const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
-        let last_idx_hwtc = res.length - 1;
-        if ( isNaN(hwtc_surface[last_idx_hwtc]) ) {
-            alert("Homewood is NaN value")
-        }
-        else {  
-            res.forEach((datum, idx) => {
-                // Add a [depth, temperature] tuple to the beginning of the datum
-                let hw_td = [ 
-                    HWTCStation.HOMEWOOD_DEPTH,
-                    hwtc_surface[idx]
-                ];
-                datum["Thermistor Chain"].unshift(hw_td);
-            });
-        }
+        // const hw_data = await HWTCStation.HOMEWOOD.get_display_data();
+        // const hwtc_times = res.map((x) => x["TimeStamp"].getTime());
+        // const hw_time = hw_data.map((x) => x["TimeStamp"].getTime());
+        // const hw_temp = hw_data.map((x) => x["Water Temperature"]);
+        // const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
+        // let last_idx_hwtc = res.length - 1;
+        // if ( isNaN(hwtc_surface[last_idx_hwtc]) ) {
+        //     alert("Homewood is NaN value")
+        // }
+        // else {  
+        //     res.forEach((datum, idx) => {
+        //         // Add a [depth, temperature] tuple to the beginning of the datum
+        //         let hw_td = [ 
+        //             HWTCStation.HOMEWOOD_DEPTH,
+        //             hwtc_surface[idx]
+        //         ];
+        //         datum["Thermistor Chain"].unshift(hw_td);
+        //     });
+        // }
 
         this.data = res;
         return res;
