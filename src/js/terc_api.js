@@ -219,14 +219,18 @@ class HWTCStation extends Station {
         const hw_time = hw_data.map((x) => x["TimeStamp"].getTime());
         const hw_temp = hw_data.map((x) => x["Water Temperature"]);
         const hwtc_surface = interpolate(hwtc_times, hw_time, hw_temp);
-        res.forEach((datum, idx) => {
-            // Add a [depth, temperature] tuple to the beginning of the datum
-            let hw_td = [ 
-                HWTCStation.HOMEWOOD_DEPTH,
-                hwtc_surface[idx]
-            ];
-            datum["Thermistor Chain"].unshift(hw_td);
-        });
+        if ( isNaN(hwtc_surface) ) {
+        }
+        else {  
+            res.forEach((datum, idx) => {
+                // Add a [depth, temperature] tuple to the beginning of the datum
+                let hw_td = [ 
+                    HWTCStation.HOMEWOOD_DEPTH,
+                    hwtc_surface[idx]
+                ];
+                datum["Thermistor Chain"].unshift(hw_td);
+            });
+        }
 
         this.data = res;
         return res;
