@@ -85,7 +85,7 @@ function Axis(props) {
             ctx.lineTo(x_e, y_e);
             ctx.stroke();
         });
-    }, []);
+    }, [ticks]);
 
     return (
         <div 

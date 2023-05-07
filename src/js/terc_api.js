@@ -1,20 +1,18 @@
 import { celsius_to_f, http_get, interpolate, today, zip } from "./util";
 import STATION_CONFIG from "../static/station_config.json";
 
-function parseTmStamp(date_string) {
+function parseTmStamp(dateString) {
     // Parses a date string in the format "YYYY-MM-DD HH:MM:SS"
     // Arguments:
     //  date_string: a String, in the format "YYYY-MM-DD HH:MM:SS"
-
-    // date_string is pretty close to an ISO 8601 timestamp
-    // timestamp specification see below
-    // https://262.ecma-international.org/5.1/#sec-15.9.1.15
-    // Convert date_string to ISO 8601 timestamp
-    date_string = date_string.trim();
-    date_string = date_string.replace(" ", "T");
-    date_string += "Z";
-
-    return new Date(date_string);
+    
+    const [datePart, timePart] = dateString.split(' ');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes, seconds] = timePart.split(':').map(Number);
+    
+    // Months in JavaScript are 0-indexed, so we subtract 1 from the month
+    const utcDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+    return utcDate;
 }
 
 class Station {
