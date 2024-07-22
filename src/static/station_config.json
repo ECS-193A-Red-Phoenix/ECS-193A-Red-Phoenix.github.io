@@ -107,6 +107,15 @@
                     38.95,
                     -119.968
                 ]
+            },
+            {
+                "id": 12,
+                "name": "Cedar Point",
+                "location_name": "Cedar Point",
+                "coords": [
+                    39.150002,
+                    -120.142235
+                ]
             }
         ]
     },
