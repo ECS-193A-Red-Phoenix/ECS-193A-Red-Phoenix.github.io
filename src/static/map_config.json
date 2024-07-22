@@ -132,6 +132,17 @@
             ]
         },
         {
+            "name": "Cedar Point",
+            "shape": "circle",
+            "coords": [
+                39.150002,
+                -120.142235
+            ],
+            "stations": [
+                "Cedar Point"
+            ]
+        },
+        {
             "name": "tb1",
             "shape": "circle",
             "coords": [
