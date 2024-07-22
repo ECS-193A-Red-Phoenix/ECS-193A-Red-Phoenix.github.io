@@ -48,7 +48,7 @@ function TCPlot(props) {
     let { time, ctd_profiles, cache_id, min_depth, max_depth, min_T, max_T, title } = props;
     const container_ref = useRef();
 
-    const data_available = !!time && !!ctd_profiles;
+    const data_available = Array.isArray(time) && time.length > 0 && !!ctd_profiles;
 
     let n_rows, n_cols, heatmap_data, temperature_color_scale;
     const elements = [];
@@ -176,7 +176,8 @@ function TCPlot(props) {
             <div className="tc-plot-title"> {title} </div>
 
 
-            { !data_available && <div> Loading Temperature Chain Data </div> }
+            { !data_available && time === undefined && <div> Loading Temperature Chain Data </div> }
+            { !data_available && Array.isArray(time) && <div> Temperature Chain Data Unavailable </div> }
 
             <canvas></canvas>
             
