@@ -229,7 +229,6 @@ class HWTCStation extends Station {
                 datum["Thermistor Chain"].unshift(hw_td);
             });
         } catch (error) {
-            alert("Failed to add Homewood data to HWTC plot. Homewood Station may be down.");
             console.log("Failed to add Homewood to HWTC plot with error", error);
         }
 
