@@ -1,0 +1,27 @@
+.module-top-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--primary-font);
+    flex: 0 1 50px;
+}
+
+.module-top-tab {
+    text-transform: uppercase;
+    font-size: 19.92px;
+    color: var(--primary-font);
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: rgba(4,52,77,.6);
+    padding: 10px 0px;
+    flex-grow: 2;
+    flex-basis: 0;
+    cursor: pointer;
+}
+
+.module-top-tab-active {
+    background-color: rgba(4,52,77,.1);
+}

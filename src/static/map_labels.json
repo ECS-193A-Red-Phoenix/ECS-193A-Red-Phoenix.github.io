@@ -1,0 +1,63 @@
+[
+    {
+        "name": "Cave Rock",
+        "loc": [39.0362962,-119.9478261]
+    },
+    {
+        "name": "Emerald Bay",
+        "loc": [38.96156,-120.1036887]
+    },
+    {
+        "name": "Homewood",
+        "loc": [39.0820174,-120.1626291]
+    },
+    {
+        "name": "Sand Harbor State Park",
+        "loc": [39.2126903,-119.9296363]
+    },
+    {
+        "name": "Heavenly",
+        "loc": [38.9306193,-119.9126679]
+    },
+    {
+        "name": "Lakeview Commons",
+        "loc": [38.95189,-120.0001187]
+    },
+    {
+        "name": "Taylor Creek",
+        "loc": [38.938987,-120.0601248]
+    },
+    {
+        "name": "Desolation Wilderness",
+        "loc": [38.9499076,-120.1865438]
+    },
+    {
+        "name": "Meeks Bay",
+        "loc": [39.034352,-120.1262648]
+    },
+    {
+        "name": "Sugar Pine Point",
+        "loc": [39.0504976,-120.1178812]
+    },
+    {
+        "name": "Skunk Harbor",
+        "loc": [39.126357,-119.942767]
+    },
+    {
+        "name": "Logan Shoals",
+        "loc": [39.0578139,-119.945371],
+        "active": false
+    },
+    {
+        "name": "Sunnyside",
+        "loc": [39.1391089,-120.1558019]
+    },
+    {
+        "name": "Alpine Meadows",
+        "loc": [39.1545287,-120.2309444]
+    },
+    {
+        "name": "Dollar Point",
+        "loc": [39.1909248,-120.1261392]
+    }
+]

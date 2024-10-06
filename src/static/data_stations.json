@@ -1,0 +1,350 @@
+{
+    "NEAR_SHORE": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/ns-station-range",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "name_units": "f",
+                "key": "LS_Temp_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Wave Height",
+                "name_units": "ft",
+                "key": "WaveHeight",
+                "key_units": "m"
+            },
+            {
+                "name": "Algae",
+                "name_units": "unitless",
+                "key": "LS_Chlorophyll_Avg",
+                "key_units": "unitless"
+            },
+            {
+                "name": "Clarity",
+                "name_units": "unitless",
+                "key": "LS_Turbidity_Avg",
+                "key_units": "unitless"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 2,
+                "name": "Dollar Point",
+                "coords": [
+                    39.1847,
+                    -120.093
+                ]
+            },
+            {
+                "id": 3,
+                "name": "Glenbrook",
+                "coords": [
+                    39.0883,
+                    -119.941
+                ]
+            },
+            {
+                "id": 4,
+                "name": "Homewood",
+                "coords": [
+                    39.0903,
+                    -120.161
+                ]
+            },
+            {
+                "id": 6,
+                "name": "Rubicon",
+                "coords": [
+                    39.0064,
+                    -120.109
+                ]
+            },
+            {
+                "id": 7,
+                "name": "Sand Harbor",
+                "coords": [
+                    39.2006,
+                    -119.931
+                ]
+            },
+            {
+                "id": 8,
+                "name": "Tahoe Vista",
+                "coords": [
+                    39.2364,
+                    -120.065
+                ]
+            },
+            {
+                "id": 9,
+                "name": "Tahoe City",
+                "coords": [
+                    39.1711,
+                    -120.138
+                ]
+            },
+            {
+                "id": 10,
+                "name": "Camp Richardson",
+                "coords": [
+                    38.9394,
+                    -120.039
+                ]
+            },
+            {
+                "id": 11,
+                "name": "Timber Cove",
+                "coords": [
+                    38.95,
+                    -119.968
+                ]
+            },
+            {
+                "id": 12,
+                "name": "Cedar Point",
+                "coords": [
+                    39.150002,
+                    -120.142235
+                ]
+            }
+        ]
+    },
+    "NASA_BUOYS": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/nasa-tb",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "name_units": "f",
+                "key": "RBR_0p5_m",
+                "key_units": "c"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 1,
+                "name": "tb1",
+                "coords": [
+                    39.155,
+                    -120.004
+                ]
+            },
+            {
+                "id": 2,
+                "name": "tb2",
+                "coords": [
+                    39.1097,
+                    -120.008
+                ]
+            },
+            {
+                "id": 3,
+                "name": "tb3",
+                "coords": [
+                    39.1108,
+                    -120.073
+                ]
+            },
+            {
+                "id": 4,
+                "name": "tb4",
+                "coords": [
+                    39.1553,
+                    -120.071
+                ]
+            }
+        ]
+    },
+    "USCG_LAKE_LEVEL": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/usgs-ws",
+        "DATA_TYPES": [
+            {
+                "name": "Lake Level",
+                "name_units": "ft",
+                "key": "Lake_Level",
+                "key_units": "ft"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 10337000,
+                "name": "Lake Tahoe Water Level",
+                "coords": [
+                    39.09353121843146, 
+                    -120.03493017228419
+                ]
+            }
+        ]
+    },
+    "USCG_RIVERS": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/usgs-ws",
+        "DATA_TYPES": [
+            {
+                "name": "Discharge",
+                "name_units": "m^3",
+                "key": "Streamflow",
+                "key_units": "m^3"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 10336610,
+                "name": "Upper Truckee River at South Lake Tahoe",
+                "coords": [
+                    38.922,
+                    -119.992
+                ]
+            },
+            {
+                "id": 103366092,
+                "name": "Upper Truckee River near Meyers",
+                "coords": [
+                    38.848,
+                    -120.028
+                ]
+            },
+            {
+                "id": 10336645,
+                "name": "General Creek",
+                "coords": [
+                    39.052,
+                    -120.119
+                ]
+            },
+            {
+                "id": 10336660,
+                "name": "Blackwood Creek",
+                "coords": [
+                    39.107,
+                    -120.162
+                ]
+            },
+            {
+                "id": 10336676,
+                "name": "Ward Creek near Tahoe Pines",
+                "coords": [
+                    39.141,
+                    -120.212
+                ]
+            },
+            {
+                "id": 10336698,
+                "name": "Third Creek",
+                "coords": [
+                    39.24,
+                    -119.947
+                ]
+            },
+            {
+                "id": 10336700,
+                "name": "Incline Creek",
+                "coords": [
+                    39.24,
+                    -119.945
+                ]
+            },
+            {
+                "id": 10336730,
+                "name": "Glenbrook Creek",
+                "coords": [
+                    39.088,
+                    -119.94
+                ]
+            },
+            {
+                "id": 10336780,
+                "name": "Trout Creek",
+                "coords": [
+                    38.932,
+                    -119.979
+                ]
+            },
+            {
+                "id": 10337500,
+                "name": "Truckee River at Tahoe City",
+                "coords": [
+                    39.167,
+                    -120.145
+                ]
+            }
+        ]
+    },
+    "STATE_OF_THE_LAKE": {
+        "STATION_TYPE": "Sotl",
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/state-of-lake",
+        "DATA_TYPES": [
+            {
+                "name": "Secchi Depth",
+                "name_units": "ft",
+                "key": "Secchi_Annual_Ave",
+                "key_units": "m"
+            },
+            {
+                "name": "Monthly Max Temperature",
+                "name_units": "f",
+                "keys": [
+                    "Monthly_Max_Air_Temp_Jan",
+                    "Monthly_Max_Air_Temp_Feb",
+                    "Monthly_Max_Air_Temp_Mar",
+                    "Monthly_Max_Air_Temp_Apr",
+                    "Monthly_Max_Air_Temp_May",
+                    "Monthly_Max_Air_Temp_Jun",
+                    "Monthly_Max_Air_Temp_July",
+                    "Monthly_Max_Air_Temp_Aug",
+                    "Monthly_Max_Air_Temp_Sep",
+                    "Monthly_Max_Air_Temp_Oct",
+                    "Monthly_Max_Air_Temp_Nov",
+                    "Monthly_Max_Air_Temp_Dec"
+                ],
+                "key_units": "f"
+            },
+            {
+                "name": "Monthly Min Temperature",
+                "name_units": "f",
+                "keys": [
+                    "Monthly_Min_Air_Temp_Jan",
+                    "Monthly_Min_Air_Temp_Feb",
+                    "Monthly_Min_Air_Temp_Mar",
+                    "Monthly_Min_Air_Temp_Apr",
+                    "Monthly_Min_Air_Temp_May",
+                    "Monthly_Min_Air_Temp_Jun",
+                    "Monthly_Min_Air_Temp_July",
+                    "Monthly_Min_Air_Temp_Aug",
+                    "Monthly_Min_Air_Temp_Sep",
+                    "Monthly_Min_Air_Temp_Oct",
+                    "Monthly_Min_Air_Temp_Nov",
+                    "Monthly_Min_Air_Temp_Dec"
+                ],
+                "key_units": "f"
+            },
+            {
+                "name": "Monthly Precipitation",
+                "name_units": "unitless",
+                "keys": [
+                    "Monthly_Precipitation_Jan",
+                    "Monthly_Precipitation_Feb",
+                    "Monthly_Precipitation_Mar",
+                    "Monthly_Precipitation_Apr",
+                    "Monthly_Precipitation_May",
+                    "Monthly_Precipitation_Jun",
+                    "Monthly_Precipitation_July",
+                    "Monthly_Precipitation_Aug",
+                    "Monthly_Precipitation_Sep",
+                    "Monthly_Precipitation_Oct",
+                    "Monthly_Precipitation_Nov",
+                    "Monthly_Precipitation_Dec"
+                ],
+                "key_units": "unitless"
+            }
+        ],
+        "STATIONS": [
+            {
+                "name": "State of the Lake",
+                "coords": [
+                    39.098,
+                    -120.031
+                ]
+            }
+        ]
+    }
+}

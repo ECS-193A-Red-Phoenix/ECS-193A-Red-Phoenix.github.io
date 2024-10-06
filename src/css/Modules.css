@@ -1,0 +1,16 @@
+.module-container {
+    width: 1040px;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 200px;
+
+    position: relative;
+    color: #fff;
+}
+
+.module-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}

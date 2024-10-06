@@ -1,0 +1,39 @@
+.transparent-top-tabs {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+}
+
+.tab-content {
+    display: flex;
+    justify-items: center;
+    flex: 1 1 100px;
+}
+
+.tab-header {
+    width: 200px;
+    height: 100%;
+    padding: 0px 20px;
+    background-color: rgba(0,0,0,.5);
+    flex-shrink: 0;
+    margin: 0px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    overflow-y: auto;
+}
+
+.tab-title {
+    font-size: 24px;
+    text-transform: uppercase;
+    padding: 10px 0px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+.tab-desc {
+    font-size: 15.6px;
+    margin-bottom: 20px;
+}

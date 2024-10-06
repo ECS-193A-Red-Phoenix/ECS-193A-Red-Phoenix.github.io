@@ -7,7 +7,7 @@ export default function ContactUs() {
       <div className="image-container">
         <img
           className="aboutUsPic"
-          src="static/img/lake-three.jpeg"
+          src="/static/img/lake-three.jpeg"
           alt="Lake Tahoe"
         ></img>
         <div className="page-description-container">

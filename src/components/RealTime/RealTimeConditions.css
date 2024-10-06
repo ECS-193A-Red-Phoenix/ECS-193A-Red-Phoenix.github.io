@@ -1,6 +1,6 @@
 .real-time-conditions-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 50px 0px;
@@ -33,7 +33,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 30px;
 }
 
 .compass-plot {
@@ -200,16 +199,6 @@
 }
 
 @media only screen and (max-width: 1300px) {
-    .real-time-conditions-container {
-        flex-direction: column-reverse;
-    }
-
-    .time-plot-container {
-        margin-top: 50px;
-        width: 100%;
-        flex-direction: column-reverse;
-    }
-    
     .time-plot-container > .compass-plot {
         max-width: 400px;
         width: auto;
