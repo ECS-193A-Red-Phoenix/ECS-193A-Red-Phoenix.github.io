@@ -107,7 +107,7 @@ function ModuleContainer(props) {
     module_container_style["transformOrigin"] = 'top';
     // flex-box ignores scale so it leaves these really long margins
     // hard code set the position of the map to be right below the module
-    let real_margin = 30;
+    let real_margin = 0;
     if (width < max_width) {
         const module_height = 533.6;
         let negative_margin = -module_height * (1 - (width / max_width));

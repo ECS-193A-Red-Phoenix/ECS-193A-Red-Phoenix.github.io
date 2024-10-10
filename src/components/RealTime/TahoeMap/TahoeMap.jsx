@@ -32,7 +32,7 @@ function TahoeMap(props) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
     const container_padding = 30;
-    const max_width = 700 + container_padding;
+    const max_width = 1040 + container_padding;
     const scale = width < max_width ? `scale(${width / max_width})` : 'scale(1)';
     tahoe_map_style["transform"] = scale;
     tahoe_map_style["transformOrigin"] = 'top';
