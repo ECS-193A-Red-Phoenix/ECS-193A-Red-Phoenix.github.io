@@ -36,6 +36,18 @@ function TahoeMap(props) {
     const scale = width < max_width ? `scale(${width / max_width})` : 'scale(1)';
     tahoe_map_style["transform"] = scale;
     tahoe_map_style["transformOrigin"] = 'top';
+    // flex-box ignores scale so it leaves these really long margins
+    // hard code set the position of the map to be right below the module
+    let real_margin = 0;
+    if (width < max_width) {
+        const module_height = 780;
+        let negative_margin = -module_height * (1 - (width / max_width));
+        negative_margin += real_margin;
+        tahoe_map_style["marginBottom"] = `${negative_margin}px`;
+    }
+    else {
+        tahoe_map_style["marginBottom"] = `${real_margin}px`;
+    }
 
     return (
         <div className="tahoe-map"
