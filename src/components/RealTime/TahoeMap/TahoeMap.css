@@ -5,6 +5,18 @@
     color: #fff;
 }
 
+.tahoe-map-help
+{
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    z-index: 1000;
+
+    color: #0f5160;
+    font-weight: 400;
+    font-size: 12.6px;
+}
+
 .map-label {
     border: none;
     color: #191919b5;

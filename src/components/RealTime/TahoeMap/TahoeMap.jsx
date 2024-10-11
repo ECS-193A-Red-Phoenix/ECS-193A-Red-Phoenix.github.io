@@ -75,6 +75,13 @@ function TahoeMap(props) {
 
             </MapContainer>
 
+            {
+                props.children && props.children.length > 1 &&
+                <div className="tahoe-map-help">
+                    Tap a map marker to change your location!
+                </div>
+            }
+
             <Acknowledgements/>
         </div>
     );
