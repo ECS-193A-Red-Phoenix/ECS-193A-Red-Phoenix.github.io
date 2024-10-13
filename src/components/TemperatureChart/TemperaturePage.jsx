@@ -17,7 +17,7 @@ import { S3 } from "../../js/s3_api";
 
 const temperature_color = ice_to_fire_discrete; 
 const T_min = 40;
-const T_max = 70;
+const T_max = 80;
 const T_units = "° F";
 let temperature_scale = scaleLinear().domain([T_min, T_max]).range([0, 1]);
 let temperature_color_scale = (temperature) => temperature_color(temperature_scale(temperature));
