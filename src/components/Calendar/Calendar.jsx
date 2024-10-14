@@ -1,6 +1,6 @@
 import "./Calendar.css";
-import { useState, useRef } from "react";
-import { clamp, militaryHourTo12Hour } from "../../js/util";
+import { useState, useRef, useEffect } from "react";
+import { clamp, militaryHourTo12Hour, bisect_left } from "../../js/util";
 import UpDownArrow from "./UpDownArrow";
 
 ////////////////////////////////////
@@ -25,37 +25,32 @@ function formatHourString(date) {
 }
 
 function Calendar(props) {
-    const [active_event_idx, set_active_event_idx] = useState(0);
     const day_select_ref = useRef();
     const hour_select_ref = useRef();
-
+    
     ////////////////////////////////////
     // Expected props:
     //  props.events: a list of Objects that have a time attribute [{'time': Date object}, ...]
-    //  props.on_event_selected: a callback function when a new event is selected
-    
+    //  on_event_selected: a callback function when a new event is selected
+    //  props.active_event_index: the index of the active event
+    const { events, on_event_selected, active_event_index } = props;
+
     ////////////////////////////////////
     // Error Handling
     ////////////////////////////////////
     let error_message;
-    if (props.events === undefined) 
+    if (events === undefined) 
         error_message = "Loading available forecasts";
-    else if (props.events === null) 
+    else if (events === null) 
         error_message = "An unexpected error occurred while retrieving forecasts";
-    else if (props.events.length === 0)
+    else if (events.length === 0)
         error_message = "No forecasts are available";
     
     if (error_message !== undefined)
         return <div className="calendar calendar-error"> {error_message} </div>;
+
     ////////////////////////////////////
-
-    // copy the events to avoid mutating props.events
-    const events = props.events.map((obj) => ({ 'time': obj.time }));
-    events.forEach((e, idx) => e.idx = idx);       // copy original event order
-    events.sort((e1, e2) => e2.time - e1.time);
-    events.forEach((e, idx) => e.sorted_idx = idx);
-
-    // Create a hashmap that maps date_string -> events on that day
+    // Create a hashmap that groups events by date_string -> events on that day
     // Example: 'Sunday, January 23' -> [event1, event2]
     const dates = {};
     for (let event of events) {
@@ -65,19 +60,20 @@ function Calendar(props) {
         else
             dates[date_string] = [event];
     }
-
+    
+    const active_event = events[active_event_index];
+    const active_event_date = formatDate(active_event.time); 
     const day_options = Object.keys(dates).map(
         (date_string, idx) => 
             <option 
                 value={ date_string }
                 key={`day-option-${idx}`} 
-                className="day-option"> 
+                className="day-option"
+                > 
                     { date_string }
             </option>
     )
     
-    const active_event = events[active_event_idx];
-    const active_event_date = formatDate(active_event.time); 
     const hours = dates[active_event_date];
     const active_hour_idx = hours.indexOf(active_event);
 
@@ -85,8 +81,9 @@ function Calendar(props) {
         (date_event, idx) =>
             <option 
                 value={ idx }
-                key={`hour-option-${date_event.idx}`}
-                className="hour-option">
+                key={`hour-option-${idx}`}
+                className="hour-option"
+                >
                     { formatHourString(date_event.time) }
             </option> 
     )
@@ -96,8 +93,7 @@ function Calendar(props) {
         const selector = day_select_ref.current;
         const selected_date = selector.options[selector.selectedIndex].text;
         const selected_event = dates[selected_date][0];
-        props.on_event_selected(selected_event.idx);
-        set_active_event_idx(selected_event.sorted_idx);
+        on_event_selected(events.indexOf(selected_event));
     }
 
     // Event callback function when hour selector is changed
@@ -107,8 +103,7 @@ function Calendar(props) {
         const hour_select = hour_select_ref.current;
         const selected_hour = hour_select.selectedIndex;
         const selected_event = dates[selected_date][selected_hour];
-        props.on_event_selected(selected_event.idx);
-        set_active_event_idx(selected_event.sorted_idx); 
+        on_event_selected(events.indexOf(selected_event));
     }
 
     // Event callback function for when up down arrow is pressed
@@ -137,10 +132,7 @@ function Calendar(props) {
 
         // Find index of event from the original order of props.events
         const new_event = dates[selected_date][new_hour_idx];
-        props.on_event_selected(new_event.idx);
-        
-        // Find index of event in the sorted order of events
-        set_active_event_idx(new_event.sorted_idx);
+        on_event_selected(events.indexOf(new_event));
     }
 
     return (
@@ -149,13 +141,21 @@ function Calendar(props) {
                 { props.description }
             </div>
             <div className="calendar">
-                <select ref={day_select_ref} className="calendar-day-select" onChange={on_day_changed}>
+                <select ref={day_select_ref} 
+                    className="calendar-day-select" 
+                    onChange={on_day_changed}
+                    value={ active_event_date }
+                    >
                     { day_options }
                 </select>
                 <span> at </span>
 
                 <div className="calendar-hour-select">
-                    <select ref={hour_select_ref} value={ active_hour_idx } className="calendar-hour-select" onChange={on_hour_changed}>
+                    <select ref={hour_select_ref} 
+                        value={ active_hour_idx } 
+                        className="calendar-hour-select" 
+                        onChange={on_hour_changed}
+                        >
                         { hour_options }
                     </select>
                     <UpDownArrow on_up={() => change_hour(-1)} on_down={() => change_hour(1)}/>

@@ -63,6 +63,15 @@ function WaveHeightPage() {
         retrieve_wind_forecasts()
             .then((res) => {
                 res.sort((f1, f2) => f2.time - f1.time);
+                let idx_closest_to_now = 0;
+                const now = new Date();
+                for (let idx = res.length - 1; idx >= 0; idx -= 1) {
+                    if (now < res[idx].time) {
+                        idx_closest_to_now = idx;
+                        break;
+                    }
+                }
+                setActiveIdx(idx_closest_to_now);
                 setWindData(res);
             })
             .catch((error) => {
@@ -134,7 +143,7 @@ function WaveHeightPage() {
                         [
                             <Calendar key='calendar' 
                                 events={wind_data} 
-                                active_event_idx={activeIdx}
+                                active_event_index={activeIdx}
                                 on_event_selected={on_event_selected}
                                 description={calendar_description}/>,
                             <div className="wh-compass" key='compass'>

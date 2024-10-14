@@ -51,8 +51,18 @@ function CurrentLakePage() {
         S3.get_files("flow", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
-                if (is_mounted)
+                let idx_closest_to_now = 0;
+                const now = new Date();
+                for (let idx = files.length - 1; idx >= 0; idx -= 1) {
+                    if (now < files[idx].time) {
+                        idx_closest_to_now = idx;
+                        break;
+                    }
+                }
+                if (is_mounted) {
+                    setActiveIdx(idx_closest_to_now);
                     setFlowFiles(files);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -97,7 +107,7 @@ function CurrentLakePage() {
                 </div>
                 
                 <Calendar events={flow_files} 
-                    active_event_idx={activeIdx}
+                    active_event_index={activeIdx}
                     on_event_selected={(idx) => setActiveIdx(idx)}
                     description={calendar_description}/>
             </div>

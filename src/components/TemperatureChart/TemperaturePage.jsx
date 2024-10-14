@@ -44,8 +44,18 @@ function TemperaturePage() {
         S3.get_files("temperature", after_date)
             .then((files) => {
                 files.sort((f1, f2) => f2.time - f1.time);
-                if (is_mounted)
+                if (is_mounted) {
+                    let file_idx_closest_to_now = 0;
+                    const now = new Date();
+                    for (let idx = files.length - 1; idx >= 0; idx -= 1) {
+                        if (now < files[idx].time) {
+                            file_idx_closest_to_now = idx;
+                            break;
+                        }
+                    }
+                    setActiveIdx(file_idx_closest_to_now);
                     setTempFiles(files);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -88,7 +98,7 @@ function TemperaturePage() {
 
                 <Calendar 
                     events={temperature_files} 
-                    active_event_idx={activeIdx}
+                    active_event_index={activeIdx}
                     on_event_selected={(idx) => setActiveIdx(idx)}
                     description={calendar_description}/>
             </div>
