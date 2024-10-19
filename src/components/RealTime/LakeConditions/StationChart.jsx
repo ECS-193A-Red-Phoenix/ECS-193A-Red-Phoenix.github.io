@@ -82,7 +82,7 @@ function StationChart(props) {
                     key={`loading-station-${station.name}-${idx}`}
                     position={createLatLng(...station.coords)}
                     onClick={() => setActiveLocation(idx)}
-                    active={idx == active_location_idx}
+                    active={idx === active_location_idx}
                     />
             )
         setMapMarkers(loading_icons);
@@ -113,7 +113,7 @@ function StationChart(props) {
                                 position={createLatLng(...station.coords)}
                                 error_msg={`${station.name} temporarily unavailable`}
                                 onClick={() => setActiveLocation(idx)}
-                                active={idx == active_location_idx}
+                                active={idx === active_location_idx}
                                 />
                     }
                     else if (most_recent_station_values[idx] === undefined) {
@@ -121,7 +121,7 @@ function StationChart(props) {
                             key={`loading-station-${station.name}-${idx}`}
                             position={createLatLng(...station.coords)}
                             onClick={() => setActiveLocation(idx)}
-                            active={idx == active_location_idx}
+                            active={idx === active_location_idx}
                             />
                     }
 
@@ -132,7 +132,7 @@ function StationChart(props) {
                         text={marker_text}
                         color={get_color(most_recent_station_values[idx])}
                         onClick={() => setActiveLocation(idx)}
-                        active={idx == active_location_idx}
+                        active={idx === active_location_idx}
                         />  
                 });
 

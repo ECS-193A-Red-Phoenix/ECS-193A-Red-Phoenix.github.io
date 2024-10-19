@@ -192,9 +192,6 @@ class DataStation extends Station {
 }
 
 class SotlStation extends Station {
-    constructor(url, data_types, name, coords) {
-        super(url, data_types, name, coords);
-    }
 
     async download_data(year) {
         // Fetches the raw JSON data from the Station URL
@@ -255,7 +252,7 @@ class SotlStation extends Station {
                     .flatMap((year) => {
                         return range(1, 12 + 1)
                             .map((month) => {
-                                month = new String(month).padStart(2, "0")
+                                month = `${month}`.padStart(2, "0")
                                 return new Date(`${start_date_year}-${month}-05T00:00Z`)
                             });
                     });
@@ -263,6 +260,8 @@ class SotlStation extends Station {
                 time.push(new Date(`${start_date_year}-01-02T00:00Z`));
                 data.push(0);
                 break;
+            default:
+                throw Error(`Unexpected data type name ${data_type_name}!`);
         }
 
         let res = {

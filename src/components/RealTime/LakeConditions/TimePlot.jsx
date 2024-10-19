@@ -90,7 +90,7 @@ function TimePlot(props) {
     color = Array.isArray(color) ? color : time.map(() => color);
     y_padding = y_padding ?? 0;
     y_padding = (isNumeric(y_padding)) ? [y_padding, y_padding] : y_padding; 
-    if (!Array.isArray(y_padding) || y_padding.length != 2)
+    if (!Array.isArray(y_padding) || y_padding.length !== 2)
         throw new Error(`Mis-formatted y_padding argument is not 2-tuple: ${y_padding}`);
 
     annotations = annotations ?? [];

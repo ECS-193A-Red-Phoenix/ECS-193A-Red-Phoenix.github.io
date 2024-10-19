@@ -19,7 +19,7 @@ export function getSeason(date) {
     const season_dates = apply(SEASON_TIMES, (date_str) => new Date(`${date_str}-${year}`), false);
     const season_idx = season_dates.findIndex(([start, end]) => date >= start && date <= end);
     // if can't find season, then it must be winter
-    return (season_idx != -1) ? SEASONS[season_idx] : SEASONS[3];
+    return (season_idx !== -1) ? SEASONS[season_idx] : SEASONS[3];
 }
 
 export const ONE_MINUTE = 60 * 1000;
@@ -106,29 +106,29 @@ export function getLatLngCenter(latLngInDegr) {
      * @return array with the center latitude longitude pairs in 
      *   degrees.
      */
-    var LATIDX = 0;
-    var LNGIDX = 1;
-    var sumX = 0;
-    var sumY = 0;
-    var sumZ = 0;
+    let LATIDX = 0;
+    let LNGIDX = 1;
+    let sumX = 0;
+    let sumY = 0;
+    let sumZ = 0;
 
     for (var i=0; i<latLngInDegr.length; i++) {
-        var lat = latLngInDegr[i][LATIDX] * Math.PI / 180;
-        var lng = latLngInDegr[i][LNGIDX] * Math.PI / 180;
+        let lat = latLngInDegr[i][LATIDX] * Math.PI / 180;
+        let lng = latLngInDegr[i][LNGIDX] * Math.PI / 180;
         // sum of cartesian coordinates
         sumX += Math.cos(lat) * Math.cos(lng);
         sumY += Math.cos(lat) * Math.sin(lng);
         sumZ += Math.sin(lat);
     }
 
-    var avgX = sumX / latLngInDegr.length;
-    var avgY = sumY / latLngInDegr.length;
-    var avgZ = sumZ / latLngInDegr.length;
+    let avgX = sumX / latLngInDegr.length;
+    let avgY = sumY / latLngInDegr.length;
+    let avgZ = sumZ / latLngInDegr.length;
 
     // convert average x, y, z coordinate to latitude and longitude
-    var lng = Math.atan2(avgY, avgX);
-    var hyp = Math.sqrt(avgX * avgX + avgY * avgY);
-    var lat = Math.atan2(avgZ, hyp);
+    let lng = Math.atan2(avgY, avgX);
+    let hyp = Math.sqrt(avgX * avgX + avgY * avgY);
+    let lat = Math.atan2(avgZ, hyp);
 
     return ([lat * 180 / Math.PI, lng * 180 / Math.PI]);
 }
