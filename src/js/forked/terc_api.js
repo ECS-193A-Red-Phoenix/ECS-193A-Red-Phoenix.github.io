@@ -41,6 +41,9 @@ class UnitConverter {
         "m": {
             "ft": (m) => m * 3.28084
         },
+        "fnu": {
+            "ntu": (fnu) => fnu
+        }
     }
 
     static convert(value, units, converted_units) {
@@ -260,6 +263,8 @@ class SotlStation extends Station {
                 time.push(new Date(`${start_date_year}-01-02T00:00Z`));
                 data.push(0);
                 break;
+            case TercAPI.SECCHI_DEPTH_NAME:
+                break;
             default:
                 throw Error(`Unexpected data type name ${data_type_name}!`);
         }
@@ -281,13 +286,22 @@ const STATIONS = Object.values(DATA_STATIONS)
     .flatMap(({URL, DATA_TYPES, STATIONS, STATION_TYPE}) => {
         return STATIONS
         .filter(({inactive}) => inactive !== true)
-        .map(({name, id, coords}) => {
+        .map(({name, id, coords, DATA_TYPE_OVERRIDES}) => {
+            let data_types = DATA_TYPES;
+            if (DATA_TYPE_OVERRIDES) 
+                DATA_TYPE_OVERRIDES.forEach((data_type_override) => {
+                    let override_index = data_types.findIndex((station_data_type) => station_data_type.name == data_type_override.name)
+                    if (override_index === -1)
+                        throw new Error(`Unexpected could not find override ${data_type_override}`)
+                    data_types[override_index] = data_type_override;
+                });
+
             switch (STATION_TYPE) {
                 case "Sotl":
-                    return new SotlStation(URL, DATA_TYPES, name, coords);
+                    return new SotlStation(URL, data_types, name, coords);
                 case "Data":
                 case undefined:
-                    return new DataStation(URL, DATA_TYPES, name, id, coords);
+                    return new DataStation(URL, data_types, name, id, coords);
                 default:
                     throw new Error(`Unknown station type '${STATION_TYPE}'`)
             }
@@ -301,8 +315,9 @@ class TercAPI {
     static TIME_KEY                     = DataStation.TIME_KEY;
     static WAVE_HEIGHT_NAME             = "Wave Height";
     static WATER_TEMPERATURE_NAME       = "Water Temperature";
+    static CONDUCTIVITY_NAME            = "Conductivity";
     static ALGAE_NAME                   = "Algae";
-    static CLARITY_NAME                 = "Clarity";
+    static TURBIDITY_NAME               = "Turbidity";
     static LAKE_LEVEL_NAME              = "Lake Level";
     static RIVER_DISCHARGE_NAME         = "Discharge";
     static SECCHI_DEPTH_NAME            = "Secchi Depth";

@@ -21,10 +21,10 @@
                 "key_units": "unitless"
             },
             {
-                "name": "Clarity",
-                "name_units": "unitless",
+                "name": "Turbidity",
+                "name_units": "ntu",
                 "key": "LS_Turbidity_Avg",
-                "key_units": "unitless"
+                "key_units": "ntu"
             }
         ],
         "STATIONS": [
@@ -32,8 +32,8 @@
                 "id": 2,
                 "name": "Dollar Point",
                 "coords": [
-                    39.1847,
-                    -120.093
+                    39.1947,
+                    -120.089
                 ]
             },
             {
@@ -56,8 +56,16 @@
                 "id": 6,
                 "name": "Rubicon",
                 "coords": [
-                    39.0064,
-                    -120.109
+                    39.01032,
+                    -120.113193
+                ],
+                "DATA_TYPES_OVERRIDES": [
+                    {
+                        "name": "Turbidity",
+                        "name_units": "ntu",
+                        "key": "LS_Turbidity_Avg",
+                        "key_units": "fnu"
+                    }
                 ]
             },
             {
@@ -82,7 +90,7 @@
                 "name": "Tahoe City",
                 "coords": [
                     39.1711,
-                    -120.138
+                    -120.147
                 ]
             },
             {
@@ -152,6 +160,102 @@
                 "coords": [
                     39.1553,
                     -120.071
+                ]
+            }
+        ]
+    },
+    "MET_USCG_STATIONS": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/met-uscg2020",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "name_units": "f",
+                "key": "WaterTemp_C",
+                "key_units": "c"
+            },
+            {
+                "name": "Wind Speed",
+                "name_units": "mph",
+                "key": "WindSpd_ms",
+                "key_units": "ms"
+            },
+            {
+                "name": "Wind Direction",
+                "name_units": "deg",
+                "key": "WindDir_deg",
+                "key_units": "deg"
+            },
+            {
+                "name": "Air Temperature",
+                "name_units": "f",
+                "key": "AirTemp_C",
+                "key_units": "c"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 1,
+                "name": "USCG2020",
+                "coords": [
+                    39.1806,
+                    -120.1192
+                ]
+            }
+        ]
+    },
+    "MET_STATIONS": {
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/met",
+        "DATA_TYPES": [
+            {
+                "name": "Wind Speed",
+                "name_units": "mph",
+                "key": "Wind_Spd1",
+                "key_units": "ms"
+            },
+            {
+                "name": "Wind Direction",
+                "name_units": "deg",
+                "key": "Wind_Dir",
+                "key_units": "deg"
+            },
+            {
+                "name": "Air Temperature",
+                "name_units": "f",
+                "key": "Air_Temp",
+                "key_units": "c"
+            }
+        ],
+        "STATIONS": [
+            {
+                "id": 1,
+                "name": "Cave Rock",
+                "coords": [
+                    39.0436,
+                    -119.9486
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Rubicon",
+                "coords": [
+                    39.01032,
+                    -120.113193
+                ]
+            },
+            {
+                "id": 4,
+                "name": "Timber Cove",
+                "coords": [
+                    38.9478,
+                    -119.9667
+                ]
+            },
+            {
+                "id": 5,
+                "name": "Tahoe Vista",
+                "coords": [
+                    39.2369,
+                    -120.0428
                 ]
             }
         ]

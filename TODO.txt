@@ -1,8 +1,27 @@
 TODO List
 
 - add wind data to real time conditions
-- conductivity, turbutivity, theo -- plug and play from different sources
+- conductivity, turbutivity, DO -- plug and play from different sources
 - get rid of clarity -- change to turbitidity 
 - add hwtc station back to map
 - lookup where historical data is being pulled from
 - 
+
+            "CONDUCTIVITY": {
+                "inactive": true,
+                "name": "Conductivity",
+                "href": "conductivity",
+                "desc": "description for conductivity",
+                "image": "/static/img/lake_conditions/conductivity.png",
+                "default_bottom_tab": 1,
+                "BOTTOM_TABS": [
+                    {
+                        "name": "Previous Week",
+                        "time_range": [-14, -7]
+                    },
+                    {
+                        "name": "Current Week",
+                        "time_range": [-7, 0]
+                    }
+                ]
+            },

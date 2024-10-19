@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import ModuleTopTab from "../TabGroup/ModuleTopTabs/ModuleTopTab";
 import ModuleTopTabs from "../TabGroup/ModuleTopTabs/ModuleTopTabs";
 import ModuleBottomTabs from "../TabGroup/ModuleBottomTabs/ModuleBottomTabs";
+import { clamp } from "../../../js/forked/util";
 
 import "../../../css/Modules.css";
 import "./ModuleContainer.css";
@@ -14,13 +15,14 @@ function ModuleContainer(props) {
     // props.module: a MODULE object from modules.json
     // context: additional state information to pass to the outlet 
     let { module } = props;
+    const module_tabs = Object.values(module.TABS);
 
     let [{tab_index, bottom_tab_index}, setModuleTabState] = useState({
         "tab_index": 0,
-        "bottom_tab_index": 0
+        "bottom_tab_index": module_tabs[0].default_bottom_tab
     });
     const setBottomTabIndex = (bottom_tab_index) => setModuleTabState(({tab_index}) => ({tab_index: tab_index, bottom_tab_index: bottom_tab_index}))
-    const current_tab = Object.values(module.TABS)[tab_index];
+    const current_tab = module_tabs[tab_index];
     let tab_description = current_tab.desc;
     let transparent_tabs = current_tab.transparent_top_tabs ?? false;
 
@@ -32,25 +34,16 @@ function ModuleContainer(props) {
         let url = location.pathname.split('/');
 
         let image_index = url.indexOf(module.href);
-        // Case where url is '/images/'
-        if (image_index < 0 || image_index + 1 >= url.length) {
-            let t_index = 0;
-            const new_bottom_tab = Object.values(module.TABS)[t_index].default_bottom_tab ?? 0;
-            setModuleTabState({tab_index: t_index, bottom_tab_index: new_bottom_tab});
-            return;
-        }
-        
         let tab_href = url[image_index + 1];
-        let t_index = Object.values(module.TABS).findIndex((t) => t.href === tab_href);
+        let t_index = module_tabs.findIndex((t) => t.href === tab_href);
         if (t_index < 0)
             throw new Error(`Unable to find tab for href ${location.pathname}`);
         else {
-            const new_bottom_tab = Object.values(module.TABS)[t_index].default_bottom_tab ?? 0;
-            setModuleTabState({tab_index: t_index, bottom_tab_index: new_bottom_tab});
+            setModuleTabState({tab_index: t_index, bottom_tab_index: module_tabs[t_index].default_bottom_tab});
         }
     }, [location]);
     
-    const tabs = Object.values(module.TABS).map((m, idx) => {
+    const tabs = module_tabs.map((m, idx) => {
         return <ModuleTopTab
                     key={`module-tab-${m.name}`}
                     name={m.name}

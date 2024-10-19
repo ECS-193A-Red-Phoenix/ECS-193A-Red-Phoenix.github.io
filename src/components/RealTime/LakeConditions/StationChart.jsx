@@ -8,6 +8,7 @@ import "./LakeConditions.css"
 
 import { colorScale, createLatLng, useIsMounted } from "../../../js/forked/util";
 import { TercAPI } from "../../../js/forked/terc_api";
+import { clamp } from "../../../js/forked/util";
 
 import APP_CONFIG from "../../../static/app_config.json"
 import { Mutex } from "async-mutex"
@@ -43,7 +44,7 @@ function StationChart(props) {
     ///////////////////////////////////////
     // Update current station data
     ///////////////////////////////////////
-    const current_station = STATIONS[active_location_idx];
+    const current_station = STATIONS[clamp(active_location_idx, 0, STATIONS.length - 1)];
     useEffect(() => {
         let ignore = false;
 
@@ -83,6 +84,7 @@ function StationChart(props) {
                     position={createLatLng(...station.coords)}
                     onClick={() => setActiveLocation(idx)}
                     active={idx === active_location_idx}
+                    text={`Loading ${station.name}`}
                     />
             )
         setMapMarkers(loading_icons);
@@ -122,6 +124,7 @@ function StationChart(props) {
                             position={createLatLng(...station.coords)}
                             onClick={() => setActiveLocation(idx)}
                             active={idx === active_location_idx}
+                            text={`Loading ${station.name}`}
                             />
                     }
 

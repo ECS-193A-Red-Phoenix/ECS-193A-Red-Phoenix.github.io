@@ -48,7 +48,7 @@ function IconMarker(props) {
             eventHandlers={{
                 click: () => onClick()
             }}
-            zIndexOffset={100}
+            zIndexOffset={active ? 1000 : 100}
             position={props.position} 
             icon={div} 
             >

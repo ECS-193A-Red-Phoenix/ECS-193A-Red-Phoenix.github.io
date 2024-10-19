@@ -147,13 +147,16 @@
 }
 
 .loading-icon-active {
+    padding: 3px;
     border: 3px solid #ddb307;
 }
 .error-icon-active {
+    padding: 3px;
     border: 3px solid #ddb307;
 }
 .color-icon-active {
     border: 3px solid #ddb307;
+    padding: 1px 9px;
 }
 
 @keyframes spin {
