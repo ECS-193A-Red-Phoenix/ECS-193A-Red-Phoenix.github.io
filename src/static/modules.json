@@ -10,11 +10,8 @@
                 "href": "water-temperature",
                 "desc": "Lake Tahoe water is cold for most swimmers, with surface temperatures ranging from 42 degrees in the winter to over 70 degrees in July and August. Though refreshing on a hot day, a plunge into Lake Tahoe can literally take your breath away. Swimmers should be prepared for dangerously cold conditions.",
                 "image": "/static/img/lake_conditions/watertemp.png",
+                "default_bottom_tab": 1,
                 "BOTTOM_TABS": [
-                    {
-                        "name": "Historical",
-                        "time_range": ["2021-07-01", "2022-01-01"]
-                    }, 
                     {
                         "name": "Previous Week",
                         "time_range": [-14, -7]
@@ -30,6 +27,7 @@
                 "href": "wave-height",
                 "desc": "Lake Tahoe can be perfectly flat and serene, or blustery winds can churn up six-foot high waves. Waves are produced by wind blowing across the lake. The highest waves occur on the downwind side of the lake, which is typically the north and east shores at Lake Tahoe. Wind and waves are usually higher in the afternoon, so be sure to plan ahead and stay safe.",
                 "image": "/static/img/lake_conditions/waveheight.png",
+                "default_bottom_tab": 2,
                 "BOTTOM_TABS": [
                     {
                         "name": "Historical",

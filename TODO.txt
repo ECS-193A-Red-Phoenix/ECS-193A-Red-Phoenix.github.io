@@ -1,15 +1,5 @@
 TODO List
 
-- Implement auto update for real time charts
-- Make current chart smoothly transition when on update
-- Make charts give feedback when drawing the map
-
-- Fill up contact and about us page
-
-- Make website mobile friendly:
-    - Hamburger button for tabs
-
-- remove historical from water temp
 - add wind data to real time conditions
 - conductivity, turbutivity, theo -- plug and play from different sources
 - get rid of clarity -- change to turbitidity 

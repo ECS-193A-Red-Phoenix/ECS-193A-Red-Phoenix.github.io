@@ -22,7 +22,6 @@ function RealTimeConditions(props) {
         <div className="real-time-conditions-container">
             <ModuleContainer
                 module={MODULES.LAKE_CONDITIONS}
-                default_bottom_tab_idx={2}
                 context={[map_markers, safelySetMapMarkers, active_location_idx, setActiveLocation]}
                 />
 

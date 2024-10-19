@@ -13,11 +13,13 @@ function ModuleContainer(props) {
     // Expected props
     // props.module: a MODULE object from modules.json
     // context: additional state information to pass to the outlet 
-    // default_bottom_tab_idx: (optional, default=0), the first bottom tab to display by default 
-    let { module, default_bottom_tab_idx } = props;
-    default_bottom_tab_idx = default_bottom_tab_idx ?? (module.default_bottom_tab ?? 0);
+    let { module } = props;
 
-    let [tab_index, setTabIndex] = useState(0);
+    let [{tab_index, bottom_tab_index}, setModuleTabState] = useState({
+        "tab_index": 0,
+        "bottom_tab_index": 0
+    });
+    const setBottomTabIndex = (bottom_tab_index) => setModuleTabState(({tab_index}) => ({tab_index: tab_index, bottom_tab_index: bottom_tab_index}))
     const current_tab = Object.values(module.TABS)[tab_index];
     let tab_description = current_tab.desc;
     let transparent_tabs = current_tab.transparent_top_tabs ?? false;
@@ -32,16 +34,20 @@ function ModuleContainer(props) {
         let image_index = url.indexOf(module.href);
         // Case where url is '/images/'
         if (image_index < 0 || image_index + 1 >= url.length) {
-            setTabIndex(0);
+            let t_index = 0;
+            const new_bottom_tab = Object.values(module.TABS)[t_index].default_bottom_tab ?? 0;
+            setModuleTabState({tab_index: t_index, bottom_tab_index: new_bottom_tab});
             return;
         }
-
+        
         let tab_href = url[image_index + 1];
         let t_index = Object.values(module.TABS).findIndex((t) => t.href === tab_href);
         if (t_index < 0)
             throw new Error(`Unable to find tab for href ${location.pathname}`);
-        else
-            setTabIndex(t_index);
+        else {
+            const new_bottom_tab = Object.values(module.TABS)[t_index].default_bottom_tab ?? 0;
+            setModuleTabState({tab_index: t_index, bottom_tab_index: new_bottom_tab});
+        }
     }, [location]);
     
     const tabs = Object.values(module.TABS).map((m, idx) => {
@@ -69,14 +75,13 @@ function ModuleContainer(props) {
     // Bottom tabs creation
     // - Each tab can optionally have bottom tabs if specified in modules.json
     //////////////////////////////////////////////////////////////
-    const [bottom_tab_index, setBottomTabIndex] = useState(default_bottom_tab_idx);
     let bottom_tabs;
     if (current_tab.BOTTOM_TABS !== undefined) {
         const tab_names = current_tab.BOTTOM_TABS.map((tab) => tab.name);
         
         bottom_tabs = 
             <ModuleBottomTabs
-                default_tab={bottom_tab_index}
+                active_tab={bottom_tab_index}
                 tab_names={tab_names}
                 onTabChanged={(idx) => setBottomTabIndex(idx)}
                 />
@@ -85,11 +90,7 @@ function ModuleContainer(props) {
         tab_description = bottom_tab_desc ?? tab_description; 
     }
 
-    const module_container_state = {
-        "tab_index": tab_index,
-        "bottom_tab_index": bottom_tab_index
-    };
-    const combined_context = [props.context, module_container_state];
+    const combined_context = [props.context, {tab_index: tab_index, bottom_tab_index: bottom_tab_index}];
 
     //////////////////////////////////////////////////////////////////////////
     // Scale the container down if its width exceeds the current window size
