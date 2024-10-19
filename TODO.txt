@@ -10,9 +10,6 @@ TODO List
     - Hamburger button for tabs
 
 - remove historical from water temp
-- change loading to be dynamic
-- sand harbor, make it inactive
-- nasa buoy's unreliable -- look into error condition
 - add wind data to real time conditions
 - conductivity, turbutivity, theo -- plug and play from different sources
 - get rid of clarity -- change to turbitidity 

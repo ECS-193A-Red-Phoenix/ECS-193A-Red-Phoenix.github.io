@@ -280,6 +280,7 @@ class SotlStation extends Station {
 const STATIONS = Object.values(DATA_STATIONS)
     .flatMap(({URL, DATA_TYPES, STATIONS, STATION_TYPE}) => {
         return STATIONS
+        .filter(({inactive}) => inactive !== true)
         .map(({name, id, coords}) => {
             switch (STATION_TYPE) {
                 case "Sotl":
