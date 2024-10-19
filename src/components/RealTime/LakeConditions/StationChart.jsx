@@ -10,6 +10,8 @@ import { colorScale, createLatLng, useIsMounted } from "../../../js/forked/util"
 import { TercAPI } from "../../../js/forked/terc_api";
 
 import APP_CONFIG from "../../../static/app_config.json"
+import { Mutex } from "async-mutex"
+import LoadingIcon from "../TahoeMap/LoadingIcon";
 
 function StationChart(props) {
     //////////////////////////////////////////////////////
@@ -73,34 +75,31 @@ function StationChart(props) {
     ///////////////////////////////////////
     useEffect(() => {
         let ignore = false;
-        const loading_marker = <ColorMarker
-                                    key={`location-marker`}
-                                    position={createLatLng(...APP_CONFIG.MAP_CENTER)}
-                                    text={"Loading"}
-                                    />;
-        setMapMarkers([loading_marker]);
 
-        // Download all station data           
-        Promise.all(STATIONS
-            .map((station) => 
-                station.get_most_recent_data(start_date, end_date, data_type_name[0])
-                    .catch(err => {
-                        console.log(`Failed to download valid data from station '${station.name}'`)
-                        console.log(err);
-                        return null;
-                    })
+        const loading_icons = STATIONS
+            .map((station, idx) =>
+                <LoadingIcon
+                    key={`loading-station-${station.name}-${idx}`}
+                    position={createLatLng(...station.coords)}
+                    onClick={() => setActiveLocation(idx)}
+                    active={idx == active_location_idx}
+                    />
             )
-        )
-        // Set Map Markers
-        .then((most_recent_data) => {
-            const valid_data = most_recent_data.filter(x => typeof x === "number");
+        setMapMarkers(loading_icons);
+
+        let lock = new Mutex();
+        let most_recent_station_values = STATIONS.map(() => undefined);
+
+        function process_station_data(station_idx, station_data_value) {
+            most_recent_station_values[station_idx] = station_data_value;
+            const valid_data = most_recent_station_values.filter(x => typeof x === "number");
             const min_value = Math.min(...valid_data);
             const max_value = Math.max(...valid_data);
-            const min_color = [57, 140, 135];
-            const max_color = [4, 52, 77];
-            const color_scale = colorScale([min_color, max_color]);
+            const min_color_rgb = [57, 140, 135];
+            const max_color_rgb = [4, 52, 77];
+            const color_scale = colorScale([min_color_rgb, max_color_rgb]);
             const get_color = (value) => {
-                const color = (min_value === max_value) ? max_color :
+                const color = (min_value === max_value) ? max_color_rgb :
                     color_scale((value - min_value) / (max_value - min_value));
                 return `rgb(${color.join(",")})`;
             }
@@ -108,30 +107,59 @@ function StationChart(props) {
             const station_map_markers = 
                 STATIONS
                 .map((station, idx) => {
-                    if (most_recent_data[idx] === null)
+                    if (most_recent_station_values[idx] === null) {
                         return <ErrorMarker
                                 key={`station-marker-${station.name}-${idx}`}
                                 position={createLatLng(...station.coords)}
                                 error_msg={`${station.name} temporarily unavailable`}
                                 onClick={() => setActiveLocation(idx)}
+                                active={idx == active_location_idx}
                                 />
+                    }
+                    else if (most_recent_station_values[idx] === undefined) {
+                        return <LoadingIcon
+                            key={`loading-station-${station.name}-${idx}`}
+                            position={createLatLng(...station.coords)}
+                            onClick={() => setActiveLocation(idx)}
+                            active={idx == active_location_idx}
+                            />
+                    }
 
-                    const marker_text = most_recent_data[idx].toFixed(1);
+                    const marker_text = most_recent_station_values[idx].toFixed(1);
                     return <ColorMarker
                         key={`station-marker-${station.name}-${idx}`}
                         position={createLatLng(...station.coords)}
                         text={marker_text}
-                        color={get_color(most_recent_data[idx])}
+                        color={get_color(most_recent_station_values[idx])}
                         onClick={() => setActiveLocation(idx)}
+                        active={idx == active_location_idx}
                         />  
                 });
 
             if (isMounted() && !ignore)
                 setMapMarkers(station_map_markers);
-        })
+        }
+
+        // Download all station data           
+        STATIONS
+            .map((station, idx) => 
+                station.get_most_recent_data(start_date, end_date, data_type_name[0])
+                    .then(async (station_data_value) => {
+                        return await lock.runExclusive(() => {
+                            process_station_data(idx, station_data_value)
+                        })
+                    })
+                    .catch(async (err) => {
+                        console.log(`Failed to download valid data from station '${station.name}' ${err}}`)
+                        return await lock.runExclusive(() => {
+                            process_station_data(idx, null)
+                        })
+                    })
+                    
+            )
 
         return () => { ignore = true; };
-    }, [start_date.getTime(), end_date.getTime()]);
+    }, [start_date.getTime(), end_date.getTime(), active_location_idx]);
 
     return (
         <div className="lake-conditions-chart-container"> 

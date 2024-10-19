@@ -6,7 +6,9 @@ function ErrorMarker(props) {
     ///////////////////////////////////////////
     // Expected props
     // error_msg (optional): message to display on popup
-    const error_html = `<span class="error-icon material-symbols-outlined">error</span>`;
+    // active (optional, default=false): if icon should be outlined
+    const active = (props.active) ? "error-icon-active" : "";
+    const error_html = `<span class="error-icon material-symbols-outlined ${active}">error</span>`;
 
     return <IconMarker
                 position={props.position}

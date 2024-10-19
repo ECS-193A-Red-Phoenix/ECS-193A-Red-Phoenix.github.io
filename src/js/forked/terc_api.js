@@ -1,5 +1,6 @@
 import { apply, celsius_to_f, format_ymd, http_get, range, today } from "./util";
 import DATA_STATIONS from "../../static/data_stations.json";
+import { Mutex } from "async-mutex"
 
 class TimedCache {
     constructor(expiration_time) {
@@ -63,6 +64,7 @@ class Station {
         this.coords = coords;
         this.data_types = data_types;
         this.download_cache = new TimedCache(Station.TIME_UNTIL_REDOWNLOAD);
+        this.mutex = new Mutex();
     }
 
     has_data_type(data_type_name) {
@@ -80,15 +82,17 @@ class Station {
         // Arguments:
         // params (optional): params to add onto the get request
         // key (optional): a key to hash the download
-        params = params ?? {};
-
-        // Return data if already downloaded
-        if (this.download_cache.has(key))
-            return this.download_cache.get(key);
-
-        const json = await http_get(this.url, params); 
-        this.download_cache.put(key, json);
-        return json;
+        return this.mutex.runExclusive(async () => {
+            params = params ?? {};
+    
+            // Return data if already downloaded
+            if (this.download_cache.has(key))
+                return this.download_cache.get(key);
+    
+            const json = await http_get(this.url, params); 
+            this.download_cache.put(key, json);
+            return json;
+        });
     }
 
     // abstract

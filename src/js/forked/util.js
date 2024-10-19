@@ -259,19 +259,18 @@ export async function http_get(url, params, headers, mode) {
     //  mode (optional, default "cors"): "cors", "no-cors", or "same-origin"
     headers = headers ?? { "Content-Type": "application/json" };
     mode = mode ?? "cors";
-
+    
     const url_obj = new URL(url);
     if (params !== undefined)
         url_obj.search = new URLSearchParams(params).toString();
-
-    let request = await fetch(url_obj, 
-        {
+    
+    let request = await fetch(url_obj, {
             method: "GET",
             mode: mode,
             headers: headers
-        }
-    );
-    return await request.json();
+            });
+    let json_result = await request.json();
+    return json_result
 }
 
 export function today(days) {

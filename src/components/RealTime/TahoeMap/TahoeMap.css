@@ -139,6 +139,32 @@
     border-radius: 50%;
 }
 
+.loading-icon {
+    background-color: #e0cf4b;
+    padding: 5px;
+    border-radius: 50%;
+    animation: spin 1.5s infinite;
+}
+
+.loading-icon-active {
+    border: 3px solid #ddb307;
+}
+.error-icon-active {
+    border: 3px solid #ddb307;
+}
+.color-icon-active {
+    border: 3px solid #ddb307;
+}
+
+@keyframes spin {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 360deg;
+    }
+}
+
 .acknowledgements {
     position: absolute;
     left: 15px;
