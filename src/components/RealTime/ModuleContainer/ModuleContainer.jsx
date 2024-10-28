@@ -23,6 +23,9 @@ function ModuleContainer(props) {
     });
     const setBottomTabIndex = (bottom_tab_index) => setModuleTabState(({tab_index}) => ({tab_index: tab_index, bottom_tab_index: bottom_tab_index}))
     const current_tab = module_tabs[tab_index];
+    const has_bottom_tab = current_tab.BOTTOM_TABS !== undefined;
+    const current_bottom_tab = (!has_bottom_tab) ? undefined : current_tab.BOTTOM_TABS[bottom_tab_index];
+    const tab_name = (has_bottom_tab) ? (current_bottom_tab.header_name ?? current_tab.name) : current_tab.name;
     let tab_description = current_tab.desc;
     let transparent_tabs = current_tab.transparent_top_tabs ?? false;
 
@@ -55,14 +58,15 @@ function ModuleContainer(props) {
     const module_container_style = {};
 
     // Create image style if current tab has an image
-    const background_image = current_tab.image;
+    const background_image = current_tab.image ?? 
+        current_tab.BOTTOM_TABS[bottom_tab_index].image;
     if (background_image) {
         module_container_style["backgroundImage"] = `url(${background_image})`;
         module_container_style["backgroundSize"] = "cover";
         module_container_style["backgroundPosition"] = "50%";
     }
 
-    const tab_has_header = current_tab.desc !== undefined;
+    const tab_has_header = current_tab.desc !== undefined || (has_bottom_tab && current_bottom_tab.desc !== undefined);
 
     //////////////////////////////////////////////////////////////
     // Bottom tabs creation
@@ -121,7 +125,7 @@ function ModuleContainer(props) {
                     tab_has_header &&
                     <div className="tab-header">
                         <div className="tab-title"> 
-                            { current_tab.name }
+                            { tab_name }
                         </div>
                         <div className="tab-desc">
                             { tab_description }

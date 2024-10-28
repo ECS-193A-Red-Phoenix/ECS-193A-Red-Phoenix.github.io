@@ -8,6 +8,7 @@ import LakeConditions from "./components/LakeConditions";
 import RealTimeConditions from "./components/RealTime/RealTimeConditions";
 import WaveHeight from "./components/RealTime/LakeConditions/WaveHeight";
 import WaterTemperature from "./components/RealTime/LakeConditions/WaterTemperature";
+import Weather from "./components/RealTime/LakeConditions/Weather";
 import Turbidity from "./components/RealTime/LakeConditions/Turbidity";
 import LakeConditionsPage from "./components/LakeConditionsPage";
 import RealTimeConditionsPage from "./components/RealTime/RealTimeConditionsPage";
@@ -69,6 +70,11 @@ root.render(
                         path={'turbidity'}
                         />
 
+                    <Route
+                        element={<Weather />}
+                        path={'weather'}
+                        />
+
                 </Route>
             </Route>
 
@@ -98,6 +104,11 @@ root.render(
                     <Route
                         element={<Turbidity />}
                         path={'turbidity'}
+                        />
+
+                    <Route
+                        element={<Weather />}
+                        path={'weather'}
                         />
                 </Route>
 

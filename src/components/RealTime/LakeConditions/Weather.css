@@ -1,0 +1,257 @@
+.weather-message {
+    font-size: 48px;
+}
+
+.weather-message-error {
+    font-size: 48px;
+    color: #FFCCCC;
+}
+
+.weather-display {
+    display: flex;
+
+    background-size: cover;
+    background-position: 50%;
+}
+
+.weather-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex: 1 1 100px;
+
+    width: 500px;
+    padding: 20px 50px;
+    margin: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.weather-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.weather-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.weather-header-left > * {
+    margin-right: 10px;
+}
+
+.weather-header-temperature {
+    display: flex;
+    align-items: flex-start;
+}
+
+.weather-header-value {
+    font-size: 72px;
+    line-height: 0.8em;
+    /* margin-top: -15px; */
+}
+
+.weather-header-units {
+    font-size: 30px;
+    line-height: 1.2em;
+    align-self: flex-start;
+}
+
+.weather-header-stats {
+    display: flex;
+    flex-direction: column;
+
+    font-size: 14px;
+    color: #c5c5c5;
+}
+
+.weather-refresh {
+    align-self: flex-start;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    user-select: none;
+}
+
+.weather-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.weather-icon {
+    font-size: 48px;
+}
+
+.weather-header-location {
+    font-size: 22px;
+}
+
+.weather-header-date {
+    font-size: 16px;
+}
+
+.weather-header-conditions {
+    font-size: 16px;
+}
+
+.temperature-chart {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    
+    width: 100%;
+    height: 115px;
+    margin: 40px 0px;
+}
+
+.temperature-chart > svg {
+    width: 100%;
+    font-size: 15px;
+}
+
+.temperature-chart .data-labels {
+    transform: translateY(-10px);
+}
+
+.temperature-chart-time-labels {
+    display: flex;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.temperature-chart-time-label {
+    min-width: 12.5%;
+    text-align: center;
+}
+
+.weather-display-icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%
+}
+
+.weather-day-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.weather-day-icon-active {
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.weather-day-icon > * {
+    margin-bottom: 5px;
+}
+
+.weather-day-icon i {
+    font-size: 32px;
+}
+
+.weather-icon-low {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.wind-chart-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.wind-chart-navigation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.wind-chart-day-icon{
+    width: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.wind-chart-day-icon-active {
+    color: rgba(255, 255, 255, 1);
+}
+
+.wind-chart {
+    display: flex;
+    width: 100%;
+    overflow: scroll;
+    scroll-behavior: smooth;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(0,0,0,0);
+}
+  
+
+.wind-chart-icon {
+    min-width: 80px;
+    height: 135px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    
+    transition-property: transform;
+    transition-duration: 1s;
+}
+
+.wind-chart-icon-speed {
+    font-size: 14px;
+}
+
+.wind-chart-icon-arrow {
+    font-size: 60px;
+    /* min- */
+}
+
+.wind-chart-icon-arrow-wrapper {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wind-chart-icon-time {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.wind-chart-icon-time-day {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    bottom: 10px;
+}
+
+.wi-day-cloudy {
+    margin-top: 5px;
+}

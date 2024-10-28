@@ -1,4 +1,4 @@
-import { apply, celsius_to_f, format_ymd, http_get, range, today } from "./util";
+import { apply, celsius_to_f, format_ymd, http_get, range, renameProperty, today } from "./util";
 import DATA_STATIONS from "../../static/data_stations.json";
 import { Mutex } from "async-mutex"
 
@@ -43,18 +43,21 @@ class UnitConverter {
         },
         "fnu": {
             "ntu": (fnu) => fnu
+        },
+        "m/s": {
+            "mph": (m_s) => 2.2369 * m_s
         }
     }
 
-    static convert(value, units, converted_units) {
-        if (units === converted_units)
+    static convert(value, units, units_to_convert_to) {
+        if (units === units_to_convert_to)
             return value;
         
         if (!(units in UnitConverter.conversion_ratios &&
-            converted_units in UnitConverter.conversion_ratios[units]))
-            throw new Error(`Conversion from '${units}' to '${converted_units}' is not implemented`)
+            units_to_convert_to in UnitConverter.conversion_ratios[units]))
+            throw new Error(`Conversion from '${units}' to '${units_to_convert_to}' is not implemented`)
 
-        return UnitConverter.conversion_ratios[units][converted_units](value);
+        return UnitConverter.conversion_ratios[units][units_to_convert_to](value);
     }
 }
 
@@ -80,7 +83,7 @@ class Station {
         return this.data_types.find((dt) => dt.name === data_type_name);
     }
 
-    async download_data(params, key) {
+    async fetch_data(params, key) {
         // Fetches the raw JSON data from the Station URL
         // Arguments:
         // params (optional): params to add onto the get request
@@ -104,9 +107,9 @@ class Station {
     }
 
     async get_most_recent_data(start_date, end_date, data_type_name) {
-        let data = await this.get_data(start_date, end_date, data_type_name);
-        data = data[data_type_name];
-        return data[data.length - 1];
+        let data = await this.get_data(start_date, end_date);
+        let most_recent_data_point = data[data.length - 1];
+        return most_recent_data_point[data_type_name]
     }
 }
 
@@ -116,6 +119,7 @@ class DataStation extends Station {
     constructor(url, data_types, name, id, coords) {
         super(url, data_types, name, coords);
         this.id = id;
+        this.get_data_mutex = new Mutex();
     }
 
     async download_data(start_date, end_date) {
@@ -131,72 +135,98 @@ class DataStation extends Station {
             "rptdate": start_date_str,
             "rptend": end_date_str
         };
-        return await super.download_data(params, key);
+        return await super.fetch_data(params, key);
     }
 
-    async get_data(start_date, end_date, data_type_name) {
-        if (!this.has_data_type(data_type_name))
-            throw new Error(`Station '${this.name}' does not have data type '${data_type_name}'`);
+    parseTmStamp(date_string) {
+        // Parses a date string in the format "YYYY-MM-DD HH:MM:SS"
+        // Arguments:
+        //  date_string: a String, in the format "YYYY-MM-DD HH:MM:SS"
+    
+        // date_string is pretty close to an ISO 8601 timestamp
+        // timestamp specification see below
+        // https://262.ecma-international.org/5.1/#sec-15.9.1.15
+        // Convert date_string to ISO 8601 timestamp
+        date_string = date_string.trim();
+        date_string = date_string.replace(" ", "T");
+        date_string += "Z";
+    
+        return new Date(date_string);
+    }
 
-        // Return data if already processed
-        const key = `get_data-${format_ymd(start_date)},${format_ymd(end_date)},${data_type_name}`;
-        if (this.download_cache.has(key)) {
-            return this.download_cache.get(key);
-        }
+    get_data_point_timestamp(data_point) {
+        return this.parseTmStamp(data_point[DataStation.TIME_KEY]);
+    }
 
-        const parseTmStamp = (date_string) => {
-            // Parses a date string in the format "YYYY-MM-DD HH:MM:SS"
-            // Arguments:
-            //  date_string: a String, in the format "YYYY-MM-DD HH:MM:SS"
-        
-            // date_string is pretty close to an ISO 8601 timestamp
-            // timestamp specification see below
-            // https://262.ecma-international.org/5.1/#sec-15.9.1.15
-            // Convert date_string to ISO 8601 timestamp
-            date_string = date_string.trim();
-            date_string = date_string.replace(" ", "T");
-            date_string += "Z";
-        
-            return new Date(date_string);
-        }
+    async get_data(start_date, end_date) {
+        // Normalizes data from the Terc API into a format used by all charts
+        // Arguments:
+        // start_date: Date object, the start time of the data
+        // end_date: Date object, the end time of the data
+        // returns: An Array of N objects containing data in the following format
+        //    Timestamp: a Date Object, 
+        //    <a data_type_name 0>: a Float
+        //    <a data_type_name 1>: a Float
+        //    where data_type_name is a static member of TercAPI
+        return this.get_data_mutex.runExclusive(async () => {
+            // Return data if already processed
+            const key = `get_data-${format_ymd(start_date)},${format_ymd(end_date)}`;
+            if (this.download_cache.has(key)) {
+                return this.download_cache.get(key);
+            }
 
-        const data_type = this.get_data_type(data_type_name);
-        const raw_data = await this.download_data(start_date, end_date);
-        const time = raw_data.map((datum) => parseTmStamp(datum[DataStation.TIME_KEY]));
-        let data = raw_data.map((datum) => {
-            let number = parseFloat(datum[data_type.key]);
-            if (isNaN(number)) return 0;
-            return number;
+            const raw_data = await this.download_data(start_date, end_date);
+            raw_data.forEach((data_point) => {
+                this.data_types.forEach(({name: data_type_name, key: data_type_key, name_units, key_units}) => {
+                    let data_type_value = parseFloat(data_point[data_type_key]);
+                    // stations can contain data points with 'None' as the value, where parseFloat will fail
+                    if (isNaN(data_type_value)) {
+                        data_type_value = 0; 
+                    }
+                    data_type_value = UnitConverter.convert(data_type_value, key_units, name_units)
+                    // assign parsed value to standard data type name
+                    data_point[data_type_name] = data_type_value;
+                    delete data_point[data_type_key]; // delete old key
+                })
+                data_point[TercAPI.TIME_NAME] = this.get_data_point_timestamp(data_point);
+                delete data_point[DataStation.TIME_KEY];
+            })
+            
+            raw_data.sort((a, b) => {
+                if (a[TercAPI.TIME_NAME] < b[TercAPI.TIME_NAME]) return -1;
+                else if (a[TercAPI.TIME_NAME] > b[TercAPI.TIME_NAME]) return 1;
+                return 0;
+            });
+
+            if (raw_data.length <= 2) {
+                this.download_cache.put(key, null);
+                throw new Error(`Station '${this.name}' doesn't contain enough data points (${raw_data.length} data points)`);
+            }
+
+            this.download_cache.put(key, raw_data);
+            return raw_data;
         });
-
-        // Data Error Checking
-        const data_has_nans = data.some(isNaN);
-        if (data_has_nans) {
-            this.download_cache.put(key, null);
-            throw new Error(`Station '${this.name}' contains NaN data`)
-        }
-        if (time.length <= 2) {
-            this.download_cache.put(key, null);
-            throw new Error(`Station '${this.name}' doesn't contain enough data points (${time.length} data points)`);
-        }
-
-        // Convert units
-        let current_units = data_type.key_units;
-        let converted_units = data_type.name_units;
-        data = data.map((x) => UnitConverter.convert(x, current_units, converted_units));
-
-        let res = {
-            [TercAPI.TIME_KEY]: time,
-            [data_type_name]: data
-        }
-        this.download_cache.put(key, res);
-        return res;
+    
     }
 }
 
-class SotlStation extends Station {
+class SotlStation extends DataStation {
 
-    async download_data(year) {
+    constructor(url, data_types, name, coords) {
+        super(url, data_types, name, undefined, coords);
+    }
+
+    async download_data(start_date, end_date) {
+        const start_date_year = start_date.getUTCFullYear();
+        const end_date_year = end_date.getUTCFullYear();
+        const dates = range(start_date_year, end_date_year + 1);
+        const result = await Promise.all(
+            dates.map((year) => this.download_data_for_year(year))
+        );
+        return result;
+    }
+
+    async download_data_for_year(year) {
         // Fetches the raw JSON data from the Station URL
         // Arguments:
         // year: a Number or String representing the calendar year of the data
@@ -204,78 +234,14 @@ class SotlStation extends Station {
         const params = {
             "id": year,
         };
-        const res = await super.download_data(params, key);
+        const res = await super.fetch_data(params, key);
         return res[0];
     }
 
-    async get_data(start_date, end_date, data_type_name) {
-        if (!this.has_data_type(data_type_name))
-            throw new Error(`Station '${this.name}' does not have data type '${data_type_name}'`);
-
-        const start_date_year = start_date.getUTCFullYear();
-        const end_date_year = end_date.getUTCFullYear();
-        
-        // Return data if already processed
-        const key = `get_data-${start_date_year},${end_date_year},${data_type_name}`;
-        if (this.download_cache.has(key)) {
-            return this.download_cache.get(key);
-        }
-
-        const data_type = this.get_data_type(data_type_name);
-        const keys = data_type.keys ?? [data_type.key];
-
-        const dates = range(start_date_year, end_date_year + 1);
-        let time = dates.map((year) => new Date(`${year}-01-01`));
-        
-        const raw_data = await Promise.all(
-            dates.map((year) => this.download_data(year))
-        );
-        let data = raw_data.map((datum) => {
-            const values = keys.map((key) => {
-                let number = parseFloat(datum[key]);
-                if (isNaN(number)) return 0;
-                return number;
-            });
-
-            if (keys.length === 1) 
-                return values[0];
-            return values;
-        });
-
-        // Convert units
-        const current_units = data_type.key_units;
-        const converted_units = data_type.name_units;
-        apply(data, (x) => UnitConverter.convert(x, current_units, converted_units));
-
-        switch (data_type_name) {
-            case TercAPI.MONTHLY_MAX_TEMPERATURE_NAME:
-            case TercAPI.MONTHLY_MIN_TEMPERATURE_NAME:
-            case TercAPI.MONTHLY_PRECIPITATION_NAME  :
-                time = dates
-                    .flatMap((year) => {
-                        return range(1, 12 + 1)
-                            .map((month) => {
-                                month = `${month}`.padStart(2, "0")
-                                return new Date(`${start_date_year}-${month}-05T00:00Z`)
-                            });
-                    });
-                data = data.flat();
-                time.push(new Date(`${start_date_year}-01-02T00:00Z`));
-                data.push(0);
-                break;
-            case TercAPI.SECCHI_DEPTH_NAME:
-                break;
-            default:
-                throw Error(`Unexpected data type name ${data_type_name}!`);
-        }
-
-        let res = {
-            [TercAPI.TIME_KEY]: time,
-            [data_type_name]: data
-        }
-        this.download_cache.put(key, res);
-        return res;
+    get_data_point_timestamp(data_point) {
+        return new Date(`${data_point["Year"]}-01-01`);
     }
+
 }
 
 ////////////////////////////////////////////////////////////////
@@ -287,7 +253,7 @@ const STATIONS = Object.values(DATA_STATIONS)
         return STATIONS
         .filter(({inactive}) => inactive !== true)
         .map(({name, id, coords, DATA_TYPE_OVERRIDES}) => {
-            let data_types = DATA_TYPES;
+            let data_types = JSON.parse(JSON.stringify(DATA_TYPES));
             if (DATA_TYPE_OVERRIDES) 
                 DATA_TYPE_OVERRIDES.forEach((data_type_override) => {
                     let override_index = data_types.findIndex((station_data_type) => station_data_type.name == data_type_override.name)
@@ -312,9 +278,12 @@ class TercAPI {
     static STATIONS = STATIONS;
 
     // Data type names
-    static TIME_KEY                     = DataStation.TIME_KEY;
+    static TIME_NAME                    = "Timestamp"
     static WAVE_HEIGHT_NAME             = "Wave Height";
     static WATER_TEMPERATURE_NAME       = "Water Temperature";
+    static WIND_SPEED_NAME              = "Wind Speed";
+    static WIND_DIRECTION_NAME          = "Wind Direction";
+    static AIR_TEMPERATURE_NAME         = "Air Temperature";
     static CONDUCTIVITY_NAME            = "Conductivity";
     static ALGAE_NAME                   = "Algae";
     static TURBIDITY_NAME               = "Turbidity";

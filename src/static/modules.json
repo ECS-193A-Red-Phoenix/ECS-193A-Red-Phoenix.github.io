@@ -64,6 +64,31 @@
                         "time_range": [-7, 0]
                     }
                 ]
+            },
+            "WEATHER": {
+                "name": "Weather",
+                "href": "weather",
+                "default_bottom_tab": 0,
+                "BOTTOM_TABS": [
+                    {
+                        "name": "Wind",
+                        "header_name": "Wind",
+                        "href": "wind",
+                        "data_type": "Wind Speed",
+                        "time_range": [-5, 0],
+                        "image": "/static/img/lake_conditions/weather_wind.png",
+                        "desc": "Wind speed is recorded at weather stations around Lake Tahoe. Daily fluctuations depend on time of day and seasonal weather fronts."
+                    },
+                    {
+                        "name": "Air Temperature",
+                        "header_name": "Air Temperature",
+                        "href": "air-temperature",
+                        "data_types": "Air Temperature",
+                        "time_range": [-5, 0],
+                        "image": "/static/img/lake_conditions/weather_airtemp.png",
+                        "desc": "Lake Tahoe weather is comfortable most of the time. Air temperatures range from the mid-20s to the mid-40s °F in the winter months and between the low-50s to over 80 °F during the summer months."
+                    }
+                ]
             }
         }
     }

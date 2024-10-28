@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import TimePlot from "./TimePlot";
@@ -17,29 +17,19 @@ import LoadingIcon from "../TahoeMap/LoadingIcon";
 function StationChart(props) {
     //////////////////////////////////////////////////////
     // Expected props
-    // data_type_name: the name of the data to display, a static member of TercAPI.
-    //      You may pass in an array of data_types if you wish to display multiple on the same chart
-    // chart_props: props to pass onto TimePlot
+    // marker_data_type: the name of the data type that the markers on the map display
     // start_date: the start date of the chart
     // end_date: the end date of the chart
-    // data_cleaning_function (optional): a post processing function to clean 
-    //      chart data, takes in (y) => returns y-value
+    // children: a function with arguments (station_data, current_station) that returns the child to embed
+    //      station_data is an Object { TmpStamp: Array(N), <Name of DataType>: Array(N) }
     const isMounted = useIsMounted();
     const [[map_markers, setMapMarkers, active_location_idx, setActiveLocation]] = useOutletContext();
-    const [ current_station_data, setCurrentStationData ] = useState({ 
-        "time": undefined, 
-        "station_data": undefined 
-    });
-    const { time, station_data } = current_station_data;
-    const is_downloading = time === undefined && station_data === undefined;
-    const is_unavailable = time === null && station_data === null;
+    const [ current_station_data, setCurrentStationData ] = useState(undefined);
+    const is_downloading = current_station_data === undefined;
+    const is_unavailable = current_station_data === null;
+    let { start_date, end_date, marker_data_type } = props;
 
-    let { data_type_name, chart_props, start_date, end_date, data_cleaning_function } = props;
-    data_type_name = Array.isArray(data_type_name) ? data_type_name : [data_type_name];
-    chart_props = chart_props ?? {};
-    data_cleaning_function = data_cleaning_function ?? ((x) => x);
-
-    const STATIONS = TercAPI.get_stations_with_data_types(data_type_name);
+    const STATIONS = TercAPI.get_stations_with_data_type(marker_data_type);
 
     ///////////////////////////////////////
     // Update current station data
@@ -49,27 +39,24 @@ function StationChart(props) {
         let ignore = false;
 
         // Set data to downloading state
-        setCurrentStationData({"time": undefined, "station_data": undefined});
-        if (!current_station)
+        setCurrentStationData(undefined);
+        if (ignore)
             return;
-
-        Promise.all(data_type_name
-            .map((dt) => current_station.get_data(start_date, end_date, dt))
-        )
+        
+        current_station.get_data(start_date, end_date)
         .then((data) => {
-            let time = data.map((d) => d[TercAPI.TIME_KEY]);
-            let station_data = data.map((d, idx) => d[data_type_name[idx]].map(data_cleaning_function));
-            if (!ignore)
-                setCurrentStationData({"time": time, "station_data": station_data});
+            if (!ignore) {
+                setCurrentStationData(data);
+            }
         })
         .catch((err) => {
             console.log(err);
-            if (!ignore)
-                setCurrentStationData({"time": null, "station_data": null});
+            if (!ignore) {
+                setCurrentStationData(null);
+            }
         });
-
         return () => { ignore = true; };
-    }, [active_location_idx, start_date, end_date]);
+    }, [active_location_idx, start_date, end_date, marker_data_type]);
 
     ///////////////////////////////////////
     // Setup all stations
@@ -146,7 +133,7 @@ function StationChart(props) {
         // Download all station data           
         STATIONS
             .map((station, idx) => 
-                station.get_most_recent_data(start_date, end_date, data_type_name[0])
+                station.get_most_recent_data(start_date, end_date, marker_data_type)
                     .then(async (station_data_value) => {
                         return await lock.runExclusive(() => {
                             process_station_data(idx, station_data_value)
@@ -158,11 +145,9 @@ function StationChart(props) {
                             process_station_data(idx, null)
                         })
                     })
-                    
             )
-
         return () => { ignore = true; };
-    }, [start_date.getTime(), end_date.getTime(), active_location_idx]);
+    }, [start_date.getTime(), end_date.getTime(), active_location_idx, marker_data_type]);
 
     return (
         <div className="lake-conditions-chart-container"> 
@@ -178,11 +163,9 @@ function StationChart(props) {
                 : 
                     <>
                     <div className="chart-title"> {current_station.name} </div>
-                    <TimePlot
-                        time={time}
-                        y={station_data}
-                        {...chart_props}
-                        />
+
+                    { props.children(current_station_data, current_station) }
+
                     </>
             }
         </div>

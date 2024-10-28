@@ -4,6 +4,7 @@ import StationChart from "./StationChart";
 import { TercAPI } from "../../../js/forked/terc_api";
 import MODULES from "../../../static/modules.json";
 import { parse_time_range } from "../../../js/forked/util";
+import TimePlot from "./TimePlot";
 
 
 function WaterTemperature(props) {
@@ -17,16 +18,27 @@ function WaterTemperature(props) {
             .BOTTOM_TABS[bottom_tab_index]
             .time_range
         );
-
-    const chart_props = {
-        "y_label": "WATER TEMPERATURE (F)",
-        "y_ticks": 7
+        
+    const children = (station_data) => {
+        const chart_props = {
+            "y_label": "WATER TEMPERATURE (F)",
+            "y_ticks": 7
+        };
+        let time = station_data.map(x => x[TercAPI.TIME_NAME]);
+        let water_temp = station_data.map(x => x[TercAPI.WATER_TEMPERATURE_NAME]);
+        return (
+            <TimePlot
+                time={time}
+                y={water_temp}
+                {...chart_props}
+                />
+        );
     };
     
     return (
         <StationChart
-            data_type_name={TercAPI.WATER_TEMPERATURE_NAME}
-            chart_props={chart_props}
+            marker_data_type={TercAPI.WATER_TEMPERATURE_NAME}
+            children={children}
             start_date={chart_start_date}
             end_date={chart_end_date}
             />

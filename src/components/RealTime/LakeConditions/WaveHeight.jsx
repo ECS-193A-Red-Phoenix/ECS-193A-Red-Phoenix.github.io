@@ -3,6 +3,8 @@ import { TercAPI } from "../../../js/forked/terc_api";
 import StationChart from "./StationChart";
 import MODULES from "../../../static/modules.json";
 import { parse_time_range } from "../../../js/forked/util";
+import TimePlot from "./TimePlot";
+
 
 function WaveHeight(props) {
     const [_, module_container] = useOutletContext();
@@ -16,17 +18,26 @@ function WaveHeight(props) {
             .time_range
         );
 
-    const chart_props = {
-        "y_label": "WAVE HEIGHT (FT)",
-        "min_y": 0,
-        "max_y": 3,
-        "y_ticks": 7
+    const children = (station_data) => {
+        const chart_props = {
+            "y_label": "WAVE HEIGHT (FT)",
+            "min_y": 0,
+            "max_y": 3,
+            "y_ticks": 7
+        };
+        let time = station_data.map(x => x[TercAPI.TIME_NAME]);
+        let wave_height = station_data.map(x => x[TercAPI.WAVE_HEIGHT_NAME]);
+        return <TimePlot
+            time={time}
+            y={wave_height}
+            {...chart_props}
+            />
     };
 
     return (
         <StationChart
-            data_type_name={TercAPI.WAVE_HEIGHT_NAME}
-            chart_props={chart_props}
+            marker_data_type={TercAPI.WAVE_HEIGHT_NAME}
+            children={children}
             start_date={chart_start_date}
             end_date={chart_end_date}
             />

@@ -59,10 +59,10 @@
                     39.01032,
                     -120.113193
                 ],
-                "DATA_TYPES_OVERRIDES": [
+                "DATA_TYPE_OVERRIDES": [
                     {
                         "name": "Turbidity",
-                        "name_units": "ntu",
+                        "name_units": "fnu",
                         "key": "LS_Turbidity_Avg",
                         "key_units": "fnu"
                     }
@@ -177,7 +177,7 @@
                 "name": "Wind Speed",
                 "name_units": "mph",
                 "key": "WindSpd_ms",
-                "key_units": "ms"
+                "key_units": "m/s"
             },
             {
                 "name": "Wind Direction",
@@ -210,7 +210,7 @@
                 "name": "Wind Speed",
                 "name_units": "mph",
                 "key": "Wind_Spd1",
-                "key_units": "ms"
+                "key_units": "m/s"
             },
             {
                 "name": "Wind Direction",
@@ -383,63 +383,6 @@
                 "name_units": "ft",
                 "key": "Secchi_Annual_Ave",
                 "key_units": "m"
-            },
-            {
-                "name": "Monthly Max Temperature",
-                "name_units": "f",
-                "keys": [
-                    "Monthly_Max_Air_Temp_Jan",
-                    "Monthly_Max_Air_Temp_Feb",
-                    "Monthly_Max_Air_Temp_Mar",
-                    "Monthly_Max_Air_Temp_Apr",
-                    "Monthly_Max_Air_Temp_May",
-                    "Monthly_Max_Air_Temp_Jun",
-                    "Monthly_Max_Air_Temp_July",
-                    "Monthly_Max_Air_Temp_Aug",
-                    "Monthly_Max_Air_Temp_Sep",
-                    "Monthly_Max_Air_Temp_Oct",
-                    "Monthly_Max_Air_Temp_Nov",
-                    "Monthly_Max_Air_Temp_Dec"
-                ],
-                "key_units": "f"
-            },
-            {
-                "name": "Monthly Min Temperature",
-                "name_units": "f",
-                "keys": [
-                    "Monthly_Min_Air_Temp_Jan",
-                    "Monthly_Min_Air_Temp_Feb",
-                    "Monthly_Min_Air_Temp_Mar",
-                    "Monthly_Min_Air_Temp_Apr",
-                    "Monthly_Min_Air_Temp_May",
-                    "Monthly_Min_Air_Temp_Jun",
-                    "Monthly_Min_Air_Temp_July",
-                    "Monthly_Min_Air_Temp_Aug",
-                    "Monthly_Min_Air_Temp_Sep",
-                    "Monthly_Min_Air_Temp_Oct",
-                    "Monthly_Min_Air_Temp_Nov",
-                    "Monthly_Min_Air_Temp_Dec"
-                ],
-                "key_units": "f"
-            },
-            {
-                "name": "Monthly Precipitation",
-                "name_units": "unitless",
-                "keys": [
-                    "Monthly_Precipitation_Jan",
-                    "Monthly_Precipitation_Feb",
-                    "Monthly_Precipitation_Mar",
-                    "Monthly_Precipitation_Apr",
-                    "Monthly_Precipitation_May",
-                    "Monthly_Precipitation_Jun",
-                    "Monthly_Precipitation_July",
-                    "Monthly_Precipitation_Aug",
-                    "Monthly_Precipitation_Sep",
-                    "Monthly_Precipitation_Oct",
-                    "Monthly_Precipitation_Nov",
-                    "Monthly_Precipitation_Dec"
-                ],
-                "key_units": "unitless"
             }
         ],
         "STATIONS": [
