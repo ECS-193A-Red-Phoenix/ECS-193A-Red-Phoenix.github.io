@@ -58,7 +58,7 @@ function Weather(props) {
     // useMemo to prevent re-renders when the map markers state changes and is propagated down
     const chart = useMemo(() => {
         return <StationChart
-            marker_data_type={current_bottom_tab.marker_data_type ?? "Wind Speed"}
+            marker_data_type={current_bottom_tab.data_type ?? "Wind Speed"}
             children={children}
             start_date={chart_start_date}
             end_date={chart_end_date}

@@ -113,7 +113,7 @@
                         "name": "Air Temperature",
                         "header_name": "Air Temperature",
                         "href": "air-temperature",
-                        "data_types": "Air Temperature",
+                        "data_type": "Air Temperature",
                         "time_range": [-5, 0],
                         "image": "/static/img/lake_conditions/weather_airtemp.png",
                         "desc": "Lake Tahoe weather is comfortable most of the time. Air temperatures range from the mid-20s to the mid-40s °F in the winter months and between the low-50s to over 80 °F during the summer months."
