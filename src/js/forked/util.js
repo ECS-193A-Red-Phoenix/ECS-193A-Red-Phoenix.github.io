@@ -544,7 +544,7 @@ export function axis_ticks_auto(x_min, x_max, acceptable_increments, max_ticks) 
             let tick_end = increment * Math.floor(x_max / increment);
 
             if (isNaN(tick_start) || isNaN(tick_end))
-                throw Error(`Invalid increment ${increment}`);
+                throw Error(`Invalid increment ${increment} x_min=${x_min} x_max=${x_max}`);
 
             if (tick_start >= tick_end)
                 return 0;
