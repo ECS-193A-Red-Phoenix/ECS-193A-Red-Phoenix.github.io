@@ -36,6 +36,10 @@ function ModuleContainer(props) {
         let url = location.pathname.split('/');
 
         let image_index = url.indexOf(module.href);
+        if (image_index === url.length - 1) {
+            console.log("Redirecting");
+            return;
+        }
         let tab_href = url[image_index + 1];
         let t_index = module_tabs.findIndex((t) => t.href === tab_href);
         if (t_index < 0)
