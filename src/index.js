@@ -9,6 +9,8 @@ import RealTimeConditions from "./components/RealTime/RealTimeConditions";
 import WaveHeight from "./components/RealTime/LakeConditions/WaveHeight";
 import WaterTemperature from "./components/RealTime/LakeConditions/WaterTemperature";
 import Weather from "./components/RealTime/LakeConditions/Weather";
+import Conductivity from "./components/RealTime/LakeConditions/Conductivity";
+import DissolvedOxygen from "./components/RealTime/LakeConditions/DissolvedOxygen";
 import Turbidity from "./components/RealTime/LakeConditions/Turbidity";
 import LakeConditionsPage from "./components/LakeConditionsPage";
 import RealTimeConditionsPage from "./components/RealTime/RealTimeConditionsPage";
@@ -71,6 +73,16 @@ root.render(
                         />
 
                     <Route
+                        element={<Conductivity />}
+                        path={'conductivity'}
+                        />
+
+                    <Route
+                        element={<DissolvedOxygen />}
+                        path={'dissolved-oxygen'}
+                        />
+
+                    <Route
                         element={<Weather />}
                         path={'weather'}
                         />
@@ -109,6 +121,16 @@ root.render(
                     <Route
                         element={<Weather />}
                         path={'weather'}
+                        />
+
+                    <Route
+                        element={<Conductivity />}
+                        path={'conductivity'}
+                        />
+
+                    <Route
+                        element={<DissolvedOxygen />}
+                        path={'dissolved-oxygen'}
                         />
                 </Route>
 

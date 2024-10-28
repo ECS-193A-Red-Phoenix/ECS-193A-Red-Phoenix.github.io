@@ -25,6 +25,12 @@
                 "name_units": "ntu",
                 "key": "LS_Turbidity_Avg",
                 "key_units": "ntu"
+            },
+            {
+                "name": "Conductivity",
+                "name_units": "μS/cm",
+                "key": "Conductivity25C_Avg",
+                "key_units": "μS/cm"
             }
         ],
         "STATIONS": [
@@ -65,6 +71,12 @@
                         "name_units": "fnu",
                         "key": "LS_Turbidity_Avg",
                         "key_units": "fnu"
+                    },
+                    {
+                        "name": "Dissolved Oxygen",
+                        "name_units": "%",
+                        "key": "LS_DO_Avg",
+                        "key_units": "%"
                     }
                 ]
             },
@@ -83,6 +95,14 @@
                 "coords": [
                     39.2364,
                     -120.065
+                ],
+                "DATA_TYPE_OVERRIDES": [
+                    {
+                        "name": "Dissolved Oxygen",
+                        "name_units": "%",
+                        "key": "LS_DO_Avg",
+                        "key_units": "%"
+                    }
                 ]
             },
             {
@@ -91,6 +111,14 @@
                 "coords": [
                     39.1711,
                     -120.147
+                ],
+                "DATA_TYPE_OVERRIDES": [
+                    {
+                        "name": "Dissolved Oxygen",
+                        "name_units": "%",
+                        "key": "LS_DO_Avg",
+                        "key_units": "%"
+                    }
                 ]
             },
             {
@@ -99,6 +127,14 @@
                 "coords": [
                     38.9394,
                     -120.039
+                ],
+                "DATA_TYPE_OVERRIDES": [
+                    {
+                        "name": "Dissolved Oxygen",
+                        "name_units": "%",
+                        "key": "LS_DO_Avg",
+                        "key_units": "%"
+                    }
                 ]
             },
             {
@@ -107,6 +143,14 @@
                 "coords": [
                     38.95,
                     -119.968
+                ],
+                "DATA_TYPE_OVERRIDES": [
+                    {
+                        "name": "Dissolved Oxygen",
+                        "name_units": "%",
+                        "key": "LS_DO_Avg",
+                        "key_units": "%"
+                    }
                 ]
             },
             {

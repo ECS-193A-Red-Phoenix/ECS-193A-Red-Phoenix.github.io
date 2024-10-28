@@ -4,7 +4,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import ModuleTopTab from "../TabGroup/ModuleTopTabs/ModuleTopTab";
 import ModuleTopTabs from "../TabGroup/ModuleTopTabs/ModuleTopTabs";
 import ModuleBottomTabs from "../TabGroup/ModuleBottomTabs/ModuleBottomTabs";
-import { clamp } from "../../../js/forked/util";
 
 import "../../../css/Modules.css";
 import "./ModuleContainer.css";

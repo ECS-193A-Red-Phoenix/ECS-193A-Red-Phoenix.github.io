@@ -1,12 +1,9 @@
 import { useEffect, useState, useRef} from "react";
-import { selectAll } from "d3";
 
 import WindChartIcon from "./WindChartIcon";
 import "./Weather.css";
 
-import { DAYS_OF_WEEK, interpolate, clamp, ONE_DAY } from "../../../js/forked/util";
-
-const ONE_HOUR = 60 * 60 * 1000;
+import { DAYS_OF_WEEK, interpolate, ONE_HOUR } from "../../../js/forked/util";
 
 function WindChart(props) {
     // Expected props
@@ -26,7 +23,7 @@ function WindChart(props) {
     for (let t = t_0; t < t_n; t += ONE_HOUR * 3) {
         let current_time = new Date(t);
         times.push(current_time);
-        if (days.length == 0 || (days[days.length - 1].getDay() != current_time.getDay())) {
+        if (days.length === 0 || (days[days.length - 1].getDay() !== current_time.getDay())) {
             days.push(current_time);
         }
     }

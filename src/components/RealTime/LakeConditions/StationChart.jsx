@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import TimePlot from "./TimePlot";
 import ColorMarker from "../TahoeMap/ColorMarker";
 import ErrorMarker from "../TahoeMap/ErrorMarker";
 import "./LakeConditions.css"
@@ -10,7 +9,6 @@ import { colorScale, createLatLng, useIsMounted } from "../../../js/forked/util"
 import { TercAPI } from "../../../js/forked/terc_api";
 import { clamp } from "../../../js/forked/util";
 
-import APP_CONFIG from "../../../static/app_config.json"
 import { Mutex } from "async-mutex"
 import LoadingIcon from "../TahoeMap/LoadingIcon";
 

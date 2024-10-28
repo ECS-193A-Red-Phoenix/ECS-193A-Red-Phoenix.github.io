@@ -29,7 +29,7 @@ function Turbidity(props) {
         : TercAPI.TURBIDITY_NAME;
 
     const children = (station_data, station) => {
-        const data_type_units = (data_type_name == TercAPI.SECCHI_DEPTH_NAME) ? "FT" : 
+        const data_type_units = (data_type_name === TercAPI.SECCHI_DEPTH_NAME) ? "FT" : 
             (station.get_data_type(TercAPI.TURBIDITY_NAME).name_units.toUpperCase())
         const chart_props = {
             "y_label": `${data_type_name.toUpperCase()} (${data_type_units})`,

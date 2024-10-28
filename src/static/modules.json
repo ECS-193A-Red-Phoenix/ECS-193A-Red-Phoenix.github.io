@@ -27,12 +27,8 @@
                 "href": "wave-height",
                 "desc": "Lake Tahoe can be perfectly flat and serene, or blustery winds can churn up six-foot high waves. Waves are produced by wind blowing across the lake. The highest waves occur on the downwind side of the lake, which is typically the north and east shores at Lake Tahoe. Wind and waves are usually higher in the afternoon, so be sure to plan ahead and stay safe.",
                 "image": "/static/img/lake_conditions/waveheight.png",
-                "default_bottom_tab": 2,
+                "default_bottom_tab": 1,
                 "BOTTOM_TABS": [
-                    {
-                        "name": "Historical",
-                        "time_range": ["2021-07-01", "2022-01-01"]
-                    }, 
                     {
                         "name": "Previous Week",
                         "time_range": [-14, -7]
@@ -55,6 +51,40 @@
                         "time_range": ["1968-01-01", "2020-01-01"],
                         "desc": "Annual Average Secchi Depth - Water clarity measurements have been taken every 10 – 15 days by UC Davis TERC since 1968, when a white disk, called the Secchi disk, could be seen at a depth of 102.4 feet. Secchi depth is the most widely used method of clarity measurement."
                     }, 
+                    {
+                        "name": "Previous Week",
+                        "time_range": [-14, -7]
+                    },
+                    {
+                        "name": "Current Week",
+                        "time_range": [-7, 0]
+                    }
+                ]
+            },
+            "CONDUCTIVITY": {
+                "name": "Conductivity",
+                "href": "conductivity",
+                "desc": "The unit of measurement for conductivity in lakes is microsiemens per centimeter (μS/cm). Conductivity measures how easily water allows electricity to pass through it.",
+                "image": "/static/img/lake_conditions/conductivity.png",
+                "default_bottom_tab": 1,
+                "BOTTOM_TABS": [
+                    {
+                        "name": "Previous Week",
+                        "time_range": [-14, -7]
+                    },
+                    {
+                        "name": "Current Week",
+                        "time_range": [-7, 0]
+                    }
+                ]
+            },
+            "DISSOLVED_OXYGEN": {
+                "name": "Dissolved Oxygen",
+                "href": "dissolved-oxygen",
+                "desc": "Dissolved oxygen (DO) is the amount of oxygen gas that is present in water. It is a key indicator of water quality and is essential for the survival of most aquatic organisms.",
+                "image": "/static/img/lake_conditions/dissolved-oxygen.png",
+                "default_bottom_tab": 1,
+                "BOTTOM_TABS": [
                     {
                         "name": "Previous Week",
                         "time_range": [-14, -7]

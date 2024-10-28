@@ -1,4 +1,4 @@
-import { apply, celsius_to_f, format_ymd, http_get, range, renameProperty, today } from "./util";
+import { celsius_to_f, format_ymd, http_get, range } from "./util";
 import DATA_STATIONS from "../../static/data_stations.json";
 import { Mutex } from "async-mutex"
 
@@ -256,9 +256,12 @@ const STATIONS = Object.values(DATA_STATIONS)
             let data_types = JSON.parse(JSON.stringify(DATA_TYPES));
             if (DATA_TYPE_OVERRIDES) 
                 DATA_TYPE_OVERRIDES.forEach((data_type_override) => {
-                    let override_index = data_types.findIndex((station_data_type) => station_data_type.name == data_type_override.name)
-                    if (override_index === -1)
-                        throw new Error(`Unexpected could not find override ${data_type_override}`)
+                    // modify existing data type if it exists, otherwise append to list of data types
+                    let override_index = data_types.findIndex((station_data_type) => station_data_type.name === data_type_override.name)
+                    if (override_index === -1) {
+                        data_types.push(data_type_override);
+                        return;
+                    }
                     data_types[override_index] = data_type_override;
                 });
 
@@ -285,6 +288,7 @@ class TercAPI {
     static WIND_DIRECTION_NAME          = "Wind Direction";
     static AIR_TEMPERATURE_NAME         = "Air Temperature";
     static CONDUCTIVITY_NAME            = "Conductivity";
+    static DISSOLVED_OXYGEN             = "Dissolved Oxygen";
     static ALGAE_NAME                   = "Algae";
     static TURBIDITY_NAME               = "Turbidity";
     static LAKE_LEVEL_NAME              = "Lake Level";
