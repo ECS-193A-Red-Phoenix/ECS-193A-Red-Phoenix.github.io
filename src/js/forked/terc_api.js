@@ -1,6 +1,7 @@
 import { celsius_to_f, format_ymd, http_get, range } from "./util";
 import DATA_STATIONS from "../../static/data_stations.json";
 import { Mutex } from "async-mutex"
+import { interpolate } from "./util";
 
 class TimedCache {
     constructor(expiration_time) {
@@ -108,6 +109,8 @@ class Station {
 
     async get_most_recent_data(start_date, end_date, data_type_name) {
         let data = await this.get_data(start_date, end_date);
+        if (data === null)
+            return null;
         let most_recent_data_point = data[data.length - 1];
         return most_recent_data_point[data_type_name]
     }
@@ -116,9 +119,10 @@ class Station {
 class DataStation extends Station {
     static TIME_KEY = "TmStamp";
 
-    constructor(url, data_types, name, id, coords) {
+    constructor(url, data_types, name, id, coords, map_icon) {
         super(url, data_types, name, coords);
         this.id = id;
+        this.map_icon = map_icon;
         this.get_data_mutex = new Mutex();
     }
 
@@ -176,44 +180,52 @@ class DataStation extends Station {
             }
 
             const raw_data = await this.download_data(start_date, end_date);
-            raw_data.forEach((data_point) => {
-                this.data_types.forEach(({name: data_type_name, key: data_type_key, name_units, key_units}) => {
-                    let data_type_value = parseFloat(data_point[data_type_key]);
-                    // stations can contain data points with 'None' as the value, where parseFloat will fail
-                    if (isNaN(data_type_value)) {
-                        data_type_value = 0; 
-                    }
-                    data_type_value = UnitConverter.convert(data_type_value, key_units, name_units)
-                    // assign parsed value to standard data type name
-                    data_point[data_type_name] = data_type_value;
-                    delete data_point[data_type_key]; // delete old key
-                })
-                data_point[TercAPI.TIME_NAME] = this.get_data_point_timestamp(data_point);
-                delete data_point[DataStation.TIME_KEY];
-            })
-            
-            raw_data.sort((a, b) => {
-                if (a[TercAPI.TIME_NAME] < b[TercAPI.TIME_NAME]) return -1;
-                else if (a[TercAPI.TIME_NAME] > b[TercAPI.TIME_NAME]) return 1;
-                return 0;
-            });
-
-            if (raw_data.length <= 2) {
+            try {
+                await this.process_raw_data(raw_data);
+            } catch (error) {
                 this.download_cache.put(key, null);
-                throw new Error(`Station '${this.name}' doesn't contain enough data points (${raw_data.length} data points)`);
+                throw error;
             }
-
             this.download_cache.put(key, raw_data);
             return raw_data;
         });
-    
     }
+
+    async process_raw_data(raw_data) {
+        // Normalize column names in each data point
+        raw_data.forEach((data_point) => {
+            this.data_types.forEach(({name: data_type_name, key: data_type_key, name_units, key_units}) => {
+                let data_type_value = parseFloat(data_point[data_type_key]);
+                // stations can contain data points with 'None' as the value, where parseFloat will fail
+                if (isNaN(data_type_value)) {
+                    data_type_value = 0; 
+                }
+                data_type_value = UnitConverter.convert(data_type_value, key_units, name_units)
+                // assign parsed value to standard data type name
+                data_point[data_type_name] = data_type_value;
+                delete data_point[data_type_key]; // delete old key
+            })
+            data_point[TercAPI.TIME_NAME] = this.get_data_point_timestamp(data_point);
+            delete data_point[DataStation.TIME_KEY];
+        })
+        
+        raw_data.sort((a, b) => {
+            if (a[TercAPI.TIME_NAME] < b[TercAPI.TIME_NAME]) return -1;
+            else if (a[TercAPI.TIME_NAME] > b[TercAPI.TIME_NAME]) return 1;
+            return 0;
+        });
+
+        if (raw_data.length <= 2) {
+            throw new Error(`Station '${this.name}' doesn't contain enough data points (${raw_data.length} data points)`);
+        }
+    }
+
 }
 
 class SotlStation extends DataStation {
 
-    constructor(url, data_types, name, coords) {
-        super(url, data_types, name, undefined, coords);
+    constructor(url, data_types, name, coords, map_icon) {
+        super(url, data_types, name, undefined, coords, map_icon);
     }
 
     async download_data(start_date, end_date) {
@@ -244,6 +256,60 @@ class SotlStation extends DataStation {
 
 }
 
+class ThermistorChainStation extends DataStation {
+
+    constructor(url, data_types, name, coords, sensor_distances_from_bottom, map_icon) {
+        super(url, data_types, name, undefined, coords, map_icon);
+        this.sensor_distances_from_bottom = sensor_distances_from_bottom;
+    }
+
+    async download_data(start_date, end_date) {
+        // Fetches the raw JSON data from the Station URL
+        // Arguments:
+        // start_date: a Date object, the start date of the data
+        // end_date: a Date object, the end date of the data
+        const start_date_str = format_ymd(start_date);
+        const end_date_str = format_ymd(end_date);
+        const key = `download_data-${start_date_str},${end_date_str}`;
+        const params = {
+            "rptdate": start_date_str,
+            "rptend": end_date_str
+        };
+        return await super.fetch_data(params, key);
+    }
+
+    async process_raw_data(raw_data) {
+        await super.process_raw_data(raw_data);
+        // append depths to each data point 
+        raw_data.forEach((data_point, idx) => {
+            const chain_depth = data_point["ChainDepth"];
+            for (let [sensor_index, sensor_depth] of this.sensor_distances_from_bottom.entries()) {
+                data_point[`Sensor${sensor_index+1}Depth`] = chain_depth - sensor_depth;
+            }
+        });
+        
+        // append station data from Homewood nearshore
+        // can't think of a good way to do this rn, so just hardcoding it here
+        const Homewood = STATIONS.find((station) => { return station.name === "Homewood"; });
+        if (Homewood === undefined) {
+            console.log("Warning: Could not find Homewood station to attach temperature data! Skipping");
+        }
+        else {
+            const start_date = raw_data[0][TercAPI.TIME_NAME];
+            const end_date = raw_data[raw_data.length - 1][TercAPI.TIME_NAME];
+            const homewood_data = await Homewood.get_data(start_date, end_date);
+            const time = homewood_data.map((x) => x[TercAPI.TIME_NAME].getTime());
+            const water_temperature = homewood_data.map((x) => x[TercAPI.WATER_TEMPERATURE_NAME]);
+            raw_data.forEach((data_point) => {
+                const surface_water_temp = interpolate(data_point[TercAPI.TIME_NAME].getTime(), time, water_temperature);
+                data_point["Sensor0Depth"] = 0.5;
+                data_point["Sensor0Temperature"] = surface_water_temp;
+                data_point[TercAPI.WATER_TEMPERATURE_NAME] = surface_water_temp;
+            });
+        }
+    }    
+}
+
 ////////////////////////////////////////////////////////////////
 // Initialize Stations
 ////////////////////////////////////////////////////////////////
@@ -252,7 +318,8 @@ const STATIONS = Object.values(DATA_STATIONS)
     .flatMap(({URL, DATA_TYPES, STATIONS, STATION_TYPE}) => {
         return STATIONS
         .filter(({inactive}) => inactive !== true)
-        .map(({name, id, coords, DATA_TYPE_OVERRIDES}) => {
+        .map((station_info) => {
+            let {name, id, coords, DATA_TYPE_OVERRIDES, map_icon } = station_info;
             let data_types = JSON.parse(JSON.stringify(DATA_TYPES));
             if (DATA_TYPE_OVERRIDES) 
                 DATA_TYPE_OVERRIDES.forEach((data_type_override) => {
@@ -267,10 +334,13 @@ const STATIONS = Object.values(DATA_STATIONS)
 
             switch (STATION_TYPE) {
                 case "Sotl":
-                    return new SotlStation(URL, data_types, name, coords);
+                    return new SotlStation(URL, data_types, name, coords, map_icon);
                 case "Data":
                 case undefined:
-                    return new DataStation(URL, data_types, name, id, coords);
+                    return new DataStation(URL, data_types, name, id, coords, map_icon);
+                case "ThermistorChainStation":
+                    let {sensor_distances_from_bottom} = station_info;
+                    return new ThermistorChainStation(URL, data_types, name, coords, sensor_distances_from_bottom, map_icon);
                 default:
                     throw new Error(`Unknown station type '${STATION_TYPE}'`)
             }

@@ -5,6 +5,8 @@ import { TercAPI } from "../../../js/forked/terc_api";
 import MODULES from "../../../static/modules.json";
 import { parse_time_range } from "../../../js/forked/util";
 import TimePlot from "./TimePlot";
+import TCPlot from "../TCPlot";
+import { today } from "../../../js/forked/util";
 
 
 function WaterTemperature(props) {
@@ -19,7 +21,33 @@ function WaterTemperature(props) {
             .time_range
         );
         
-    const children = (station_data) => {
+    const children = (station_data, station) => {
+        if (station.name === 'Homewood Thermistor Chain' && station_data.length > 0 && station_data[0]['Sensor0Depth'] !== undefined) {
+            // filter to 3 days ago otherwise the plot will be too long
+            let three_days_ago = today(-3);
+            let filtered_data = station_data.filter((x) => three_days_ago < x[TercAPI.TIME_NAME]);
+            let time = filtered_data.map(x => x[TercAPI.TIME_NAME]);
+            let ctd_profiles = filtered_data.map((x) => {
+                let temperature_depth_profile = []
+                for (let i = 0; i <= 64; i++) {
+                    let depth = x[`Sensor${i}Depth`]
+                    let temperature = x[`Sensor${i}Temperature`]
+                    if (depth === undefined || temperature === undefined)
+                        break;
+                    temperature_depth_profile.push([depth, temperature])
+                }
+                return temperature_depth_profile;
+            });
+            return <TCPlot
+                        time={time}
+                        ctd_profiles={ctd_profiles}
+                        cache_id={"tc_plot"}
+                        min_depth={0}
+                        // max_depth is dynamic
+                        min_T={40}
+                        max_T={70}
+                        />
+        }
         const chart_props = {
             "y_label": "WATER TEMPERATURE (F)",
             "y_ticks": 7

@@ -155,13 +155,14 @@ function TCPlot(props) {
 
         select(canvas).on("mousemove", function (event) {
             const [x, y] = pointer(event);
-            const [i, j] = [Math.floor(x / canvas.width * n_cols), Math.floor(y / canvas.height * n_rows)];
+            const { width, height } = canvas.getBoundingClientRect();
+            const [i, j] = [Math.floor(x / width * n_cols), Math.floor(y / height * n_rows)];
             if (i < 0 || i >= n_cols || j < 0 || j >= n_rows) {
                 turnOffCursor();
                 return;
             }
-            const temp = round(heatmap_data[j][i], 0);
-            const [px, py] = [x / canvas.width * 100, y / canvas.height * 100];
+            const temp = round(heatmap_data[j][i], 1);
+            const [px, py] = [x / width * 100, y / height * 100];
             cursor.style("display", "block")
                 .style("left", `${px}%`)
                 .style("top", `${py}%`)

@@ -233,50 +233,19 @@
 
 .tc-plot-container {
     position: relative;
-    margin-top: 25px;
-    margin-bottom: 100px;
+}
+
+.tc-plot-container * {
+    font-size: 15px;
 }
 
 .tc-plot-container > canvas {
-    height: 250px;
+    height: 300px;
 }
 
-@media screen and (min-width: 1300px) {
-    .tc-plot-container {
-        margin-right: 50px;
-    }
+.tc-plot-container .temperature-legend-unit::before {
+    background-color: white;
 }
-
-@media screen and (max-width: 900px) {
-    .tc-plot-container > canvas {
-        height: 200px;
-    }   
-}
-
-@media screen and (max-width: 750px) {
-    .tc-plot-container > canvas {
-        height: 150px;
-    }   
-}
-
-@media screen and (max-width: 600px) {
-    .tc-plot-container > canvas {
-        height: 100px;
-    }   
-}
-
-@media screen and (max-width: 450px) {
-    .tc-plot-container > canvas {
-        height: 60px;
-    }   
-}
-
-@media screen and (max-width: 330px) {
-    .tc-plot-container > canvas {
-        height: 40px;
-    }   
-}
-
 
 .tc-plot-container > .temperature-legend-container {
     top: 0px;
@@ -296,6 +265,7 @@
     left: 50%;
     top: 50%;
     background-color: white;
+    color: black;
     padding: 5px 10px;
     border-radius: 8px;
     transform: translate(-50%, -200%);

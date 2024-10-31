@@ -54,7 +54,7 @@
                 "id": 4,
                 "name": "Homewood",
                 "coords": [
-                    39.0903,
+                    39.1003,
                     -120.161
                 ]
             },
@@ -436,6 +436,148 @@
                     39.098,
                     -120.031
                 ]
+            }
+        ]
+    },
+    "THERMISTOR_CHAIN": {
+        "STATION_TYPE": "ThermistorChainStation",
+        "URL": "https://tepfsail50.execute-api.us-west-2.amazonaws.com/v1/report/tc-homewood",
+        "DATA_TYPES": [
+            {
+                "name": "Water Temperature",
+                "name_units": "f",
+                "key": "LS_Temp_Avg",
+                "key_units": "f"
+            },
+            {
+                "name": "ChainDepth",
+                "name_units": "m",
+                "key": "Depth_m4C_Avg",
+                "key_units": "m"
+            },
+            {
+                "name": "Sensor1Temperature",
+                "name_units": "f",
+                "key": "LS_T1_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor2Temperature",
+                "name_units": "f",
+                "key": "LS_T2_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor3Temperature",
+                "name_units": "f",
+                "key": "LS_T3_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor4Temperature",
+                "name_units": "f",
+                "key": "LS_T4_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor5Temperature",
+                "name_units": "f",
+                "key": "LS_T5_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor6Temperature",
+                "name_units": "f",
+                "key": "LS_T6_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor7Temperature",
+                "name_units": "f",
+                "key": "LS_T7_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor8Temperature",
+                "name_units": "f",
+                "key": "LS_T8_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor9Temperature",
+                "name_units": "f",
+                "key": "LS_T9_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor10Temperature",
+                "name_units": "f",
+                "key": "LS_T10_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor11Temperature",
+                "name_units": "f",
+                "key": "LS_T11_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor12Temperature",
+                "name_units": "f",
+                "key": "LS_T12_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor13Temperature",
+                "name_units": "f",
+                "key": "LS_T13_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor14Temperature",
+                "name_units": "f",
+                "key": "LS_T14_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor15Temperature",
+                "name_units": "f",
+                "key": "LS_T15_Avg",
+                "key_units": "c"
+            },
+            {
+                "name": "Sensor16Temperature",
+                "name_units": "f",
+                "key": "LS_T16_Avg",
+                "key_units": "c"
+            }
+        ],
+        "STATIONS": [
+            {
+                "name": "Homewood Thermistor Chain",
+                "coords": [
+                    39.08353,
+                    -120.1509167
+                ],
+                "sensor_distances_from_bottom": [
+                    105.0, 
+                    100.0, 
+                    95.0, 
+                    90.0, 
+                    85.0, 
+                    80.0, 
+                    75.0, 
+                    70.0, 
+                    60.0, 
+                    50.0, 
+                    40.0, 
+                    30.0, 
+                    20.0, 
+                    15.0, 
+                    10.0, 
+                    5.0
+                ],
+                "map_icon": "thermometer"
             }
         ]
     }

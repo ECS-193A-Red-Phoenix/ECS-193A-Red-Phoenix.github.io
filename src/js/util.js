@@ -537,8 +537,9 @@ export function interpolate(x_interpolate, X, Y) {
     //  x_interpolate: an Array of x values at which to evaluate the interpolated point, must be increasing
     //  X: the x-coordinates of the data points, must be increasing
     //  Y: the y-coordinates of the data points, same length as X.
-    if (x_interpolate.length === 0)
+    if (x_interpolate.length === 0) {
         throw new Error(`Expected at least 1 value to interpolate, got ${x_interpolate}`)
+    }
     if (X.length === 0 || Y.length === 0)
         throw new Error(`Expected at least 1 data point, got X: ${X}, Y: ${Y}`) 
     if (X.length !== Y.length)

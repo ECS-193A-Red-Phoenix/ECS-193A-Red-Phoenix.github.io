@@ -317,12 +317,12 @@ export function interpolate(x_interpolate, X, Y) {
     const y_n = Y[Y.length - 1];
 
     // Ensure x is within bounds
-    if (x_interpolate < x_0) return y_0;
-    if (x_interpolate > x_n) return y_n;
+    if (x_interpolate <= x_0) return y_0;
+    if (x_interpolate >= x_n) return y_n;
 
     // Could use bisect left here but don't want to implement
     let i = 0;
-    while (X[i] <= x_interpolate) { i += 1 };
+    while (X[i] <= x_interpolate && i < X.length) { i += 1 };
 
     // Interpolate between two points in time
     const x1 = X[i - 1];

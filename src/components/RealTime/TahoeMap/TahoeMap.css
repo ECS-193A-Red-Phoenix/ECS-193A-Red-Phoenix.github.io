@@ -133,6 +133,17 @@
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+.material-icon-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    background-color: #0d5061;
+    width: fit-content;
+    padding: 5px;
+    border-radius: 50%;
+}
+
 .error-icon {
     background-color: #610d0d;
     padding: 5px;
@@ -157,6 +168,10 @@
 .color-icon-active {
     border: 3px solid #ddb307;
     padding: 1px 9px;
+}
+.material-icon-marker-active {
+    border: 3px solid #ddb307;
+    padding: 3px;
 }
 
 @keyframes spin {

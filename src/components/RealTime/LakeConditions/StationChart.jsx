@@ -11,6 +11,8 @@ import { clamp } from "../../../js/forked/util";
 
 import { Mutex } from "async-mutex"
 import LoadingIcon from "../TahoeMap/LoadingIcon";
+import IconMarker from "../TahoeMap/IconMarker";
+import MaterialIconMarker from "../TahoeMap/MaterialIconMarker";
 
 function StationChart(props) {
     //////////////////////////////////////////////////////
@@ -110,6 +112,17 @@ function StationChart(props) {
                             onClick={() => setActiveLocation(idx)}
                             active={idx === active_location_idx}
                             text={`Loading ${station.name}`}
+                            />
+                    }
+                    else if (station.map_icon !== undefined) {
+                        return <MaterialIconMarker
+                            key={`station-material-icon-${station.name}-${idx}`}
+                            position={createLatLng(...station.coords)}
+                            onClick={() => setActiveLocation(idx)}
+                            active={idx === active_location_idx}
+                            text={`${station.name}`}
+                            material_icon_name={`${station.map_icon}`}
+                            color={get_color(most_recent_station_values[idx])}
                             />
                     }
 

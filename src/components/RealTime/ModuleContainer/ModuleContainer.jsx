@@ -16,16 +16,16 @@ function ModuleContainer(props) {
     let { module } = props;
     const module_tabs = Object.values(module.TABS);
 
-    let [{tab_index, bottom_tab_index}, setModuleTabState] = useState({
+    let [{tab_index, bottom_tab_index, tab_description}, setModuleTabState] = useState({
         "tab_index": 0,
-        "bottom_tab_index": module_tabs[0].default_bottom_tab
+        "bottom_tab_index": module_tabs[0].default_bottom_tab,
     });
     const setBottomTabIndex = (bottom_tab_index) => setModuleTabState(({tab_index}) => ({tab_index: tab_index, bottom_tab_index: bottom_tab_index}))
     const current_tab = module_tabs[tab_index];
     const has_bottom_tab = current_tab.BOTTOM_TABS !== undefined;
     const current_bottom_tab = (!has_bottom_tab) ? undefined : current_tab.BOTTOM_TABS[bottom_tab_index];
     const tab_name = (has_bottom_tab) ? (current_bottom_tab.header_name ?? current_tab.name) : current_tab.name;
-    let tab_description = current_tab.desc;
+    tab_description = tab_description ?? current_tab.desc;
     let transparent_tabs = current_tab.transparent_top_tabs ?? false;
 
     //////////////////////////////////////////////////////////
