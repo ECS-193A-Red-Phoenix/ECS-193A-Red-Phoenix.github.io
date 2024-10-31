@@ -577,7 +577,8 @@
                     10.0, 
                     5.0
                 ],
-                "map_icon": "thermometer"
+                "map_icon": "thermometer",
+                "description": "A thermistor chain is a series of temperature sensors (thermistors) connected along a cable or rope at specific intervals. It's used to measure temperature at multiple depths simultaneously, typically in bodies of water like lakes, oceans, or storage tanks. This arrangement allows for creating a vertical temperature profile of the water column."
             }
         ]
     }

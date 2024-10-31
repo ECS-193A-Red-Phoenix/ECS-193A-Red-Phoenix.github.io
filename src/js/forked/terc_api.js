@@ -65,13 +65,15 @@ class UnitConverter {
 class Station {
     static TIME_UNTIL_REDOWNLOAD = 60 * 60 * 1000; // one hour
 
-    constructor(url, data_types, name, coords) {
+    constructor(url, data_types, name, coords, extra_options) {
         this.url = url;
         this.name = name;
         this.coords = coords;
         this.data_types = data_types;
         this.download_cache = new TimedCache(Station.TIME_UNTIL_REDOWNLOAD);
         this.mutex = new Mutex();
+        if (extra_options !== undefined)
+            Object.assign(this, extra_options);
     }
 
     has_data_type(data_type_name) {
@@ -119,10 +121,8 @@ class Station {
 class DataStation extends Station {
     static TIME_KEY = "TmStamp";
 
-    constructor(url, data_types, name, id, coords, map_icon) {
-        super(url, data_types, name, coords);
-        this.id = id;
-        this.map_icon = map_icon;
+    constructor(url, data_types, name, coords, extra_options) {
+        super(url, data_types, name, coords, extra_options);
         this.get_data_mutex = new Mutex();
     }
 
@@ -224,8 +224,8 @@ class DataStation extends Station {
 
 class SotlStation extends DataStation {
 
-    constructor(url, data_types, name, coords, map_icon) {
-        super(url, data_types, name, undefined, coords, map_icon);
+    constructor(url, data_types, name, coords, extra_options) {
+        super(url, data_types, name, coords, extra_options);
     }
 
     async download_data(start_date, end_date) {
@@ -258,9 +258,8 @@ class SotlStation extends DataStation {
 
 class ThermistorChainStation extends DataStation {
 
-    constructor(url, data_types, name, coords, sensor_distances_from_bottom, map_icon) {
-        super(url, data_types, name, undefined, coords, map_icon);
-        this.sensor_distances_from_bottom = sensor_distances_from_bottom;
+    constructor(url, data_types, name, coords, extra_options) {
+        super(url, data_types, name, coords, extra_options);
     }
 
     async download_data(start_date, end_date) {
@@ -319,7 +318,12 @@ const STATIONS = Object.values(DATA_STATIONS)
         return STATIONS
         .filter(({inactive}) => inactive !== true)
         .map((station_info) => {
-            let {name, id, coords, DATA_TYPE_OVERRIDES, map_icon } = station_info;
+            let {name, coords, DATA_TYPE_OVERRIDES } = station_info;
+            let extra_options = { ...station_info };
+            delete extra_options['name'];
+            delete extra_options['coords'];
+            delete extra_options['DATA_TYPE_OVERRIDES'];
+
             let data_types = JSON.parse(JSON.stringify(DATA_TYPES));
             if (DATA_TYPE_OVERRIDES) 
                 DATA_TYPE_OVERRIDES.forEach((data_type_override) => {
@@ -334,13 +338,12 @@ const STATIONS = Object.values(DATA_STATIONS)
 
             switch (STATION_TYPE) {
                 case "Sotl":
-                    return new SotlStation(URL, data_types, name, coords, map_icon);
+                    return new SotlStation(URL, data_types, name, coords, extra_options);
                 case "Data":
                 case undefined:
-                    return new DataStation(URL, data_types, name, id, coords, map_icon);
+                    return new DataStation(URL, data_types, name, coords, extra_options);
                 case "ThermistorChainStation":
-                    let {sensor_distances_from_bottom} = station_info;
-                    return new ThermistorChainStation(URL, data_types, name, coords, sensor_distances_from_bottom, map_icon);
+                    return new ThermistorChainStation(URL, data_types, name, coords, extra_options);
                 default:
                     throw new Error(`Unknown station type '${STATION_TYPE}'`)
             }

@@ -64,6 +64,8 @@ function StationChart(props) {
     useEffect(() => {
         let ignore = false;
 
+        // although station is not used in the component directly, its used in a hacky way in ModuleContainer
+        // to get the tab description
         const loading_icons = STATIONS
             .map((station, idx) =>
                 <LoadingIcon
@@ -72,6 +74,7 @@ function StationChart(props) {
                     onClick={() => setActiveLocation(idx)}
                     active={idx === active_location_idx}
                     text={`Loading ${station.name}`}
+                    station={station}
                     />
             )
         setMapMarkers(loading_icons);
@@ -103,6 +106,7 @@ function StationChart(props) {
                                 error_msg={`${station.name} temporarily unavailable`}
                                 onClick={() => setActiveLocation(idx)}
                                 active={idx === active_location_idx}
+                                station={station}
                                 />
                     }
                     else if (most_recent_station_values[idx] === undefined) {
@@ -112,6 +116,7 @@ function StationChart(props) {
                             onClick={() => setActiveLocation(idx)}
                             active={idx === active_location_idx}
                             text={`Loading ${station.name}`}
+                            station={station}
                             />
                     }
                     else if (station.map_icon !== undefined) {
@@ -123,6 +128,7 @@ function StationChart(props) {
                             text={`${station.name}`}
                             material_icon_name={`${station.map_icon}`}
                             color={get_color(most_recent_station_values[idx])}
+                            station={station}
                             />
                     }
 
@@ -134,6 +140,7 @@ function StationChart(props) {
                         color={get_color(most_recent_station_values[idx])}
                         onClick={() => setActiveLocation(idx)}
                         active={idx === active_location_idx}
+                        station={station}
                         />  
                 });
 

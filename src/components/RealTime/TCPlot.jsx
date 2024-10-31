@@ -109,7 +109,7 @@ function TCPlot(props) {
                 direction="h"
                 format_value={format_date}
                 ticks={x_ticks}
-                title="Date"
+                title=""
                 />,
             <Axis 
                 min_value={min_depth}
