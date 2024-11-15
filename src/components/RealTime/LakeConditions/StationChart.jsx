@@ -20,6 +20,7 @@ function StationChart(props) {
     // marker_data_type: the name of the data type that the markers on the map display
     // start_date: the start date of the chart
     // end_date: the end date of the chart
+    // custom_marker_function: a function (station, station_idx, station_data_point, marker_props) => marker element on the map
     // children: a function with arguments (station_data, current_station) that returns the child to embed
     //      station_data is an Object { TmpStamp: Array(N), <Name of DataType>: Array(N) }
     const isMounted = useIsMounted();
@@ -27,7 +28,7 @@ function StationChart(props) {
     const [ current_station_data, setCurrentStationData ] = useState(undefined);
     const is_downloading = current_station_data === undefined;
     const is_unavailable = current_station_data === null;
-    let { start_date, end_date, marker_data_type } = props;
+    let { start_date, end_date, marker_data_type, custom_marker_function } = props;
 
     const STATIONS = TercAPI.get_stations_with_data_type(marker_data_type);
 
@@ -82,9 +83,9 @@ function StationChart(props) {
         let lock = new Mutex();
         let most_recent_station_values = STATIONS.map(() => undefined);
 
-        function process_station_data(station_idx, station_data_value) {
-            most_recent_station_values[station_idx] = station_data_value;
-            const valid_data = most_recent_station_values.filter(x => typeof x === "number");
+        function process_station_data(station_idx, most_recent_station_data_point) {
+            most_recent_station_values[station_idx] = most_recent_station_data_point;
+            const valid_data = most_recent_station_values.map(x => x?.[marker_data_type]).filter(x => typeof x === "number");
             const min_value = Math.min(...valid_data);
             const max_value = Math.max(...valid_data);
             const min_color_rgb = [57, 140, 135];
@@ -99,48 +100,52 @@ function StationChart(props) {
             const station_map_markers = 
                 STATIONS
                 .map((station, idx) => {
-                    if (most_recent_station_values[idx] === null) {
+                    const on_click = () => { setActiveLocation(idx) };
+                    const position = createLatLng(...station.coords);
+                    const is_active = idx === active_location_idx;
+                    const most_recent_data_point = most_recent_station_values[idx];
+                    const most_recent_value = most_recent_data_point?.[marker_data_type]; 
+                    const color = most_recent_value === undefined ? undefined : get_color(most_recent_value);
+                    const marker_props = {
+                        "position": position,
+                        "onClick": on_click,
+                        "active": is_active,
+                        "text": station.name,
+                        "color": color,
+                        "station": station
+                    }
+
+                    if (most_recent_data_point === null) {
                         return <ErrorMarker
                                 key={`station-marker-${station.name}-${idx}`}
-                                position={createLatLng(...station.coords)}
                                 error_msg={`${station.name} temporarily unavailable`}
-                                onClick={() => setActiveLocation(idx)}
-                                active={idx === active_location_idx}
-                                station={station}
+                                {...marker_props}
                                 />
                     }
-                    else if (most_recent_station_values[idx] === undefined) {
+                    else if (most_recent_data_point === undefined) {
+                        marker_props.text = `Loading ${station.name}`;
                         return <LoadingIcon
                             key={`loading-station-${station.name}-${idx}`}
-                            position={createLatLng(...station.coords)}
-                            onClick={() => setActiveLocation(idx)}
-                            active={idx === active_location_idx}
-                            text={`Loading ${station.name}`}
-                            station={station}
+                            {...marker_props}
                             />
                     }
                     else if (station.map_icon !== undefined) {
                         return <MaterialIconMarker
                             key={`station-material-icon-${station.name}-${idx}`}
-                            position={createLatLng(...station.coords)}
-                            onClick={() => setActiveLocation(idx)}
-                            active={idx === active_location_idx}
-                            text={`${station.name}`}
                             material_icon_name={`${station.map_icon}`}
-                            color={get_color(most_recent_station_values[idx])}
-                            station={station}
+                            {...marker_props}
                             />
                     }
+                    else if (custom_marker_function !== undefined) {
+                        marker_props.key = `custom-marker-icon-${station.name}-${idx}`; 
+                        return custom_marker_function(station, most_recent_data_point, marker_props)
+                    }
 
-                    const marker_text = most_recent_station_values[idx].toFixed(1);
+                    const marker_text = most_recent_value.toFixed(1);
                     return <ColorMarker
                         key={`station-marker-${station.name}-${idx}`}
-                        position={createLatLng(...station.coords)}
+                        {...marker_props}
                         text={marker_text}
-                        color={get_color(most_recent_station_values[idx])}
-                        onClick={() => setActiveLocation(idx)}
-                        active={idx === active_location_idx}
-                        station={station}
                         />  
                 });
 
@@ -151,7 +156,7 @@ function StationChart(props) {
         // Download all station data           
         STATIONS
             .map((station, idx) => 
-                station.get_most_recent_data(start_date, end_date, marker_data_type)
+                station.get_most_recent_data(start_date, end_date)
                     .then(async (station_data_value) => {
                         return await lock.runExclusive(() => {
                             process_station_data(idx, station_data_value)
@@ -165,7 +170,7 @@ function StationChart(props) {
                     })
             )
         return () => { ignore = true; };
-    }, [start_date.getTime(), end_date.getTime(), active_location_idx, marker_data_type]);
+    }, [start_date.getTime(), end_date.getTime(), active_location_idx, marker_data_type, custom_marker_function]);
 
     return (
         <div className="lake-conditions-chart-container"> 

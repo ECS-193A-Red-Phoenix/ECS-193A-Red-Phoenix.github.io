@@ -1,7 +1,7 @@
 import { scaleLinear } from "d3";
 import { round, militaryHourTo12Hour, DAYS_OF_WEEK } from "../../../js/forked/util";
 
-const speed_scale = scaleLinear().domain([0, 20]).range([30, 70]);
+const speed_scale = scaleLinear().domain([0, 20]).range([30, 70]).clamp(true);
 
 function WindChartIcon(props) {
     let { speed, direction, time } = props;

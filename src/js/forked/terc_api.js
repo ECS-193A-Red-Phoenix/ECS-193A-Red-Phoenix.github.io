@@ -109,12 +109,12 @@ class Station {
         throw new Error("get_data is not implemented for this class!");
     }
 
-    async get_most_recent_data(start_date, end_date, data_type_name) {
+    async get_most_recent_data(start_date, end_date) {
         let data = await this.get_data(start_date, end_date);
         if (data === null)
             return null;
         let most_recent_data_point = data[data.length - 1];
-        return most_recent_data_point[data_type_name]
+        return most_recent_data_point;
     }
 }
 

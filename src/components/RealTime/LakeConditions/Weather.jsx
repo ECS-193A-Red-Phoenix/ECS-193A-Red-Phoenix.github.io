@@ -2,10 +2,11 @@ import { useOutletContext } from "react-router-dom";
 import { TercAPI } from "../../../js/forked/terc_api";
 import StationChart from "./StationChart";
 import MODULES from "../../../static/modules.json";
-import { parse_time_range } from "../../../js/forked/util";
+import { militaryHourTo12Hour, parse_time_range } from "../../../js/forked/util";
 import TimePlot from "./TimePlot";
 import WindChart from "./WindChart";
 import { useMemo } from "react";
+import MaterialIconMarker from "../TahoeMap/MaterialIconMarker";
 
 
 function Weather(props) {
@@ -55,6 +56,25 @@ function Weather(props) {
             return create_air_temperature_chart(time, station_data)
     };
 
+    const wind_marker_function = (station, most_recent_station_data_point, marker_props) => {
+        let wind_direction = most_recent_station_data_point[TercAPI.WIND_DIRECTION_NAME];
+        let wind_speed = most_recent_station_data_point[TercAPI.WIND_SPEED_NAME];
+        let time = most_recent_station_data_point[TercAPI.TIME_NAME];
+        let hours = militaryHourTo12Hour(time.getHours());
+        let am_pm = (time.getHours() >= 12) ? "PM" : "AM";
+
+        const style = { "transform": `rotate(${wind_direction+180}deg)`}
+        const key = marker_props.key;
+        marker_props.text += ` ${wind_speed.toFixed(1)} mph ${hours}${am_pm}`
+        delete marker_props["key"];
+        return <MaterialIconMarker
+                    key={key}
+                    material_icon_name={"north"}
+                    style={style}
+                    {...marker_props}
+                    />
+    };
+
     // useMemo to prevent re-renders when the map markers state changes and is propagated down
     const chart = useMemo(() => {
         return <StationChart
@@ -62,6 +82,7 @@ function Weather(props) {
             children={children}
             start_date={chart_start_date}
             end_date={chart_end_date}
+            custom_marker_function={current_bottom_tab.name === "Wind" ? wind_marker_function : undefined}
             />
     }, [tab_index, bottom_tab_index])
     return (
