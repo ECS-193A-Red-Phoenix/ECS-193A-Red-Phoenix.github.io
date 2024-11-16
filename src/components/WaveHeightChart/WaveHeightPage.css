@@ -11,3 +11,26 @@
         height: auto;
     }
 }
+
+.wave-height-wind-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-25%, -10%);
+}
+
+.material-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.material-icon-popup {
+    /* background: rgba(0, 0, 0, .5); */
+    /* border: 2px solid white; */
+    color: #fff;
+    border-radius: 0px;
+    padding: 6px;
+    text-transform: uppercase;
+}

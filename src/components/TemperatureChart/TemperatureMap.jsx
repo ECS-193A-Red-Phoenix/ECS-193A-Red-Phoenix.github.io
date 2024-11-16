@@ -10,6 +10,7 @@ function TemperatureMap(props) {
     //  color_palette: a function that maps a value in T to an [r, g, b] color
     //  cache_id (optional): a unique identifier for this heatmap (provides a significant performance boost)
     //  decimal_places (optional, default=1): how many decimal places to round the cursor hover value
+    //  children (optional, default={}): additional child elements to display in the map container
     const container_ref = useRef();
     const {T, units, color_palette} = props;
     const decimal_places = if_undefined(props.decimal_places, 1);
@@ -69,6 +70,7 @@ function TemperatureMap(props) {
         <div ref={container_ref} className="temperature-chart-container">
             <canvas></canvas>
             <div className="temperature-cursor"> Cursor </div>
+            { props.children }
         </div>
     );
 }

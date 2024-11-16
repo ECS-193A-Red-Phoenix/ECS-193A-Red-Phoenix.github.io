@@ -1,5 +1,4 @@
 TODO List
 
-- add hwtc station back to map
-- update wave height plot for modeled conditions
+- add parallel loading to ltid site
 - chat with deidre about citizen science

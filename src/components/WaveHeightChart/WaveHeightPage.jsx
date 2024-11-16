@@ -8,6 +8,7 @@ import "../TemperatureChart/TemperatureChart.css";
 import "../RealTime/RealTimeConditions.css";
 import "../../css/LakeConditions.css";
 import "./WaveHeightPage.css";
+import MaterialIcon from "./MaterialIcon";
 
 import { lagoon, militaryHourTo12Hour, clamp } from "../../js/util";
 import { retrieve_wind_forecasts } from "../../js/nws_api";
@@ -84,6 +85,7 @@ function WaveHeightPage() {
     let wind_speed, wind_direction, compass_title;
     if (!is_loading_wind && !wind_unavailable) {
         [wind_speed, wind_direction] = wind_data[activeIdx].values;
+        wind_speed = wind_speed * MS_TO_MPH;
 
         let active_date = wind_data[activeIdx].time;
         compass_title = `Wind ${formatDate(active_date)}`;
@@ -140,21 +142,11 @@ function WaveHeightPage() {
                 {
                     (is_loading_wind) ? <div> Retrieving wind forecasts </div> :
                     (wind_unavailable) ? <div> Unable to retrieve wind forecasts. Try again later. </div> :
-                        [
-                            <Calendar key='calendar' 
-                                events={wind_data} 
-                                active_event_index={activeIdx}
-                                on_event_selected={on_event_selected}
-                                description={calendar_description}/>,
-                            <div className="wh-compass" key='compass'>
-                                <CompassPlot
-                                    radius={450}
-                                    speed={wind_speed * MS_TO_MPH}
-                                    direction={wind_direction}
-                                    units={wind_units}
-                                    title={compass_title}/>
-                            </div>
-                        ]
+                        <Calendar key='calendar' 
+                            events={wind_data} 
+                            active_event_index={activeIdx}
+                            on_event_selected={on_event_selected}
+                            description={calendar_description}/>
                 }
             </div>
 
@@ -168,7 +160,16 @@ function WaveHeightPage() {
                                 units={wh_units}
                                 color_palette={wh_color_scale} 
                                 cache_id={cache_id}
-                                decimal_places={1}/>,
+                                decimal_places={1}>
+                                    <div className="wave-height-wind-icon"> 
+                                        <MaterialIcon
+                                            material_icon_name={"north"}
+                                            text={` Wind ${wind_speed.toFixed(1)} MPH`}
+                                            color={"rgb(57, 140, 135)"}
+                                            style={{"transform": `rotate(${wind_direction + 180}deg)`}}
+                                            />
+                                    </div>
+                            </TemperatureMap>,
                             <TemperatureLegend key='wave-height-legend'
                                 min={wh_min} 
                                 max={wh_max} 
