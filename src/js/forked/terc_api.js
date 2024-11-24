@@ -22,6 +22,9 @@ class TimedCache {
         
         const now = Date.now();
         const expired = (now - this.cache[key].time) >= this.expiration_time;
+        if (expired) {
+            console.log("Download cache expired!", now - this.cache[key].time, this.expiration_time)
+        }
         return !expired;
     }
 
@@ -191,19 +194,29 @@ class DataStation extends Station {
         });
     }
 
+    normalize_data_point(data_point, data_type_key, name_units, key_units) {
+        let data_type_value = parseFloat(data_point[data_type_key]);
+        // stations can contain data points with 'None' as the value, where parseFloat will fail
+        if (isNaN(data_type_value)) {
+            data_type_value = 0; 
+        }
+        data_type_value = UnitConverter.convert(data_type_value, key_units, name_units)
+        delete data_point[data_type_key]; // delete the old key
+        return data_type_value;
+    }
+
     async process_raw_data(raw_data) {
         // Normalize column names in each data point
         raw_data.forEach((data_point) => {
-            this.data_types.forEach(({name: data_type_name, key: data_type_key, name_units, key_units}) => {
-                let data_type_value = parseFloat(data_point[data_type_key]);
-                // stations can contain data points with 'None' as the value, where parseFloat will fail
-                if (isNaN(data_type_value)) {
-                    data_type_value = 0; 
+            this.data_types.forEach(({name, key, name_units, key_units}) => {
+                if (Array.isArray(key)) {
+                    data_point[name] = [];
+                    for (let k_i of key) {
+                        data_point[name].push(this.normalize_data_point(data_point, k_i, name_units, key_units))
+                    }
+                } else {
+                    data_point[name] = this.normalize_data_point(data_point, key, name_units, key_units);
                 }
-                data_type_value = UnitConverter.convert(data_type_value, key_units, name_units)
-                // assign parsed value to standard data type name
-                data_point[data_type_name] = data_type_value;
-                delete data_point[data_type_key]; // delete old key
             })
             data_point[TercAPI.TIME_NAME] = this.get_data_point_timestamp(data_point);
             delete data_point[DataStation.TIME_KEY];

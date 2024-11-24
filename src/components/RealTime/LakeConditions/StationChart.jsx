@@ -13,6 +13,7 @@ import { Mutex } from "async-mutex"
 import LoadingIcon from "../TahoeMap/LoadingIcon";
 import IconMarker from "../TahoeMap/IconMarker";
 import MaterialIconMarker from "../TahoeMap/MaterialIconMarker";
+import { mean } from "d3";
 
 function StationChart(props) {
     //////////////////////////////////////////////////////
@@ -85,9 +86,14 @@ function StationChart(props) {
 
         function process_station_data(station_idx, most_recent_station_data_point) {
             most_recent_station_values[station_idx] = most_recent_station_data_point;
-            const valid_data = most_recent_station_values.map(x => x?.[marker_data_type]).filter(x => typeof x === "number");
-            const min_value = Math.min(...valid_data);
-            const max_value = Math.max(...valid_data);
+            const marker_data_type_values = most_recent_station_values
+                .map(x => x?.[marker_data_type])
+                .map(x => Array.isArray(x) ? mean(x) : x)
+            console.log(marker_data_type_values, most_recent_station_data_point)
+            const valid_values = marker_data_type_values
+                .filter(x => typeof x === "number");
+            const min_value = Math.min(...valid_values);
+            const max_value = Math.max(...valid_values);
             const min_color_rgb = [57, 140, 135];
             const max_color_rgb = [4, 52, 77];
             const color_scale = colorScale([min_color_rgb, max_color_rgb]);
@@ -104,7 +110,7 @@ function StationChart(props) {
                     const position = createLatLng(...station.coords);
                     const is_active = idx === active_location_idx;
                     const most_recent_data_point = most_recent_station_values[idx];
-                    const most_recent_value = most_recent_data_point?.[marker_data_type]; 
+                    const most_recent_value = marker_data_type_values[idx]
                     const color = most_recent_value === undefined ? undefined : get_color(most_recent_value);
                     const marker_props = {
                         "position": position,
